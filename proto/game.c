@@ -1,4 +1,5 @@
 #include "proto.h"
+#include <stdlib.h>
 
 byte Timer;
 const byte* CurrentLevel = Level1;
@@ -7,15 +8,16 @@ bool SinglePlayer = false;
 void Interrupt(void)
 {
     Timer++;
-    DoPlayers();
+    if (!DoPlayers())
+        exit(0);
     UpdateDrawBullets();
+    UpdateFlying();
 }
 
 void Game(void)
 {
     SpectrumBorder = 1;
 
-    InitPlayers();
     DrawLevel(CurrentLevel);
 
     for (;;) {

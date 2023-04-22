@@ -5,8 +5,6 @@ typedef struct Tile { const byte* image; byte attr; } Tile;
 const Tile AppleTopTile  = { AppleTop,  PASSABLE_ATTR };
 const Tile AppleTop1Tile = { AppleTop1, PASSABLE_ATTR };
 const Tile AppleTop2Tile = { AppleTop2, PASSABLE_ATTR };
-const Tile Apple1Tile    = { Apple1,    0x46          };
-const Tile Apple2Tile    = { Apple1,    0x42          };
 
 static Tile Tiles[] = {
         { Empty,            PASSABLE_ATTR },    /* 0 */
@@ -41,32 +39,30 @@ void DrawLevel(const byte* level)
             else {
                 switch (value & 0x7f) {
                     case PLAYER_1_START:
-                        player1.x = x << 3;
-                        player1.y = y << 3;
+                        InitPhysObject(&player1.phys, x << 3, y << 3);
                         DrawTile(x, y, &Tiles[0]);
                         break;
                     case PLAYER_2_START:
-                        player2.x = x << 3;
-                        player2.y = y << 3;
+                        InitPhysObject(&player2.phys, x << 3, y << 3);
                         DrawTile(x, y, &Tiles[0]);
                         break;
                     case PLAYER_1_APPLE:
-                        player1.appleX = x << 3;
-                        player1.appleY = y << 3;
                         if (SinglePlayer)
                             DrawTile(x, y, &Tiles[0]);
                         else
-                            DrawTile(x, y, &Apple1Tile);
+                            PlaceItem(x << 3, y << 3, Apple1, APPLE1_ATTR);
                         break;
                     case PLAYER_2_APPLE:
-                        player2.appleX = x << 3;
-                        player2.appleY = y << 3;
-                        DrawTile(x, y, &Apple2Tile);
+                        PlaceItem(x << 3, y << 3, Apple1, APPLE2_ATTR);
                         break;
                     case PLAYER_1_TOP:
+                        player1.gatesX = (x << 3) - 8;
+                        player1.gatesY = (y << 3) + 8;
                         DrawTile(x, y, (SinglePlayer ? &AppleTopTile : &AppleTop1Tile));
                         break;
                     case PLAYER_2_TOP:
+                        player2.gatesX = (x << 3) - 8;
+                        player2.gatesY = (y << 3) + 8;
                         DrawTile(x, y, (SinglePlayer ? &AppleTopTile : &AppleTop2Tile));
                         break;
                 }

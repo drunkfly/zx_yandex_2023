@@ -14,9 +14,15 @@ add_executable(proto WIN32
     bullet.c
     data.c
     game.c
+    item.c
+    item.h
     level.c
+    level.h
     main.c
+    physics.c
+    physics.h
     player.c
+    player.h
     proto.h
     sprites.c
     )

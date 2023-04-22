@@ -3,7 +3,13 @@
 #define IDLE 0
 #define MOVING 1
 #define JUMPING 2
-#define FALLING 3
+#define DEAD_FALLING 3
+#define DEAD 4
+#define WAKING_UP 5
+
+#define SHOOT_COOLDOWN 25
+#define DEATH_SHOOT_COOLDOWN 50*2
+#define DEATH_STONE_COOLDOWN 255
 
 Player player1;
 Player player2;
@@ -40,313 +46,227 @@ static const byte* PlayerHandsRight[] = {
         PlayerHandsRight5,
 };
 
-static Player* OppositePlayer(Player* player)
+static void TryGetItem(Player* player, sbyte offs, byte oldX, byte oldY)
 {
-    if (player == &player1)
-        return &player2;
-    else
-        return &player1;
-}
-
-static bool CanJumpUp(Player* player)
-{
-    if ((player->y & 7) != 0)
-        return true;
-    if (player->y == 0)
-        return false;
-
-    Player* opp = OppositePlayer(player);
-    if (opp->appleStolen && player->y <= 8)
-        return false;
-
-    byte yOff = 1;
-    if (opp->appleStolen)
-        yOff = 2;
-
-    int off = 6144 + ((player->y >> 3) - yOff + LEVEL_Y) * 32 + (player->x >> 3);
-    byte attr = SpectrumScreen[off];
-    if (attr != PASSABLE_ATTR)
-        return false;
-
-    if ((player->x & 7) != 0) {
-        byte attr = SpectrumScreen[off + 1];
-        if (attr != PASSABLE_ATTR)
-            return false;
-    }
-
-    return true;
-}
-
-static bool CanFallDown(Player* player)
-{
-    if ((player->y & 7) != 0)
-        return true;
-    if (player->y >= (LEVEL_HEIGHT * 8) - 8)
-        return false;
-
-    int off = 6144 + ((player->y >> 3) + 1 + LEVEL_Y) * 32 + (player->x >> 3);
-    byte attr = SpectrumScreen[off];
-    if (attr != PASSABLE_ATTR)
-        return false;
-
-    if ((player->x & 7) != 0) {
-        byte attr = SpectrumScreen[off + 1];
-        if (attr != PASSABLE_ATTR)
-            return false;
-    }
-
-    return true;
-}
-
-static bool CanGoLeft(Player* player)
-{
-    if ((player->x & 7) != 0)
-        return true;
-    if (player->x == 0)
-        return false;
-
-    int off = 6144 + ((player->y >> 3) + LEVEL_Y) * 32 + (player->x >> 3) - 1;
-    byte attr = SpectrumScreen[off];
-    if (attr != PASSABLE_ATTR)
-        return false;
-
-    if ((player->y & 7) != 0) {
-        byte attr = SpectrumScreen[off + 32];
-        if (attr != PASSABLE_ATTR)
-            return false;
-    }
-
-    Player* opp = OppositePlayer(player);
-    if (opp->appleStolen) {
-        byte attr = SpectrumScreen[off - 32];
-        if (attr != PASSABLE_ATTR)
-            return false;
-    }
-
-    return true;
-}
-
-static bool CanGoRight(Player* player)
-{
-    if ((player->x & 7) != 0)
-        return true;
-    if (player->x >= (LEVEL_WIDTH * 8) - 8)
-        return false;
-
-    int off = 6144 + ((player->y >> 3) + LEVEL_Y) * 32 + (player->x >> 3) + 1;
-    byte attr = SpectrumScreen[off];
-    if (attr != PASSABLE_ATTR)
-        return false;
-
-    if ((player->y & 7) != 0) {
-        byte attr = SpectrumScreen[off + 32];
-        if (attr != PASSABLE_ATTR)
-            return false;
-    }
-
-    Player* opp = OppositePlayer(player);
-    if (opp->appleStolen) {
-        byte attr = SpectrumScreen[off - 32];
-        if (attr != PASSABLE_ATTR)
-            return false;
-    }
-
-    return true;
-}
-
-static sbyte off[] = { 1, 0, 1, 0 };
-
-static void TryGetApple(Player* player, sbyte offs)
-{
-    if (player->state == IDLE || player->state == MOVING) {
-        Player* opp = OppositePlayer(player);
-        if (opp->appleStolen)
+    if (player->state == IDLE || player->state == MOVING || player->state == JUMPING) {
+        if (player->itemAttr)
             return;
-        /*
-        if (player->x < opp->appleX + 8 &&
-            player->x + 8 > opp->appleX &&
-            player->y < opp->appleY + 8 &&
-            player->y + 8 > opp->appleY) {
-        }
-        */
-        byte px = player->x >> 3;
-        byte py = player->y >> 3;
-        byte ax = opp->appleX >> 3;
-        byte ay = opp->appleY >> 3;
-        if (py == ay && px + offs == ax) {
-            opp->appleStolen = 1;
-            XorSprite(opp->appleX, opp->appleY + off[opp->appleCounter], Apple1);
-            XorSprite(player->x, player->y - 9, Apple1);
+
+        Item item = TryGrabItem(player->phys.x + offs, player->phys.y);
+        if (item.attr) {
+            XorSprite(oldX, oldY - 9, item.sprite);
+            player->itemAttr = item.attr;
+            player->itemSprite = item.sprite;
         }
     }
 }
 
-static bool MoveLeftRight(Player* player)
+static bool MoveLeftRight(Player* player, byte oldX, byte oldY)
 {
     if (KeyPressed[(player == &player1 ? KEY_LEFT : KEY_A)]) {
-        if (CanGoLeft(player)) {
-            if (!OppositePlayer(player)->appleStolen || (Timer & 1) == 0)
-                --player->x;
+        if (CanGoLeft(&player->phys)) {
+            if (!player->itemAttr || (Timer & 1) == 0)
+                --player->phys.x;
         } else
-            TryGetApple(player, -1);
-        player->dir = LEFT;
+            TryGetItem(player, -8, oldX, oldY);
+        player->phys.flags = (player->phys.flags & ~PHYS_DIRECTION) | PHYS_LEFT;
         return true;
     }
     if (KeyPressed[(player == &player1 ? KEY_RIGHT : KEY_D)]) {
-        if (CanGoRight(player)) {
-            if (!OppositePlayer(player)->appleStolen || (Timer & 1) == 0)
-                ++player->x;
+        if (CanGoRight(&player->phys)) {
+            if (!player->itemAttr || (Timer & 1) == 0)
+                ++player->phys.x;
         } else
-            TryGetApple(player, 1);
-        player->dir = RIGHT;
+            TryGetItem(player, 8, oldX, oldY);
+        player->phys.flags = (player->phys.flags & ~PHYS_DIRECTION) | PHYS_RIGHT;
         return true;
     }
     return false;
 }
 
-static void TryShoot(Player* player)
+static void TryShoot(Player* player, byte oldX, byte oldY)
 {
     if (KeyPressed[(player == &player1 ? KEY_ENTER : KEY_CAPS_SHIFT)] && player->cooldown == 0) {
-        byte xx;
-        if (player->dir == LEFT)
-            xx = player->x + 1;
-        else
-            xx = player->x + 6;
-        SpawnBullet(xx, player->y + 4, player->dir);
-        player->cooldown = 5;
+        if (player->itemAttr) {
+            XorSprite(oldX, oldY - 9, player->itemSprite);
+            if (SpawnFlyingItem(player->phys.x, player->phys.y - 8, player->phys.flags, player->itemSprite, player->itemAttr, 4 << 5)) {
+                player->itemSprite = NULL;
+                player->itemAttr = 0;
+                player->cooldown = SHOOT_COOLDOWN;
+            }
+        } else {
+            byte xx;
+            if ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT)
+                xx = player->phys.x + 1;
+            else
+                xx = player->phys.x + 6;
+            SpawnBullet(xx, player->phys.y + 4, player->phys.flags & PHYS_DIRECTION);
+            player->cooldown = SHOOT_COOLDOWN;
+        }
     }
 }
 
-static void FallDown(Player* player)
+bool DoPlayer(Player* player)
 {
-    if (player->accel < 0xf0)
-        player->accel += 0x08;
-    for (byte i = 0; i < ((player->accel >> 5) & 7); i++) {
-        if (!CanFallDown(player))
-            return;
-        player->y += 1;
-    }
-}
-
-void DoPlayer(Player* player)
-{
-    byte oldX = player->x;
-    byte oldY = player->y;
+    byte oldX = player->phys.x;
+    byte oldY = player->phys.y;
 
     if (player->cooldown != 0)
         --player->cooldown;
 
     bool onGround = true;
-    if (CanFallDown(player))
+    byte upAdj = (player->itemAttr ? 2 : 1);
+    if (UpdatePhysObject(&player->phys, upAdj))
         onGround = false;
-    else
-        player->accel = 0;
 
     switch (player->state) {
         case IDLE:
         case MOVING:
         idle:
             player->state = IDLE;
-            if (MoveLeftRight(player))
+            if (MoveLeftRight(player, oldX, oldY))
                 player->state = MOVING;
-            TryShoot(player);
-            if (!onGround)
-                FallDown(player);
-            else {
-                if (KeyPressed[(player == &player1 ? KEY_UP : KEY_W)] && CanJumpUp(player)) {
+            TryShoot(player, oldX, oldY);
+            if (onGround) {
+                if (KeyPressed[(player == &player1 ? KEY_UP : KEY_W)] && CanGoUp(&player->phys, upAdj)) {
                     player->state = JUMPING;
-                    player->speed = 4 << 5;
-                    player->decel = 0x01;
+                    JumpPhysObject(&player->phys, player->phys.flags, 4 << 5);
                 }
             }
-            break;
-
-        case FALLING:
-        falling:
-            if (onGround)
-                goto idle;
-            FallDown(player);
-            TryShoot(player);
-            MoveLeftRight(player);
             break;
 
         case JUMPING:
-            if (player->speed <= player->decel) {
-                player->state = FALLING;
-                goto falling;
+            if (onGround)
+                goto idle;
+            MoveLeftRight(player, oldX, oldY);
+            TryShoot(player, oldX, oldY);
+            break;
+
+        case DEAD_FALLING:
+            if (onGround)
+                player->state = DEAD;
+            break;
+
+        case DEAD:
+            if (!onGround)
+                player->state = DEAD_FALLING;
+            else if (player->cooldown == 0) {
+                player->cooldown = 10;
+                player->state = WAKING_UP;
             }
-            player->speed -= player->decel;
-            if (player->speed < 0x07) {
-                player->state = FALLING;
-                goto falling;
-            }
-            player->decel++;
-            MoveLeftRight(player);
-            TryShoot(player);
-            for (byte i = 0; i < ((player->speed >> 5) & 7); i++) {
-                if (CanJumpUp(player))
-                    --player->y;
-                else {
-                    player->state = FALLING;
-                    goto falling;
-                }
-            }
+            break;
+
+        case WAKING_UP:
+            if (player->cooldown == 0)
+                player->state = IDLE;
             break;
     }
 
     const byte* newSprite;
     switch (player->state) {
         case IDLE:
-            if (OppositePlayer(player)->appleStolen)
-                newSprite = (player->dir == LEFT ? PlayerHandsLeft[0] : PlayerHandsRight[0]);
+            if (player->itemAttr)
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerHandsLeft[0] : PlayerHandsRight[0]);
             else
-                newSprite = (player->dir == LEFT ? PlayerLeft[0] : PlayerRight[0]);
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerLeft[0] : PlayerRight[0]);
             break;
         case MOVING:
-            if (OppositePlayer(player)->appleStolen)
-                newSprite = (player->dir == LEFT ? PlayerHandsLeft[1 + ((Timer >> 2) & 3)] : PlayerHandsRight[1 + ((Timer >> 2) & 3)]);
+            if (player->itemAttr)
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerHandsLeft[1 + ((Timer >> 2) & 3)] : PlayerHandsRight[1 + ((Timer >> 2) & 3)]);
             else
-                newSprite = (player->dir == LEFT ? PlayerLeft[1 + ((Timer >> 2) & 3)] : PlayerRight[1 + ((Timer >> 2) & 3)]);
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerLeft[1 + ((Timer >> 2) & 3)] : PlayerRight[1 + ((Timer >> 2) & 3)]);
             break;
         case JUMPING:
-        case FALLING:
-            if (OppositePlayer(player)->appleStolen)
-                newSprite = (player->dir == LEFT ? PlayerHandsLeftJump : PlayerHandsRightJump);
+            if (player->itemAttr)
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerHandsLeftJump : PlayerHandsRightJump);
             else
-                newSprite = (player->dir == LEFT ? PlayerLeftJump : PlayerRightJump);
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerLeftJump : PlayerRightJump);
+            break;
+        case DEAD_FALLING:
+            newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead1Left : PlayerDead1Right);
+            break;
+        case DEAD:
+            if ((player->cooldown & 15) < 7)
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead1Left : PlayerDead1Right);
+            else
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead2Left : PlayerDead2Right);
+            break;
+        case WAKING_UP:
+            newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead3Left : PlayerDead3Right);
             break;
     }
 
     if (player->oldSprite) {
         XorSprite(oldX, oldY, player->oldSprite);
-        if (OppositePlayer(player)->appleStolen)
-            XorSprite(oldX, oldY - 9, Apple1);
+        if (player->itemAttr)
+            XorSprite(oldX, oldY - 9, player->itemSprite);
     }
-    XorSprite(player->x, player->y, newSprite);
-    if (OppositePlayer(player)->appleStolen)
-        XorSprite(player->x, player->y - 9, Apple1);
+    XorSprite(player->phys.x, player->phys.y, newSprite);
+    if (player->itemAttr)
+        XorSprite(player->phys.x, player->phys.y - 9, player->itemSprite);
     player->oldSprite = newSprite;
 
-    if (!player->appleStolen) {
-        if ((Timer & 15) == 15) {
-            XorSprite(player->appleX, player->appleY + off[player->appleCounter], Apple1);
-            ++player->appleCounter;
-            player->appleCounter &= 3;
-            XorSprite(player->appleX, player->appleY + off[player->appleCounter], Apple1);
+    if ((player->state != DEAD && player->state != DEAD_FALLING)
+            && player->phys.x + 8 >= player->gatesX + 6 && player->phys.x <= player->gatesX + 3 * 8 - 6
+            && player->phys.y + 8 >= player->gatesY && player->phys.y <= player->gatesY + 8) {
+        byte myApple = (player == &player1 ? APPLE1_ATTR : APPLE2_ATTR);
+        byte enemyApple = (player == &player1 ? APPLE2_ATTR : APPLE1_ATTR);
+
+        if (player->itemAttr == myApple) {
+            XorSprite(player->phys.x, player->phys.y - 9, player->itemSprite);
+            PlaceItem(player->gatesX + 8, player->gatesY, player->itemSprite, player->itemAttr);
+            player->itemSprite = NULL;
+            player->itemAttr = 0;
+        }
+
+        const Item* itemAtOurGates1 = ItemAt(player->gatesX + 8, player->gatesY);
+        const Item* itemAtOurGates2 = ItemAt(player->gatesX, player->gatesY);
+        const Item* itemAtOurGates3 = ItemAt(player->gatesX + 16, player->gatesY);
+
+        bool haveEnemyCoin = (player->itemAttr == enemyApple ||
+            (itemAtOurGates1 != NULL && itemAtOurGates1->attr == enemyApple) ||
+            (itemAtOurGates2 != NULL && itemAtOurGates2->attr == enemyApple) ||
+            (itemAtOurGates3 != NULL && itemAtOurGates3->attr == enemyApple));
+
+        bool haveOurCoin = (player->itemAttr == myApple ||
+            (itemAtOurGates1 != NULL && itemAtOurGates1->attr == myApple) ||
+            (itemAtOurGates2 != NULL && itemAtOurGates2->attr == myApple) ||
+            (itemAtOurGates3 != NULL && itemAtOurGates3->attr == myApple));
+
+        if (haveOurCoin && haveEnemyCoin)
+            return false;
+    }
+
+    return true;
+}
+
+void KillPlayer(Player* player, bool isShot)
+{
+    if (player->state != DEAD && player->state != DEAD_FALLING) {
+        player->state = DEAD_FALLING;
+        player->cooldown = (isShot ? DEATH_SHOOT_COOLDOWN : DEATH_STONE_COOLDOWN);
+        if (player->itemAttr) {
+            XorSprite(player->phys.x, player->phys.y - 9, player->itemSprite);
+            if (SpawnFlyingItem(player->phys.x, player->phys.y - 8, player->phys.flags,
+                    player->itemSprite, player->itemAttr, (1 << 5) | 3)) {
+                player->itemAttr = 0;
+                player->itemSprite = NULL;
+            } else {
+                PlaceItem(player->phys.x, player->phys.y, player->itemSprite, player->itemAttr);
+            }
         }
     }
 }
 
-void InitPlayers()
+bool DoPlayers(void)
 {
-    player1.y = (LEVEL_HEIGHT * 8) - 8;
-    player1.appleCounter = 1;
-    player2.appleCounter = 1;
-}
+    if (!DoPlayer(&player1))
+        return false;
 
-void DoPlayers(void)
-{
-    DoPlayer(&player1);
-    if (!SinglePlayer)
-        DoPlayer(&player2);
+    if (!SinglePlayer) {
+        if (!DoPlayer(&player2))
+            return false;
+    }
+
+    return true;
 }

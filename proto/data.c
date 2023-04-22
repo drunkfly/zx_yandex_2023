@@ -28,6 +28,12 @@ byte PlayerLeftJump[8];
 byte PlayerRightJump[8];
 byte PlayerHandsLeftJump[8];
 byte PlayerHandsRightJump[8];
+byte PlayerDead1Left[8];
+byte PlayerDead2Left[8];
+byte PlayerDead3Left[8];
+byte PlayerDead1Right[8];
+byte PlayerDead2Right[8];
+byte PlayerDead3Right[8];
 
 byte Empty[8];
 byte Bricks[8];
@@ -40,6 +46,9 @@ byte AppleTop2[8];
 byte AppleTopRight[8];
 byte AppleRight[8];
 byte Apple1[8];
+byte Apple2[8];
+byte Apple3[8];
+byte Apple4[8];
 
 byte Level1[1024];
 
@@ -200,7 +209,10 @@ void LoadData(void)
     GetSprite(AppleTopRight, 88, 120);
     GetSprite(AppleRight, 88, 128);
 
-    GetSprite(Apple1, 80, 128);
+    GetSprite(Apple1, 32, 152);
+    GetSprite(Apple2, 40, 152);
+    GetSprite(Apple3, 48, 152);
+    GetSprite(Apple4, 56, 152);
 
     GenerateLevel(Level1, Level1Data);
 
@@ -229,4 +241,11 @@ void LoadData(void)
     GetSprite(PlayerHandsRight4, 56, 136);
     GetSprite(PlayerHandsRight5, 64, 136);
     GetSprite(PlayerHandsRightJump, 24, 136);
+
+    GetMirrorSprite(PlayerDead1Left, 16, 144);
+    GetMirrorSprite(PlayerDead2Left, 24, 144);
+    GetMirrorSprite(PlayerDead3Left, 32, 144);
+    GetSprite(PlayerDead1Right, 16, 144);
+    GetSprite(PlayerDead2Right, 24, 144);
+    GetSprite(PlayerDead3Right, 32, 144);
 }

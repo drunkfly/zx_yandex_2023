@@ -23,6 +23,12 @@ static bool BulletCollidesWithWall(const Bullet* bullet)
     return SpectrumScreen[off] != PASSABLE_ATTR;
 }
 
+static bool BulletCollidesWithPlayer(const Bullet* bullet, const Player* player)
+{
+    return (bullet->x >= player->phys.x + 2 && bullet->y >= player->phys.y &&
+        bullet->x <= player->phys.x + 6 && bullet->y <= player->phys.y + 8);
+}
+
 static void XorBullet(const Bullet* bullet)
 {
     SpectrumScreen[ZXCOORD((bullet->x >> 3), (bullet->y + (LEVEL_Y * 8)))] ^= BulletSprites[bullet->x & 7];
@@ -35,7 +41,7 @@ void SpawnBullet(byte x, byte y, byte dir)
 
     bullets[bulletCount].x = x;
     bullets[bulletCount].y = y;
-    bullets[bulletCount].dir = (dir == LEFT ? -1 : 1);
+    bullets[bulletCount].dir = (dir == PHYS_LEFT ? -1 : 1);
     XorBullet(&bullets[bulletCount]);
     ++bulletCount;
 }
@@ -55,7 +61,13 @@ void UpdateDrawBullets(void)
         bullets[i].x += bullets[i].dir;
         if (BulletCollidesWithWall(&bullets[i]))
             DestroyBullet(i);
-        else
+        else if (BulletCollidesWithPlayer(&bullets[i], &player1)) {
+            KillPlayer(&player1, true);
+            DestroyBullet(i);
+        } else if (BulletCollidesWithPlayer(&bullets[i], &player2)) {
+            KillPlayer(&player2, true);
+            DestroyBullet(i);
+        } else
             XorBullet(&bullets[i]);
     }
 }

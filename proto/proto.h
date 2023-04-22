@@ -1,3 +1,4 @@
+#include <stddef.h>
 
 typedef unsigned char byte;
 typedef signed char sbyte;
@@ -187,38 +188,6 @@ typedef int bool;
 #define KEYIDX_PC_TAB       70
 #endif
 
-#define LEVEL_Y             2
-#define LEVEL_WIDTH         32
-#define LEVEL_HEIGHT        22
-
-#define PASSABLE_ATTR       0x47
-
-#define PLAYER_1_START      0
-#define PLAYER_2_START      1
-#define PLAYER_1_APPLE      2
-#define PLAYER_2_APPLE      3
-#define PLAYER_1_TOP        4
-#define PLAYER_2_TOP        5
-
-#define LEFT 0
-#define RIGHT 1
-
-typedef struct Player {
-    const byte* oldSprite;
-    byte x;
-    byte y;
-    byte state : 2;
-    byte dir : 1;
-    byte speed;
-    byte accel;
-    byte decel;
-    byte cooldown;
-    byte appleX;
-    byte appleY;
-    byte appleCounter;
-    byte appleStolen;
-} Player;
-
 extern byte AppleLeft[8];
 extern byte AppleTopLeft[8];
 extern byte AppleTop[8];
@@ -229,9 +198,6 @@ extern byte AppleRight[8];
 extern byte Apple1[8];
 extern byte Apple2[8];
 extern byte Apple3[8];
-
-extern Player player1;
-extern Player player2;
 
 extern byte Timer;
 extern bool SinglePlayer;
@@ -276,16 +242,24 @@ extern byte PlayerHandsRight5[8];
 extern byte PlayerHandsLeftJump[8];
 extern byte PlayerHandsRightJump[8];
 
+extern byte PlayerDead1Left[8];
+extern byte PlayerDead2Left[8];
+extern byte PlayerDead3Left[8];
+extern byte PlayerDead1Right[8];
+extern byte PlayerDead2Right[8];
+extern byte PlayerDead3Right[8];
+
 extern byte Empty[];
 extern byte Bricks[];
 extern byte Apple[];
 
 extern byte Level1[];
 
-void InitPlayers(void);
-void DoPlayers(void);
-
-void DrawLevel(const byte* level);
 
 void SpawnBullet(byte x, byte y, byte dir);
 void UpdateDrawBullets(void);
+
+#include "physics.h"
+#include "item.h"
+#include "player.h"
+#include "level.h"
