@@ -1,5 +1,6 @@
 
 typedef unsigned char byte;
+typedef signed char sbyte;
 typedef unsigned short word;
 
 #ifndef __cplusplus
@@ -192,6 +193,16 @@ typedef int bool;
 
 #define PASSABLE_ATTR       0x47
 
+#define PLAYER_1_START      0
+#define PLAYER_2_START      1
+#define PLAYER_1_APPLE      2
+#define PLAYER_2_APPLE      3
+#define PLAYER_1_TOP        4
+#define PLAYER_2_TOP        5
+
+#define LEFT 0
+#define RIGHT 1
+
 typedef struct Player {
     const byte* oldSprite;
     byte x;
@@ -201,13 +212,29 @@ typedef struct Player {
     byte speed;
     byte accel;
     byte decel;
-    byte count;
+    byte cooldown;
+    byte appleX;
+    byte appleY;
+    byte appleCounter;
+    byte appleStolen;
 } Player;
+
+extern byte AppleLeft[8];
+extern byte AppleTopLeft[8];
+extern byte AppleTop[8];
+extern byte AppleTop1[8];
+extern byte AppleTop2[8];
+extern byte AppleTopRight[8];
+extern byte AppleRight[8];
+extern byte Apple1[8];
+extern byte Apple2[8];
+extern byte Apple3[8];
 
 extern Player player1;
 extern Player player2;
 
 extern byte Timer;
+extern bool SinglePlayer;
 
 extern bool AnyKeyPressed;
 extern bool KeyPressed[256];
@@ -236,8 +263,22 @@ extern byte PlayerRight5[];
 extern byte PlayerLeftJump[];
 extern byte PlayerRightJump[];
 
+extern byte PlayerHandsLeft1[8];
+extern byte PlayerHandsLeft2[8];
+extern byte PlayerHandsLeft3[8];
+extern byte PlayerHandsLeft4[8];
+extern byte PlayerHandsLeft5[8];
+extern byte PlayerHandsRight1[8];
+extern byte PlayerHandsRight2[8];
+extern byte PlayerHandsRight3[8];
+extern byte PlayerHandsRight4[8];
+extern byte PlayerHandsRight5[8];
+extern byte PlayerHandsLeftJump[8];
+extern byte PlayerHandsRightJump[8];
+
 extern byte Empty[];
 extern byte Bricks[];
+extern byte Apple[];
 
 extern byte Level1[];
 
@@ -245,3 +286,6 @@ void InitPlayers(void);
 void DoPlayers(void);
 
 void DrawLevel(const byte* level);
+
+void SpawnBullet(byte x, byte y, byte dir);
+void UpdateDrawBullets(void);

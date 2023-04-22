@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(16K)
 
+set(CMAKE_C_STANDARD 99)
+
 if(MSVC)
     add_definitions(
         -D_CRT_SECURE_NO_DEPRECATE
@@ -9,6 +11,7 @@ if(MSVC)
 endif()
 
 add_executable(proto WIN32
+    bullet.c
     data.c
     game.c
     level.c
@@ -17,6 +20,10 @@ add_executable(proto WIN32
     proto.h
     sprites.c
     )
+
+if(MSVC)
+    set_property(TARGET proto PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
 if(WIN32)
     target_include_directories(proto PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/sdl2/include")

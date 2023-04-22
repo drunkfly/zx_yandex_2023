@@ -2,11 +2,13 @@
 
 byte Timer;
 const byte* CurrentLevel = Level1;
+bool SinglePlayer = false;
 
 void Interrupt(void)
 {
     Timer++;
     DoPlayers();
+    UpdateDrawBullets();
 }
 
 void Game(void)
