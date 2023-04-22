@@ -186,6 +186,27 @@ typedef int bool;
 #define KEYIDX_PC_TAB       70
 #endif
 
+#define LEVEL_Y             2
+#define LEVEL_WIDTH         32
+#define LEVEL_HEIGHT        22
+
+#define PASSABLE_ATTR       0x47
+
+typedef struct Player {
+    const byte* oldSprite;
+    byte x;
+    byte y;
+    byte state : 2;
+    byte dir : 1;
+    byte speed;
+    byte accel;
+    byte decel;
+    byte count;
+} Player;
+
+extern Player player1;
+extern Player player2;
+
 extern byte Timer;
 
 extern bool AnyKeyPressed;
@@ -206,12 +227,21 @@ extern byte PlayerLeft1[];
 extern byte PlayerLeft2[];
 extern byte PlayerLeft3[];
 extern byte PlayerLeft4[];
+extern byte PlayerLeft5[];
 extern byte PlayerRight1[];
 extern byte PlayerRight2[];
 extern byte PlayerRight3[];
 extern byte PlayerRight4[];
+extern byte PlayerRight5[];
 extern byte PlayerLeftJump[];
 extern byte PlayerRightJump[];
 
+extern byte Empty[];
+extern byte Bricks[];
+
+extern byte Level1[];
+
 void InitPlayers(void);
 void DoPlayers(void);
+
+void DrawLevel(const byte* level);

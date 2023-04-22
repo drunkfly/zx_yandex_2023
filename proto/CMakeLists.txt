@@ -11,6 +11,7 @@ endif()
 add_executable(proto WIN32
     data.c
     game.c
+    level.c
     main.c
     player.c
     proto.h

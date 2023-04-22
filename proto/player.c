@@ -8,17 +8,6 @@
 #define LEFT 0
 #define RIGHT 1
 
-typedef struct Player {
-    const byte* oldSprite;
-    byte x;
-    byte y;
-    byte state : 2;
-    byte dir : 1;
-    byte speed;
-    byte accel;
-    byte decel;
-} Player;
-
 Player player1;
 Player player2;
 
@@ -27,35 +16,116 @@ static const byte* PlayerLeft[] = {
         PlayerLeft2,
         PlayerLeft3,
         PlayerLeft4,
-};
+        PlayerLeft5,
+    };
 
 static const byte* PlayerRight[] = {
         PlayerRight1,
         PlayerRight2,
         PlayerRight3,
         PlayerRight4,
+        PlayerRight5,
     };
+
+static bool CanJumpUp(Player* player)
+{
+    if ((player->y & 7) != 0)
+        return true;
+    if (player->y == 0)
+        return false;
+
+    int off = 6144 + ((player->y >> 3) - 1 + LEVEL_Y) * 32 + (player->x >> 3);
+    byte attr = SpectrumScreen[off];
+    if (attr != PASSABLE_ATTR)
+        return false;
+
+    if ((player->x & 7) != 0) {
+        byte attr = SpectrumScreen[off + 1];
+        if (attr != PASSABLE_ATTR)
+            return false;
+    }
+
+    return true;
+}
+
+static bool CanFallDown(Player* player)
+{
+    if ((player->y & 7) != 0)
+        return true;
+    if (player->y >= (LEVEL_HEIGHT * 8) - 8)
+        return false;
+
+    int off = 6144 + ((player->y >> 3) + 1 + LEVEL_Y) * 32 + (player->x >> 3);
+    byte attr = SpectrumScreen[off];
+    if (attr != PASSABLE_ATTR)
+        return false;
+
+    if ((player->x & 7) != 0) {
+        byte attr = SpectrumScreen[off + 1];
+        if (attr != PASSABLE_ATTR)
+            return false;
+    }
+
+    return true;
+}
+
+static bool CanGoLeft(Player* player)
+{
+    if ((player->x & 7) != 0)
+        return true;
+    if (player->x == 0)
+        return false;
+
+    int off = 6144 + ((player->y >> 3) + LEVEL_Y) * 32 + (player->x >> 3) - 1;
+    byte attr = SpectrumScreen[off];
+    if (attr != PASSABLE_ATTR)
+        return false;
+
+    if ((player->y & 7) != 0) {
+        byte attr = SpectrumScreen[off + 32];
+        if (attr != PASSABLE_ATTR)
+            return false;
+    }
+
+    return true;
+}
+
+static bool CanGoRight(Player* player)
+{
+    if ((player->x & 7) != 0)
+        return true;
+    if (player->x >= (LEVEL_WIDTH * 8) - 8)
+        return false;
+
+    int off = 6144 + ((player->y >> 3) + LEVEL_Y) * 32 + (player->x >> 3) + 1;
+    byte attr = SpectrumScreen[off];
+    if (attr != PASSABLE_ATTR)
+        return false;
+
+    if ((player->y & 7) != 0) {
+        byte attr = SpectrumScreen[off + 32];
+        if (attr != PASSABLE_ATTR)
+            return false;
+    }
+
+    return true;
+}
 
 static bool MoveLeftRight(Player* player)
 {
     if (KeyPressed[KEY_LEFT]) {
-        if (player->x > 0)
+        if (CanGoLeft(player))
             --player->x;
         player->dir = LEFT;
         return true;
     }
     if (KeyPressed[KEY_RIGHT]) {
-        if (player->x < 256 - 8)
+        if (CanGoRight(player))
             ++player->x;
         player->dir = RIGHT;
         return true;
     }
     return false;
-}
-
-static bool CanFallDown(Player* player)
-{
-    return player->y < 192 - 8;
 }
 
 static void FallDown(Player* player)
@@ -118,8 +188,12 @@ void DoPlayer(Player* player)
             player->decel++;
             MoveLeftRight(player);
             for (byte i = 0; i < ((player->speed >> 5) & 7); i++) {
-                if (player->y > 0)
+                if (CanJumpUp(player))
                     --player->y;
+                else {
+                    player->state = FALLING;
+                    goto falling;
+                }
             }
             break;
     }
@@ -127,10 +201,13 @@ void DoPlayer(Player* player)
     const byte* newSprite;
     switch (player->state) {
         case IDLE:
+            player->count = 1 << 2;
             newSprite = (player->dir == LEFT ? PlayerLeft[0] : PlayerRight[0]);
             break;
         case MOVING:
-            newSprite = (player->dir == LEFT ? PlayerLeft[(Timer >> 2) & 3] : PlayerRight[(Timer >> 2) & 3]);
+            newSprite = (player->dir == LEFT ? PlayerLeft[player->count >> 2] : PlayerRight[player->count >> 2]);
+            if (++player->count >= (5 << 2))
+                player->count = 0;
             break;
         case JUMPING:
         case FALLING:
@@ -146,7 +223,7 @@ void DoPlayer(Player* player)
 
 void InitPlayers()
 {
-    player1.y = 192 - 8;
+    player1.y = (LEVEL_HEIGHT * 8) - 8;
 }
 
 void DoPlayers(void)

@@ -72,6 +72,7 @@ void XorSprite7(byte x, byte y, const byte* pixels)
 void XorSprite(byte x, byte y, const byte* pixels)
 {
     byte xx = x >> 3;
+    y += LEVEL_Y * 8;
     switch (x & 7) {
         case 0: XorSprite0(xx, y, pixels); break;
         case 1: XorSprite1(xx, y, pixels); break;

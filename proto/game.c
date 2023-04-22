@@ -1,6 +1,7 @@
 #include "proto.h"
 
 byte Timer;
+const byte* CurrentLevel = Level1;
 
 void Interrupt(void)
 {
@@ -11,10 +12,9 @@ void Interrupt(void)
 void Game(void)
 {
     SpectrumBorder = 1;
-    for (word off = 0; off < 768; off++)
-        SpectrumScreen[6144 + off] = 0x47;
 
     InitPlayers();
+    DrawLevel(CurrentLevel);
 
     for (;;) {
         HandleEvents();
