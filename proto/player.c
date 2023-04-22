@@ -1,18 +1,22 @@
 #include "proto.h"
 
-#define IDLE 0
-#define MOVING 1
-#define JUMPING 2
-#define DEAD_FALLING 3
-#define DEAD 4
-#define WAKING_UP 5
-
 #define SHOOT_COOLDOWN 25
 #define DEATH_SHOOT_COOLDOWN 50*2
 #define DEATH_STONE_COOLDOWN 255
 
+#define GUN_VISUAL_COOLDOWN 40
+
 Player player1;
 Player player2;
+
+static byte ShootY[] = {
+        2,
+        2,
+        2,
+        2,
+        3,
+        4,
+    };
 
 static const byte* PlayerLeft[] = {
         PlayerLeft1,
@@ -46,7 +50,23 @@ static const byte* PlayerHandsRight[] = {
         PlayerHandsRight5,
 };
 
-static void TryGetItem(Player* player, sbyte offs, byte oldX, byte oldY)
+static const byte* PlayerGunLeft[] = {
+        PlayerGunLeft1,
+        PlayerGunLeft2,
+        PlayerGunLeft3,
+        PlayerGunLeft4,
+        PlayerGunLeft5,
+};
+
+static const byte* PlayerGunRight[] = {
+        PlayerGunRight1,
+        PlayerGunRight2,
+        PlayerGunRight3,
+        PlayerGunRight4,
+        PlayerGunRight5,
+};
+
+static void TryGetItem(Player* player, sbyte offs, byte oldX, byte oldY, byte oldState)
 {
     if (player->state == IDLE || player->state == MOVING || player->state == JUMPING) {
         if (player->itemAttr)
@@ -54,21 +74,21 @@ static void TryGetItem(Player* player, sbyte offs, byte oldX, byte oldY)
 
         Item item = TryGrabItem(player->phys.x + offs, player->phys.y);
         if (item.attr) {
-            XorSprite(oldX, oldY - 9, item.sprite);
+            XorSprite(oldX, oldY - (oldState == SITTING ? 7 : 9), item.sprite);
             player->itemAttr = item.attr;
             player->itemSprite = item.sprite;
         }
     }
 }
 
-static bool MoveLeftRight(Player* player, byte oldX, byte oldY)
+static bool MoveLeftRight(Player* player, byte oldX, byte oldY, byte oldState)
 {
     if (KeyPressed[(player == &player1 ? KEY_LEFT : KEY_A)]) {
         if (CanGoLeft(&player->phys)) {
             if (!player->itemAttr || (Timer & 1) == 0)
                 --player->phys.x;
         } else
-            TryGetItem(player, -8, oldX, oldY);
+            TryGetItem(player, -8, oldX, oldY, oldState);
         player->phys.flags = (player->phys.flags & ~PHYS_DIRECTION) | PHYS_LEFT;
         return true;
     }
@@ -77,19 +97,22 @@ static bool MoveLeftRight(Player* player, byte oldX, byte oldY)
             if (!player->itemAttr || (Timer & 1) == 0)
                 ++player->phys.x;
         } else
-            TryGetItem(player, 8, oldX, oldY);
+            TryGetItem(player, 8, oldX, oldY, oldState);
         player->phys.flags = (player->phys.flags & ~PHYS_DIRECTION) | PHYS_RIGHT;
         return true;
     }
     return false;
 }
 
-static void TryShoot(Player* player, byte oldX, byte oldY)
+static void TryShoot(Player* player, byte oldX, byte oldY, byte oldState)
 {
-    if (KeyPressed[(player == &player1 ? KEY_ENTER : KEY_CAPS_SHIFT)] && player->cooldown == 0) {
+    if (!KeyPressed[(player == &player1 ? KEY_ENTER : KEY_CAPS_SHIFT)])
+        return;
+
+    if (player->cooldown == 0) {
         if (player->itemAttr) {
-            XorSprite(oldX, oldY - 9, player->itemSprite);
-            if (SpawnFlyingItem(player->phys.x, player->phys.y - 8, player->phys.flags, player->itemSprite, player->itemAttr, 4 << 5)) {
+            XorSprite(oldX, oldY - (oldState == SITTING ? 7 : 9), player->itemSprite);
+            if (SpawnFlyingItem(player->phys.x, player->phys.y - (player->state == SITTING ? 6 : 8), player->phys.flags, player->itemSprite, player->itemAttr, 4 << 5)) {
                 player->itemSprite = NULL;
                 player->itemAttr = 0;
                 player->cooldown = SHOOT_COOLDOWN;
@@ -100,8 +123,11 @@ static void TryShoot(Player* player, byte oldX, byte oldY)
                 xx = player->phys.x + 1;
             else
                 xx = player->phys.x + 6;
-            SpawnBullet(xx, player->phys.y + 4, player->phys.flags & PHYS_DIRECTION);
+            byte id = (player->state == SITTING ? 5 :
+                        (player->state == MOVING ? 1 + ((Timer >> 2) & 3) : 0));
+            SpawnBullet(xx, player->phys.y + ShootY[id], player->phys.flags & PHYS_DIRECTION);
             player->cooldown = SHOOT_COOLDOWN;
+            player->visualCooldown = GUN_VISUAL_COOLDOWN;
         }
     }
 }
@@ -110,9 +136,12 @@ bool DoPlayer(Player* player)
 {
     byte oldX = player->phys.x;
     byte oldY = player->phys.y;
+    byte oldState = player->state;
 
     if (player->cooldown != 0)
         --player->cooldown;
+    if (player->visualCooldown != 0)
+        --player->visualCooldown;
 
     bool onGround = true;
     byte upAdj = (player->itemAttr ? 2 : 1);
@@ -124,9 +153,12 @@ bool DoPlayer(Player* player)
         case MOVING:
         idle:
             player->state = IDLE;
-            if (MoveLeftRight(player, oldX, oldY))
+            if (onGround && KeyPressed[player == &player1 ? KEY_DOWN : KEY_S]) {
+                player->state = SITTING;
+                goto sitting;
+            } else if (MoveLeftRight(player, oldX, oldY, oldState))
                 player->state = MOVING;
-            TryShoot(player, oldX, oldY);
+            TryShoot(player, oldX, oldY, oldState);
             if (onGround) {
                 if (KeyPressed[(player == &player1 ? KEY_UP : KEY_W)] && CanGoUp(&player->phys, upAdj)) {
                     player->state = JUMPING;
@@ -138,8 +170,9 @@ bool DoPlayer(Player* player)
         case JUMPING:
             if (onGround)
                 goto idle;
-            MoveLeftRight(player, oldX, oldY);
-            TryShoot(player, oldX, oldY);
+         jumping:
+            MoveLeftRight(player, oldX, oldY, oldState);
+            TryShoot(player, oldX, oldY, oldState);
             break;
 
         case DEAD_FALLING:
@@ -160,50 +193,86 @@ bool DoPlayer(Player* player)
             if (player->cooldown == 0)
                 player->state = IDLE;
             break;
+
+        case SITTING:
+            if (!onGround) {
+                player->state = JUMPING;
+                goto jumping;
+            }
+          sitting:
+            if (!KeyPressed[player == &player1 ? KEY_DOWN : KEY_S]) {
+                player->state = IDLE;
+                goto idle;
+            }
+            TryShoot(player, oldX, oldY, oldState);
+            break;
     }
 
     const byte* newSprite;
     switch (player->state) {
         case IDLE:
-            if (player->itemAttr)
+            if (player->itemAttr) {
+                player->visualCooldown = 0;
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerHandsLeft[0] : PlayerHandsRight[0]);
+            } else if (player->visualCooldown)
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerGunLeft[0] : PlayerGunRight[0]);
             else
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerLeft[0] : PlayerRight[0]);
             break;
-        case MOVING:
-            if (player->itemAttr)
-                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerHandsLeft[1 + ((Timer >> 2) & 3)] : PlayerHandsRight[1 + ((Timer >> 2) & 3)]);
+        case MOVING: {
+            byte id = 1 + ((Timer >> 2) & 3);
+            if (player->itemAttr) {
+                player->visualCooldown = 0;
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerHandsLeft[id] : PlayerHandsRight[id]);
+            } else if (player->visualCooldown)
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerGunLeft[id] : PlayerGunRight[id]);
             else
-                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerLeft[1 + ((Timer >> 2) & 3)] : PlayerRight[1 + ((Timer >> 2) & 3)]);
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerLeft[id] : PlayerRight[id]);
             break;
+        }
         case JUMPING:
-            if (player->itemAttr)
+            if (player->itemAttr) {
+                player->visualCooldown = 0;
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerHandsLeftJump : PlayerHandsRightJump);
+            } else if (player->visualCooldown)
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerGunLeftJump : PlayerGunRightJump);
             else
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerLeftJump : PlayerRightJump);
             break;
         case DEAD_FALLING:
+            player->visualCooldown = 0;
             newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead1Left : PlayerDead1Right);
             break;
         case DEAD:
+            player->visualCooldown = 0;
             if ((player->cooldown & 15) < 7)
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead1Left : PlayerDead1Right);
             else
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead2Left : PlayerDead2Right);
             break;
         case WAKING_UP:
+            player->visualCooldown = 0;
             newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead3Left : PlayerDead3Right);
+            break;
+        case SITTING:
+            if (player->itemAttr) {
+                player->visualCooldown = 0;
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerHandsDuckLeft : PlayerHandsDuckRight);
+            } else if (player->visualCooldown)
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerGunDuckLeft : PlayerGunDuckRight);
+            else
+                newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDuckLeft : PlayerDuckRight);
             break;
     }
 
     if (player->oldSprite) {
         XorSprite(oldX, oldY, player->oldSprite);
         if (player->itemAttr)
-            XorSprite(oldX, oldY - 9, player->itemSprite);
+            XorSprite(oldX, oldY - (oldState == SITTING ? 7 : 9), player->itemSprite);
     }
     XorSprite(player->phys.x, player->phys.y, newSprite);
     if (player->itemAttr)
-        XorSprite(player->phys.x, player->phys.y - 9, player->itemSprite);
+        XorSprite(player->phys.x, player->phys.y - (player->state == SITTING ? 7 : 9), player->itemSprite);
     player->oldSprite = newSprite;
 
     if ((player->state != DEAD && player->state != DEAD_FALLING)
@@ -213,7 +282,7 @@ bool DoPlayer(Player* player)
         byte enemyApple = (player == &player1 ? APPLE2_ATTR : APPLE1_ATTR);
 
         if (player->itemAttr == myApple) {
-            XorSprite(player->phys.x, player->phys.y - 9, player->itemSprite);
+            XorSprite(player->phys.x, player->phys.y - (player->state == SITTING ? 7 : 9), player->itemSprite);
             PlaceItem(player->gatesX + 8, player->gatesY, player->itemSprite, player->itemAttr);
             player->itemSprite = NULL;
             player->itemAttr = 0;
@@ -243,11 +312,9 @@ bool DoPlayer(Player* player)
 void KillPlayer(Player* player, bool isShot)
 {
     if (player->state != DEAD && player->state != DEAD_FALLING) {
-        player->state = DEAD_FALLING;
-        player->cooldown = (isShot ? DEATH_SHOOT_COOLDOWN : DEATH_STONE_COOLDOWN);
         if (player->itemAttr) {
-            XorSprite(player->phys.x, player->phys.y - 9, player->itemSprite);
-            if (SpawnFlyingItem(player->phys.x, player->phys.y - 8, player->phys.flags,
+            XorSprite(player->phys.x, player->phys.y - (player->state == SITTING ? 7 : 9), player->itemSprite);
+            if (SpawnFlyingItem(player->phys.x, player->phys.y - (player->state == SITTING ? 6 : 8), player->phys.flags,
                     player->itemSprite, player->itemAttr, (1 << 5) | 3)) {
                 player->itemAttr = 0;
                 player->itemSprite = NULL;
@@ -255,6 +322,8 @@ void KillPlayer(Player* player, bool isShot)
                 PlaceItem(player->phys.x, player->phys.y, player->itemSprite, player->itemAttr);
             }
         }
+        player->state = DEAD_FALLING;
+        player->cooldown = (isShot ? DEATH_SHOOT_COOLDOWN : DEATH_STONE_COOLDOWN);
     }
 }
 

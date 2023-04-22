@@ -25,8 +25,13 @@ static bool BulletCollidesWithWall(const Bullet* bullet)
 
 static bool BulletCollidesWithPlayer(const Bullet* bullet, const Player* player)
 {
-    return (bullet->x >= player->phys.x + 2 && bullet->y >= player->phys.y &&
-        bullet->x <= player->phys.x + 6 && bullet->y <= player->phys.y + 8);
+    if (player->state == SITTING) {
+        return (bullet->x >= player->phys.x + 2 && bullet->y >= player->phys.y + 3 &&
+            bullet->x <= player->phys.x + 6 && bullet->y <= player->phys.y + 8);
+    } else {
+        return (bullet->x >= player->phys.x + 2 && bullet->y >= player->phys.y &&
+            bullet->x <= player->phys.x + 6 && bullet->y <= player->phys.y + 8);
+    }
 }
 
 static void XorBullet(const Bullet* bullet)

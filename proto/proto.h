@@ -198,6 +198,7 @@ extern byte AppleRight[8];
 extern byte Apple1[8];
 extern byte Apple2[8];
 extern byte Apple3[8];
+extern byte Apple4[8];
 
 extern byte Timer;
 extern bool SinglePlayer;
@@ -242,12 +243,32 @@ extern byte PlayerHandsRight5[8];
 extern byte PlayerHandsLeftJump[8];
 extern byte PlayerHandsRightJump[8];
 
+extern byte PlayerGunLeft1[8];
+extern byte PlayerGunLeft2[8];
+extern byte PlayerGunLeft3[8];
+extern byte PlayerGunLeft4[8];
+extern byte PlayerGunLeft5[8];
+extern byte PlayerGunRight1[8];
+extern byte PlayerGunRight2[8];
+extern byte PlayerGunRight3[8];
+extern byte PlayerGunRight4[8];
+extern byte PlayerGunRight5[8];
+extern byte PlayerGunLeftJump[8];
+extern byte PlayerGunRightJump[8];
+
 extern byte PlayerDead1Left[8];
 extern byte PlayerDead2Left[8];
 extern byte PlayerDead3Left[8];
 extern byte PlayerDead1Right[8];
 extern byte PlayerDead2Right[8];
 extern byte PlayerDead3Right[8];
+
+extern byte PlayerDuckLeft[8];
+extern byte PlayerDuckRight[8];
+extern byte PlayerHandsDuckLeft[8];
+extern byte PlayerHandsDuckRight[8];
+extern byte PlayerGunDuckLeft[8];
+extern byte PlayerGunDuckRight[8];
 
 extern byte Empty[];
 extern byte Bricks[];

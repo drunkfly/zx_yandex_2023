@@ -228,11 +228,20 @@ static void RemoveFlying(byte index)
 
 static bool CollidesWithPlayer(const FlyingItem* flying, const Player* player)
 {
-    if (player->phys.x + 2 < flying->phys.x + 8 &&
-        player->phys.x + 6 > flying->phys.x &&
-        player->phys.y + 1 < flying->phys.y + 8 &&
-        player->phys.y + 7 > flying->phys.y) {
-        return true;
+    if (player->state == SITTING) {
+        if (player->phys.x + 2 < flying->phys.x + 8 &&
+            player->phys.x + 6 > flying->phys.x &&
+            player->phys.y + 4 < flying->phys.y + 8 &&
+            player->phys.y + 7 > flying->phys.y) {
+            return true;
+        }
+    } else {
+        if (player->phys.x + 2 < flying->phys.x + 8 &&
+            player->phys.x + 6 > flying->phys.x &&
+            player->phys.y + 1 < flying->phys.y + 8 &&
+            player->phys.y + 7 > flying->phys.y) {
+            return true;
+        }
     }
     return false;
 }

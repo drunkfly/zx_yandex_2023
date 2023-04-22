@@ -23,17 +23,36 @@ byte PlayerHandsRight2[8];
 byte PlayerHandsRight3[8];
 byte PlayerHandsRight4[8];
 byte PlayerHandsRight5[8];
+byte PlayerGunLeft1[8];
+byte PlayerGunLeft2[8];
+byte PlayerGunLeft3[8];
+byte PlayerGunLeft4[8];
+byte PlayerGunLeft5[8];
+byte PlayerGunRight1[8];
+byte PlayerGunRight2[8];
+byte PlayerGunRight3[8];
+byte PlayerGunRight4[8];
+byte PlayerGunRight5[8];
 
 byte PlayerLeftJump[8];
 byte PlayerRightJump[8];
 byte PlayerHandsLeftJump[8];
 byte PlayerHandsRightJump[8];
+byte PlayerGunLeftJump[8];
+byte PlayerGunRightJump[8];
 byte PlayerDead1Left[8];
 byte PlayerDead2Left[8];
 byte PlayerDead3Left[8];
 byte PlayerDead1Right[8];
 byte PlayerDead2Right[8];
 byte PlayerDead3Right[8];
+
+byte PlayerDuckLeft[8];
+byte PlayerDuckRight[8];
+byte PlayerHandsDuckLeft[8];
+byte PlayerHandsDuckRight[8];
+byte PlayerGunDuckLeft[8];
+byte PlayerGunDuckRight[8];
 
 byte Empty[8];
 byte Bricks[8];
@@ -242,10 +261,30 @@ void LoadData(void)
     GetSprite(PlayerHandsRight5, 64, 136);
     GetSprite(PlayerHandsRightJump, 24, 136);
 
+    GetMirrorSprite(PlayerGunLeft1, 32, 120);
+    GetMirrorSprite(PlayerGunLeft2, 40, 120); 
+    GetMirrorSprite(PlayerGunLeft3, 48, 120);
+    GetMirrorSprite(PlayerGunLeft4, 56, 120);
+    GetMirrorSprite(PlayerGunLeft5, 64, 120);
+    GetMirrorSprite(PlayerGunLeftJump, 24, 120);
+    GetSprite(PlayerGunRight1, 32, 120);
+    GetSprite(PlayerGunRight2, 40, 120); 
+    GetSprite(PlayerGunRight3, 48, 120);
+    GetSprite(PlayerGunRight4, 56, 120);
+    GetSprite(PlayerGunRight5, 64, 120);
+    GetSprite(PlayerGunRightJump, 24, 120);
+
     GetMirrorSprite(PlayerDead1Left, 16, 144);
     GetMirrorSprite(PlayerDead2Left, 24, 144);
     GetMirrorSprite(PlayerDead3Left, 32, 144);
     GetSprite(PlayerDead1Right, 16, 144);
     GetSprite(PlayerDead2Right, 24, 144);
     GetSprite(PlayerDead3Right, 32, 144);
+
+    GetMirrorSprite(PlayerDuckLeft, 8, 128);
+    GetMirrorSprite(PlayerHandsDuckLeft, 8, 136);
+    GetMirrorSprite(PlayerGunDuckLeft, 8, 120);
+    GetSprite(PlayerDuckRight, 8, 128);
+    GetSprite(PlayerHandsDuckRight, 8, 136);
+    GetSprite(PlayerGunDuckRight, 8, 120);
 }

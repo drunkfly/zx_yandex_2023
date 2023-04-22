@@ -11,6 +11,7 @@ void Interrupt(void)
     if (!DoPlayers())
         exit(0);
     UpdateDrawBullets();
+    UpdateItems();
     UpdateFlying();
 }
 
