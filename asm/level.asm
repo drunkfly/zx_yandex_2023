@@ -20,7 +20,9 @@ Tiles:          db      PASSABLE_ATTR       ; 0
                 ;   HL => compressed level data
                 ;   DE => 0x4000 + compressed level size
 
-LoadLevel:      push    de
+LoadLevel:      xor     a
+                ld      (SpriteCount), a
+                push    de
                 push    hl
                 halt
                 call    ClearAttrib
@@ -82,8 +84,31 @@ LoadLevel:      push    de
 @@single:       ld      ixl, 1
                 and     0x3f
                 jr      @@do
-@@object:
-                call    @@advance
+@@object:       and     0x7f
+                cp      OBJ_PLAYER1_START
+                jr      z, @@player1start
+                cp      OBJ_PLAYER2_START
+                jr      z, @@player2start
+                xor     a
+                jr      @@single
+
+@@player1start: ld      ix, Player1
+                jr      @@playerStart
+@@player2start: ld      ix, Player2
+@@playerStart:  push    bc
+                sla     b
+                sla     b
+                sla     b
+                sla     c
+                sla     c
+                sla     c
+                call    InitPlayer
+                pop     bc
+                jr      @@doneEmpty
+
+@@doneEmpty:    xor     a
+                jr      @@single
+@@doneObject:   call    @@advance
                 jr      @@loop
 
 @@advance:      inc     c

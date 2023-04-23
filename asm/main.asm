@@ -1,11 +1,24 @@
 
 
+                section bss
+
+Timer           db      0
+
                 section entry
 
 Start:          ld      hl, Level1
                 ld      de, Level1_size
-                call    LoadLevel
+                call    RunLevel
 
-
-
-loop:           jp      loop
+RunLevel:       call    LoadLevel
+@@loop:         halt
+                call    DrawSprites
+                ld      ix, Player1
+                call    DoPlayer
+                ; if (!DoPlayer(&player1))
+                ;   return false;
+                ; if (!SinglePlayer) {
+                ;   if (!DoPlayer(&player2))
+                ;   return false;
+                ; }
+                jp      @@loop

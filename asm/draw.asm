@@ -66,6 +66,8 @@ XorColoredTile: call    XorTile
                 ;   E = sprite X
                 ;   D = sprite Y
                 ;   HL => pixels
+                ; Preserves:
+                ;   IX
 
 XorSprite:      ; calculate screen address
                 ld      a, d

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 static FILE* f;
 
@@ -95,10 +96,18 @@ byte Apple4[8];
 byte Level1[1024];
 
 static byte data[6912];
+static int spriteCounter = 0;
 
 static void GetSprite(const char* name, byte* dst, byte x, byte y)
 {
-    fprintf(f, "\n%s:\n", name);
+    char buf[128];
+    strcpy(buf, name);
+    //for (char* p = buf; *p; ++p)
+    //    *p = toupper(*p);
+
+    ++spriteCounter;
+    fprintf(f, "\nSPRITE_%s = %d\n", buf, spriteCounter);
+    fprintf(f, "%s:\n", name);
 
     for (int i = 0; i < 8; i++) {
         *dst = data[ZXCOORD((x >> 3), (y + i))];
@@ -109,7 +118,14 @@ static void GetSprite(const char* name, byte* dst, byte x, byte y)
 
 static void GetMirrorSprite(const char* name, byte* dst, byte x, byte y)
 {
-    fprintf(f, "\n%s:\n", name);
+    char buf[128];
+    strcpy(buf, name);
+    //for (char* p = buf; *p; ++p)
+    //    *p = toupper(*p);
+
+    ++spriteCounter;
+    fprintf(f, "\nSPRITE_%s = %d\n", buf, spriteCounter);
+    fprintf(f, "%s:\n", name);
 
     for (int i = 0; i < 8; i++) {
         byte j = data[ZXCOORD((x >> 3), (y + i))];
@@ -258,7 +274,11 @@ void LoadData(void)
     *(strrchr(buf, '/') + 1) = 0;
     strcat(buf, "../asm/data_gfx.asm");
     f = fopen(buf, "w");
+
     fprintf(f, "section gfx\n");
+    fprintf(f, "\nSPRITE_EMPTY = 0\n");
+    fprintf(f, "Empty:\n");
+    fprintf(f, "db 0, 0, 0, 0, 0, 0, 0, 0\n");
 
     GetSprite("Bricks", Bricks, 64, 24);
     GetSprite("CoinLeft", AppleLeft, 72, 128);
