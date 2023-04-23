@@ -149,7 +149,7 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
     byte count = 0;
     byte value;
 
-    fprintf(f, "section %s\n", section);
+    fprintf(f, "section data_%s\n", section);
     fprintf(f, "%s:\n", name);
     byte* start = level;
 
@@ -275,7 +275,7 @@ void LoadData(void)
     strcat(buf, "../asm/data_gfx.asm");
     f = fopen(buf, "w");
 
-    fprintf(f, "section gfx\n");
+    fprintf(f, "section data_gfx\n");
     fprintf(f, "\nSPRITE_EMPTY = 0\n");
     fprintf(f, "Empty:\n");
     fprintf(f, "db 0, 0, 0, 0, 0, 0, 0, 0\n");

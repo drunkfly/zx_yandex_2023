@@ -1,5 +1,5 @@
 
-                section sprites_bss
+                section y_bss_sprites
 
 sizeof_Sprite       = 6
 Sprite_oldX         = 0
@@ -22,7 +22,7 @@ SpriteCount     db      0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section sprites
+                section code_sprites
 
                 ; Input:
                 ;   A = sprite index

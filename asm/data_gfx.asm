@@ -1,4 +1,4 @@
-section gfx
+section data_gfx
 
 SPRITE_EMPTY = 0
 Empty:

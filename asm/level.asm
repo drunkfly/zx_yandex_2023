@@ -1,5 +1,5 @@
 
-                section tiles
+                section data_tiles
 
 Tiles:          db      PASSABLE_ATTR       ; 0
                 dw      0x5800;Empty
@@ -14,7 +14,7 @@ Tiles:          db      PASSABLE_ATTR       ; 0
                 db      PASSABLE_ATTR       ; 5
                 dw      CoinRight
 
-                section main
+                section code_level
 
                 ; Input:
                 ;   HL => compressed level data

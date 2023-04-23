@@ -19,3 +19,9 @@ PASSABLE_ATTR       = 0x47
 PHYS_HORIZONTAL     = 0x01
 PHYS_LEFT           = 0
 PHYS_RIGHT          = 1
+
+PHYS_VERTICAL       = 0x02
+PHYS_DOWN           = 0
+PHYS_UP             = 2
+
+Timer               = 0x5C78

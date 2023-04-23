@@ -1,10 +1,5 @@
 
-
-                section bss
-
-Timer           db      0
-
-                section entry
+                section code_entry
 
 Start:          ld      hl, Level1
                 ld      de, Level1_size

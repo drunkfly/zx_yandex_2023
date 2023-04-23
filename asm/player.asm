@@ -11,7 +11,7 @@ PLAYER_DEAD_RESPAWN         = 0xee + 8*2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section bss
+                section y_bss_player
 
 Player_phys_x           = 0
 Player_phys_y           = 1
@@ -95,7 +95,7 @@ onGround        db      0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section player_jumps_1
+                section data_player_jumps_1
 
 PlayerActions:  dw      DoPlayer@@idle
                 dw      DoPlayer@@moving
@@ -109,7 +109,7 @@ PlayerActions:  dw      DoPlayer@@idle
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section player_jumps_2
+                section data_player_jumps_2
 
 PlayerDrawing:  dw      DoPlayer@@drawIdle
                 dw      DoPlayer@@drawMoving
@@ -123,7 +123,7 @@ PlayerDrawing:  dw      DoPlayer@@drawIdle
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section player_tables
+                section data_player_tables
 
 PlayerHands:    db      SPRITE_PlayerHandsLeft1
                 db      SPRITE_PlayerHandsRight1
@@ -187,7 +187,7 @@ PlayerDead3:    db      SPRITE_PlayerDead3Left
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section main
+                section code_player
 
                 ; Input:
                 ;   B = port
@@ -211,9 +211,7 @@ KeyPressed:     ld      c, 0xFE
 
 InitPlayer:     ld      (ix+Player_originalX), c
                 ld      (ix+Player_originalY), b
-ld (ix+Player_phys_x), c
-ld (ix+Player_phys_y), b
-                ;InitPhysObject(&player1.phys, player1.originalX, player1.originalY);
+                call    InitPhysObject
                 call    AllocSprite
                 ld      (ix+Player_sprite), a
                 ld      (ix+Player_state), PLAYER_IDLE
@@ -235,39 +233,57 @@ MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
                 ld      a, (ix+Player_keyLeft_mask)
                 call    KeyPressed
                 jr      nz, @@noLeft
-                ;if (CanGoLeft(&player->phys)) {
+                ld      a, (ix+Player_state)
+                cp      PLAYER_SITTING
+                jr      z, @@didLeft
+                ld      a, (ix+Player_itemAttr)
+                or      a
+                jr      z, @@1
+                call    CanGoLeftWithItem
+                jr      @@2
+@@1:            call    CanGoLeft
+@@2:            jr      z, @@cantLeft
                 ld      a, (ix+Player_itemAttr)
                 or      a
                 jr      z, @@leftOk
                 ld      a, (Timer)
                 and     1
-                jr      nz, @@skipLeft
+                jr      nz, @@didLeft
 @@leftOk:       dec     (ix+Player_phys_x)
-@@skipLeft:     jr      @@didLeft
-                ;} else
-                ;TryGetItem(player, -8, oldX, oldY, oldState);
+                jr      @@didLeft
+@@cantLeft:     ;FIXME TryGetItem(player, -8, oldX, oldY, oldState);
 @@didLeft:      ld      a, (ix+Player_phys_flags)
                 and     ~PHYS_HORIZONTAL
                 ;or      PHYS_LEFT
+                ld      (ix+Player_phys_flags), a
                 ret     ; CF=0: return true
 @@noLeft:       ld      b, (ix+Player_keyRight_port)
                 ld      a, (ix+Player_keyRight_mask)
                 call    KeyPressed
                 jr      nz, @@noRight
-                ;if (CanGoRight(&player->phys)) {
+                ld      a, (ix+Player_state)
+                cp      PLAYER_SITTING
+                jr      z, @@didRight
+                ld      a, (ix+Player_itemAttr)
+                or      a
+                jr      z, @@3
+                call    CanGoRightWithItem
+                jr      @@4
+@@3:            call    CanGoRight
+@@4:            jr      z, @@cantRight
                 ld      a, (ix+Player_itemAttr)
                 or      a
                 jr      z, @@rightOk
                 ld      a, (Timer)
                 and     1
-                jr      nz, @@skipRight
+                jr      nz, @@didRight
 @@rightOk:      inc     (ix+Player_phys_x)
-@@skipRight:    jr      @@didRight
-                ;} else
-                ;TryGetItem(player, 8, oldX, oldY, oldState);
+                jr      @@didRight
+@@cantRight:    ;FIXME TryGetItem(player, 8, oldX, oldY, oldState);
 @@didRight:     ld      a, (ix+Player_phys_flags)
                 and     ~PHYS_HORIZONTAL
                 or      PHYS_RIGHT
+                ld      (ix+Player_phys_flags), a
                 ret     ; CF=0: return true
 @@noRight:      scf
                 ret     ; CF=1: return false
@@ -276,7 +292,6 @@ MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
 
 TryShoot:
                 ret
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -297,9 +312,16 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 
                 ld      a, 1
                 ld      (onGround), a
-                ;byte upAdj = (player->itemAttr ? 2 : 1);
-                ;if (UpdatePhysObject(&player->phys, upAdj))
-                ;   onGround = false;
+                ld      a, (ix+Player_itemAttr)
+                ld      d, 1
+                or      a
+                jr      z, @@3
+                inc     d
+@@3:            call    UpdatePhysObject
+                jr      z, @@4
+                xor     a
+                ld      (onGround), a
+@@4:
 
                 ld      a, (ix+Player_state)
                 ld      l, a
@@ -319,11 +341,13 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 ld      a, (ix+Player_keyUp_mask)
                 call    KeyPressed
                 jr      nz, @@noJump
-                ; FIXME: CanGoUp
-                jr      nz, @@noJump
+                call    CanGoUp
+                jr      z, @@noJump
                 ld      (ix+Player_state), PLAYER_JUMPING
-                ; JumpPhysObject(&player->phys, player->phys.flags, 4 << 5);
-                jr      @@jumping
+                ld      a, (ix+Player_phys_flags)
+                ld      c, 4 << 5
+                call    JumpPhysObject
+                jr      @@jumpingInAir
 @@noJump:       ; check if we can duck
                 ld      b, (ix+Player_keyDown_port)
                 ld      a, (ix+Player_keyDown_mask)
@@ -402,7 +426,8 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@continueSit
                 ld      (ix+Player_state), PLAYER_IDLE
                 jp      @@idleOnGround
-@@continueSit:  call    TryShoot
+@@continueSit:  call    MoveLeftRight
+                call    TryShoot
 
 @@draw:         ld      a, (ix+Player_state)
                 ld      l, a
@@ -428,9 +453,8 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 
 @@drawMoving:   ld      a, (Timer)
                 rrca
-                rrca
-                and     3
-                inc     a
+                and     6
+                add     a, 2
                 ld      c, a
                 ld      b, 0
                 ld      a, (ix+Player_itemAttr)
@@ -494,21 +518,18 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 @@drawSitting2: ld      hl, PlayerDuck
                 jr      @@setSprite
 
-@@setSprite:    bit     1, (ix+Player_phys_flags)   ; PHYS_HORIZONTAL
-                jr      z, @@3
+@@setSprite:    bit     0, (ix+Player_phys_flags)   ; PHYS_HORIZONTAL
+                jr      z, @@5
                 inc     hl
-@@3:            ld      b, (hl)
+@@5:            ld      b, (hl)
                 ld      d, (ix+Player_phys_y)
                 ld      e, (ix+Player_phys_x)
                 ld      a, (ix+Player_sprite)
                 call    SetSprite
 
 /*
-@@4:
-    XorSprite(player->phys.x, player->phys.y, newSprite);
     if (player->itemAttr)
         XorSprite(player->phys.x, player->phys.y - (player->state == SITTING ? 7 : 9), player->itemSprite);
-    player->oldSprite = newSprite;
 
     if ((player->state != DEAD && player->state != DEAD_FALLING && player->state != DEAD_FALLING_RESPAWN && player->state != DEAD_RESPAWN)
             && player->phys.x + 8 >= player->gatesX + 6 && player->phys.x <= player->gatesX + 3 * 8 - 6

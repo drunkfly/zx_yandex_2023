@@ -84,20 +84,24 @@ static void TryGetItem(Player* player, sbyte offs, byte oldX, byte oldY, byte ol
 static bool MoveLeftRight(Player* player, byte oldX, byte oldY, byte oldState)
 {
     if (KeyPressed[(player == &player1 ? KEY_LEFT : KEY_A)]) {
-        if (CanGoLeft(&player->phys)) {
-            if (!player->itemAttr || (Timer & 1) == 0)
-                --player->phys.x;
-        } else
-            TryGetItem(player, -8, oldX, oldY, oldState);
+        if (player->state != SITTING) {
+            if (player->itemAttr ? CanGoLeftWithItem(&player->phys) : CanGoLeft(&player->phys)) {
+                if (!player->itemAttr || (Timer & 1) == 0)
+                    --player->phys.x;
+            } else
+                TryGetItem(player, -8, oldX, oldY, oldState);
+        }
         player->phys.flags = (player->phys.flags & ~PHYS_DIRECTION) | PHYS_LEFT;
         return true;
     }
     if (KeyPressed[(player == &player1 ? KEY_RIGHT : KEY_D)]) {
-        if (CanGoRight(&player->phys)) {
-            if (!player->itemAttr || (Timer & 1) == 0)
-                ++player->phys.x;
-        } else
-            TryGetItem(player, 8, oldX, oldY, oldState);
+        if (player->state != SITTING) {
+            if (player->itemAttr ? CanGoRightWithItem(&player->phys) : CanGoRight(&player->phys)) {
+                if (!player->itemAttr || (Timer & 1) == 0)
+                    ++player->phys.x;
+            } else
+                TryGetItem(player, 8, oldX, oldY, oldState);
+        }
         player->phys.flags = (player->phys.flags & ~PHYS_DIRECTION) | PHYS_RIGHT;
         return true;
     }
@@ -220,6 +224,7 @@ bool DoPlayer(Player* player)
                 player->state = IDLE;
                 goto idle;
             }
+            MoveLeftRight(player, oldX, oldY, oldState);
             TryShoot(player, oldX, oldY, oldState);
             break;
     }

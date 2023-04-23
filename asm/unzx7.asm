@@ -7,7 +7,7 @@
 ;   DE: destination address (decompressing)
 ; -----------------------------------------------------------------------------
 
-                section main
+                section code_zx7
 
 Unzx7:          ld      a, 0x80
 @@copyByte:     ldi                         ; copy literal byte
