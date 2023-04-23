@@ -1,0 +1,20 @@
+{
+    "Cdefines": [
+    ],
+    "Coptimization": "size",
+    "Cstandard": "c99",
+    "calleeSaves": false,
+    "charIsUnsigned": false,
+    "codeSeg": "main",
+    "constSeg": "main",
+    "dataSeg": "main",
+    "dontObfuscate": [
+    ],
+    "dontOutputMainFile": false,
+    "generateBlobs": false,
+    "loaderFileName": "BOOT",
+    "omitFramePointer": false,
+    "programFileName": "GAME",
+    "stackAutomaticVariables": false,
+    "version": 1
+}
