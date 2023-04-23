@@ -13,6 +13,8 @@ PhysObject_accel = 4
                 ;   B = Y
                 ;   C = X
                 ;   IX => PhysObject
+                ; Preserves:
+                ;   DE
 
 InitPhysObject: ld      (ix+PhysObject_x), c
                 ld      (ix+PhysObject_y), b

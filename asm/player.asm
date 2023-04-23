@@ -204,10 +204,12 @@ KeyPressed:     ld      c, 0xFE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                ; Input
+                ; Input:
                 ;   B = Y
                 ;   C = X
                 ;   IX => player
+                ; Preserves:
+                ;   DE
 
 InitPlayer:     ld      (ix+Player_originalX), c
                 ld      (ix+Player_originalY), b

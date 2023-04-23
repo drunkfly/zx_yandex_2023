@@ -1,5 +1,6 @@
 
 MAX_SPRITES         = 32
+MAX_ITEMS           = 16
 
 LEVEL_Y             = 2
 LEVEL_WIDTH         = 32
@@ -15,6 +16,9 @@ OBJ_STONE           = 6
 OBJ_GHOST           = 7
 
 PASSABLE_ATTR       = 0x47
+COIN1_ATTR          = 0x46
+COIN2_ATTR          = 0x45
+STONE_ATTR          = 0x07
 
 PHYS_HORIZONTAL     = 0x01
 PHYS_LEFT           = 0

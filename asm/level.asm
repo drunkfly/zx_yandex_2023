@@ -2,7 +2,7 @@
                 section data_tiles
 
 Tiles:          db      PASSABLE_ATTR       ; 0
-                dw      0x5800;Empty
+                dw      Empty
                 db      0x57                ; 1
                 dw      Bricks
                 db      PASSABLE_ATTR       ; 2
@@ -14,6 +14,13 @@ Tiles:          db      PASSABLE_ATTR       ; 0
                 db      PASSABLE_ATTR       ; 5
                 dw      CoinRight
 
+CoinTopTile:    db      PASSABLE_ATTR
+                dw      CoinTop
+CoinTop1Tile:   db      PASSABLE_ATTR
+                dw      CoinTop1
+CoinTop2Tile:   db      PASSABLE_ATTR
+                dw      CoinTop2
+
                 section code_level
 
                 ; Input:
@@ -22,6 +29,7 @@ Tiles:          db      PASSABLE_ATTR       ; 0
 
 LoadLevel:      xor     a
                 ld      (SpriteCount), a
+                ld      (ItemCount), a
                 push    de
                 push    hl
                 halt
@@ -59,7 +67,7 @@ LoadLevel:      xor     a
                 ld      l, a
                 ld      h, Tiles >> 8
                 ; read attribute
-                ld      a, (hl)
+@@drawTile:     ld      a, (hl)
                 ld      ixh, a
                 inc     hl
                 ; read pixels address
@@ -89,7 +97,17 @@ LoadLevel:      xor     a
                 jr      z, @@player1start
                 cp      OBJ_PLAYER2_START
                 jr      z, @@player2start
-                xor     a
+                cp      OBJ_PLAYER1_TOP
+                jr      z, @@player1top
+                cp      OBJ_PLAYER2_TOP
+                jr      z, @@player2top
+                cp      OBJ_PLAYER1_COIN
+                jr      z, @@player1coin
+                cp      OBJ_PLAYER2_COIN
+                jr      z, @@player2coin
+                cp      OBJ_STONE
+                jr      z, @@stone
+@@doneEmpty:    xor     a
                 jr      @@single
 
 @@player1start: ld      ix, Player1
@@ -106,10 +124,67 @@ LoadLevel:      xor     a
                 pop     bc
                 jr      @@doneEmpty
 
-@@doneEmpty:    xor     a
-                jr      @@single
+@@player2coin:  push    de
+                ld      d, COIN2_ATTR
+                jr      @@playerCoin
+@@player1coin:  ld      a, (SinglePlayer)
+                or      a
+                jr      nz, @@doneEmpty
+                push    de
+                ld      d, COIN1_ATTR
+@@playerCoin:   ld      e, SPRITE_Coin1
+                push    bc
+                sla     b
+                sla     b
+                sla     b
+                sla     c
+                sla     c
+                sla     c
+                call    PlaceItem
+                pop     bc
+                pop     de
+                jr      @@doneObject
+
+@@player1top:   ld      ix, Player1
+                ld      hl, CoinTop1Tile
+                jr      @@playerTop
+@@player2top:   ld      ix, Player2
+                ld      hl, CoinTop2Tile
+@@playerTop:    ld      a, (SinglePlayer)
+                or      a
+                jr      z, @@playerTop1
+                ld      hl, CoinTopTile
+@@playerTop1:   push    bc
+                sla     b
+                sla     b
+                sla     b
+                ld      a, b
+                sub     8
+                ld      (ix+Player_gatesX), a
+                sla     c
+                sla     c
+                sla     c
+                add     a, 8
+                ld      (ix+Player_gatesY), a
+                pop     bc
+                ld      ixl, 1
+                jp      @@drawTile
+
+@@stone:        push    bc
+                push    de
+                sla     b
+                sla     b
+                sla     b
+                sla     c
+                sla     c
+                sla     c
+                ld      e, SPRITE_Stone
+                ld      d, STONE_ATTR
+                call    PlaceItem
+                pop     de
+                pop     bc
 @@doneObject:   call    @@advance
-                jr      @@loop
+                jp      @@loop
 
 @@advance:      inc     c
                 ld      a, 32

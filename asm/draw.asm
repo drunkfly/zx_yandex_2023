@@ -13,6 +13,35 @@ ClearAttrib:    ld      hl, 0x5800
                 ret
 
                 ; Input:
+                ;   B = Y
+                ;   C = X
+                ; Preserves:
+                ;   DE
+
+CalcAttribAddr: ld      a, b
+                rrca
+                rrca
+                rrca
+                and     0x1f
+                add     a, a        ; *= 2
+                add     a, a        ; *= 4
+                ld      l, a
+                ld      h, 0
+                add     hl, hl      ; *= 8
+                add     hl, hl      ; *= 16
+                add     hl, hl      ; *= 32
+                ld      a, c
+                rrca
+                rrca
+                rrca
+                and     0x1f
+                or      l
+                ld      l, a
+                ld      bc, 0x5800
+                add     hl, bc
+                ret
+
+                ; Input:
                 ;   E = tile X
                 ;   D = tile Y
                 ;   HL => pixels

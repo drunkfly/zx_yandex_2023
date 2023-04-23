@@ -14,6 +14,10 @@ section code_physics
 section code_player
 section code_sprites
 section code_zx7
+section code_items
+section code_game
 
+section y_bss_game
 section y_bss_player
 section y_bss_sprites
+section y_bss_items

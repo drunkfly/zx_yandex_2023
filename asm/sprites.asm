@@ -47,9 +47,9 @@ CalcSpriteAddr: ld      bc, Sprites
                 ; Input:
                 ;   None
                 ; Output:
-                ;   A = sprite index
+                ;   A = sprite ID
                 ; Preserves:
-                ;   IX
+                ;   IX, DE
 
 AllocSprite:    ld      a, (SpriteCount)
                 cp      MAX_SPRITES
@@ -57,7 +57,7 @@ AllocSprite:    ld      a, (SpriteCount)
                 push    af
                 inc     a
                 ld      (SpriteCount), a
-                ld      bc, Sprites+2
+                ld      bc, Sprites+2-sizeof_Sprite
                 call    CalcSpriteAddr@@raw
                 ld      (hl), SPRITE_EMPTY
                 inc     hl
@@ -81,12 +81,9 @@ ReleaseSprite:  call    CalcSpriteAddr
                 ld      (SpriteCount), a
                 call    CalcSpriteAddr
                 pop     de
+                repeat  sizeof_Sprite
                 ldi
-                ldi
-                ldi
-                ldi
-                ldi
-                ldi
+                endrepeat
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -145,7 +142,7 @@ DrawSprites:    ; draw
                 inc     hl
                 ld      a, (hl)
                 inc     hl
-                push    hl
+@@draw:         push    hl
                 ld      h, 0
                 ld      l, a
                 add     hl, hl
