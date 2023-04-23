@@ -1,0 +1,6 @@
+
+LEVEL_Y         = 2
+LEVEL_WIDTH     = 32
+LEVEL_HEIGHT    = 22
+
+PASSABLE_ATTR   = 0x47

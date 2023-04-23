@@ -1,11 +1,23 @@
 
-
                 section main
+
+                ; Input:
+                ;   None
+
+ClearAttrib:    ld      hl, 0x5800
+                ld      de, 0x5801
+                xor     a
+                ld      (hl), a
+                ld      bc, 768
+                ldir
+                ret
 
                 ; Input:
                 ;   E = tile X
                 ;   D = tile Y
                 ;   HL => pixels
+                ; Preserves:
+                ;   IXH
 
 XorTile:        ; calculate screen address
                 ld      a, d
@@ -21,22 +33,24 @@ XorTile:        ; calculate screen address
                 ld      d, a
                 ; draw pixels
                 repeat  7
-                ldi
-                dec     e
+                ld      a, (hl)
+                ld      (de), a
+                inc     hl
                 inc     d
                 endrepeat
-                ldi
+                ld      a, (hl)
+                ld      (de), a
                 ret
 
                 ; Input:
                 ;   E = tile X
                 ;   D = tile Y
                 ;   HL => pixels
-                ;   A = attribute
+                ;   IXH = attribute
+                ; Preserves:
+                ;   IXH
 
-XorColoredTile: ex      af, af'
-                call    XorTile
-                dec     e
+XorColoredTile: call    XorTile
                 ld      a, d
                 rrca
                 rrca
@@ -44,7 +58,7 @@ XorColoredTile: ex      af, af'
                 and     3
                 or      0x58
                 ld      d, a
-                ex      af, af'
+                ld      a, ixh
                 ld      (de), a
                 ret
 

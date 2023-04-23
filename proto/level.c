@@ -26,62 +26,74 @@ static void DrawTile(byte x, byte y, const Tile* tile)
 
 void DrawLevel(const byte* level)
 {
-    byte x = 0, y = 0;
+    byte x = 0, y = LEVEL_HEIGHT - 1;
 
     for (;;) {
         byte count = *level++;
+
         if (count == 0)
             break;
-        byte value = *level++;
-        while (count-- > 0) {
-            if (value < 0x80)
-                DrawTile(x, y, &Tiles[value]);
-            else {
-                switch (value & 0x7f) {
-                    case PLAYER_1_START:
-                        player1.originalX = x << 3;
-                        player1.originalY = y << 3;
-                        InitPhysObject(&player1.phys, player1.originalX, player1.originalY);
-                        DrawTile(x, y, &Tiles[0]);
-                        break;
-                    case PLAYER_2_START:
-                        player2.originalX = x << 3;
-                        player2.originalY = y << 3;
-                        InitPhysObject(&player2.phys, player2.originalX, player2.originalY);
-                        DrawTile(x, y, &Tiles[0]);
-                        break;
-                    case PLAYER_1_APPLE:
-                        if (SinglePlayer)
-                            DrawTile(x, y, &Tiles[0]);
-                        else
-                            PlaceItem(x << 3, y << 3, Apple1, APPLE1_ATTR);
-                        break;
-                    case PLAYER_2_APPLE:
-                        PlaceItem(x << 3, y << 3, Apple1, APPLE2_ATTR);
-                        break;
-                    case PLAYER_1_TOP:
-                        player1.gatesX = (x << 3) - 8;
-                        player1.gatesY = (y << 3) + 8;
-                        DrawTile(x, y, (SinglePlayer ? &AppleTopTile : &AppleTop1Tile));
-                        break;
-                    case PLAYER_2_TOP:
-                        player2.gatesX = (x << 3) - 8;
-                        player2.gatesY = (y << 3) + 8;
-                        DrawTile(x, y, (SinglePlayer ? &AppleTopTile : &AppleTop2Tile));
-                        break;
-                    case STONE:
-                        PlaceItem(x << 3, y << 3, Stone, STONE_ATTR);
-                        break;
-                    case GHOST:
-                        DrawTile(x, y, &Tiles[0]);
-                        SpawnEnemy(x << 3, y << 3, GhostSprites);
-                        break;
-                }
-            }
 
+        if ((count & 0x40) != 0) {
+            DrawTile(x, y, &Tiles[count & 0x3f]);
+            goto cont;
+        }
+
+        if ((count & 0x80) != 0) {
+            switch (count & 0x7f) {
+                case PLAYER_1_START:
+                    player1.originalX = x << 3;
+                    player1.originalY = y << 3;
+                    InitPhysObject(&player1.phys, player1.originalX, player1.originalY);
+                    DrawTile(x, y, &Tiles[0]);
+                    break;
+                case PLAYER_2_START:
+                    player2.originalX = x << 3;
+                    player2.originalY = y << 3;
+                    InitPhysObject(&player2.phys, player2.originalX, player2.originalY);
+                    DrawTile(x, y, &Tiles[0]);
+                    break;
+                case PLAYER_1_APPLE:
+                    if (SinglePlayer)
+                        DrawTile(x, y, &Tiles[0]);
+                    else
+                        PlaceItem(x << 3, y << 3, Apple1, APPLE1_ATTR);
+                    break;
+                case PLAYER_2_APPLE:
+                    PlaceItem(x << 3, y << 3, Apple1, APPLE2_ATTR);
+                    break;
+                case PLAYER_1_TOP:
+                    player1.gatesX = (x << 3) - 8;
+                    player1.gatesY = (y << 3) + 8;
+                    DrawTile(x, y, (SinglePlayer ? &AppleTopTile : &AppleTop1Tile));
+                    break;
+                case PLAYER_2_TOP:
+                    player2.gatesX = (x << 3) - 8;
+                    player2.gatesY = (y << 3) + 8;
+                    DrawTile(x, y, (SinglePlayer ? &AppleTopTile : &AppleTop2Tile));
+                    break;
+                case STONE:
+                    PlaceItem(x << 3, y << 3, Stone, STONE_ATTR);
+                    break;
+                case GHOST:
+                    DrawTile(x, y, &Tiles[0]);
+                    SpawnEnemy(x << 3, y << 3, GhostSprites);
+                    break;
+            }
+          cont:
             if (++x == 32) {
                 x = 0;
-                ++y;
+                --y;
+            }
+            continue;
+        }
+
+        byte value = *level++;
+        while (count-- > 0) {
+            DrawTile(x, y, &Tiles[value]);
+            if (++x == 32) {
+                x = 0;
+                --y;
             }
         }
     }
