@@ -128,10 +128,13 @@ RemoveItem:     push    hl
                 ;   C = X
                 ; Result:
                 ;   HL => item or H = 0
+                ; Preserves:
+                ;   IX
 
 ItemAt:         ld      a, (ItemCount)
                 or      a
                 jr      z, @@notFound
+                push    ix
                 ld      ixl, a
                 ld      a, b
                 and     ~7
@@ -154,6 +157,7 @@ ItemAt:         ld      a, (ItemCount)
 @@continue:     add     hl, de
                 dec     ixl
                 jr      nz, @@loop
+                pop     ix
 @@notFound:     ld      h, 0
                 ret
 
@@ -163,11 +167,14 @@ ItemAt:         ld      a, (ItemCount)
                 ; Result:
                 ;   E = attr (0 if not grabbed)
                 ;   D = sprite
+                ; Preserves:
+                ;   IX
 
 TryGrabItem:    ld      a, (ItemCount)
                 or      a
                 ld      e, a
                 ret     z
+                push    ix
                 ld      hl, Items
                 ld      de, sizeof_Item
                 ld      ixl, a
@@ -178,9 +185,9 @@ TryGrabItem:    ld      a, (ItemCount)
                 ld      a, (hl)
                 dec     hl
                 cp      b
+                jr      z, @@ok
                 jr      nc, @@continue
-                jr      z, @@continue
-                add     a, 8
+@@ok:           add     a, 8
                 cp      b
                 jr      c, @@continue
                 push    hl
@@ -193,10 +200,12 @@ TryGrabItem:    ld      a, (ItemCount)
                 push    de
                 call    RemoveItem
                 pop     de
+                pop     ix
                 ret
 @@continue:     add     hl, de
                 dec     ixl
                 jr      nz, @@loop
+                pop     ix
                 ld      e, 0
                 ret
 

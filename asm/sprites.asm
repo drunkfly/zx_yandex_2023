@@ -30,7 +30,7 @@ SpriteCount     db      0
                 ; Output:
                 ;   HL => sprite
                 ; Preserves:
-                ;   DE
+                ;   DE, IX
 
 CalcSpriteAddr: ld      bc, Sprites
 @@raw:          add     a, a        ; *= 2
@@ -47,7 +47,7 @@ CalcSpriteAddr: ld      bc, Sprites
                 ; Input:
                 ;   None
                 ; Output:
-                ;   A = sprite ID
+                ;   A = sprite index
                 ; Preserves:
                 ;   IX, DE
 
@@ -93,16 +93,18 @@ ReleaseSprite:  call    CalcSpriteAddr
                 ;   E = X
                 ;   D = Y
                 ;   B = Sprite ID
+                ; Preserves:
+                ;   IX
 
-SetSprite:      ld      ixl, b
+SetSprite:      push    bc
                 ld      bc, Sprites+3
                 call    CalcSpriteAddr@@raw
+                pop     bc
                 ld      (hl), e
                 inc     hl
                 ld      (hl), d
                 inc     hl
-                ld      a, ixl
-                ld      (hl), a
+                ld      (hl), b
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

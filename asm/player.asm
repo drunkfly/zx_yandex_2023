@@ -21,7 +21,7 @@ Player_phys_accel       = 4
 Player_state            = 5
 Player_cooldown         = 6
 Player_visualCooldown   = 7
-Player_itemSprite       = 8
+Player_itemSpriteID     = 8
 Player_itemAttr         = 9
 Player_gatesX           = 10
 Player_gatesY           = 11
@@ -37,7 +37,8 @@ Player_keyDown_port     = 20
 Player_keyDown_mask     = 21
 Player_keyFire_port     = 22
 Player_keyFire_mask     = 23
-Player_sprite           = 24
+Player_spriteRef        = 24
+Player_itemSpriteRef    = 25
 
 Player1:        db      0           ; phys.x
                 db      0           ; phys.y
@@ -47,7 +48,7 @@ Player1:        db      0           ; phys.x
                 db      0           ; state
                 db      0           ; cooldown
                 db      0           ; visualCooldown
-                db      0           ; itemSprite
+                db      0           ; itemSpriteID
                 db      0           ; itemAttr
                 db      0           ; gatesX
                 db      0           ; gatesY
@@ -63,7 +64,8 @@ Player1:        db      0           ; phys.x
                 db      0x01        ; keyDown.mask
                 db      0x7F        ; keyFire.port      ; M
                 db      0x04        ; keyFire.mask
-                db      0           ; sprite
+                db      0           ; spriteRef
+                db      0           ; itemSpriteRef
 
 Player2:        db      0           ; phys.x
                 db      0           ; phys.y
@@ -73,7 +75,7 @@ Player2:        db      0           ; phys.x
                 db      0           ; state
                 db      0           ; cooldown
                 db      0           ; visualCooldown
-                db      0           ; itemSprite
+                db      0           ; itemSpriteID
                 db      0           ; itemAttr
                 db      0           ; gatesX
                 db      0           ; gatesY
@@ -89,7 +91,8 @@ Player2:        db      0           ; phys.x
                 db      0x02        ; keyDown.mask
                 db      0x7F        ; keyFire.port      ; Space
                 db      0x01        ; keyFire.mask
-                db      0           ; sprite
+                db      0           ; spriteRef
+                db      0           ; itemSpriteRef
 
 onGround        db      0
 
@@ -215,13 +218,45 @@ InitPlayer:     ld      (ix+Player_originalX), c
                 ld      (ix+Player_originalY), b
                 call    InitPhysObject
                 call    AllocSprite
-                ld      (ix+Player_sprite), a
+                ld      (ix+Player_spriteRef), a
                 ld      (ix+Player_state), PLAYER_IDLE
                 xor     a
                 ld      (ix+Player_itemAttr), a
-                ld      (ix+Player_itemSprite), a
+                ld      (ix+Player_itemSpriteID), a
                 ld      (ix+Player_cooldown), a
                 ld      (ix+Player_visualCooldown), a
+                ld      (ix+Player_visualCooldown), a
+                ld      (ix+Player_itemSpriteRef), a
+                ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+                ; Input:
+                ;   IX => player
+                ;   C = offset
+
+TryGetItem:     ld      a, (ix+Player_state)
+                cp      PLAYER_IDLE
+                jr      z, @@stateGood
+                cp      PLAYER_MOVING
+                jr      z, @@stateGood
+                cp      PLAYER_JUMPING
+                ret     nz
+@@stateGood:    ld      a, (ix+Player_itemAttr)
+                or      a
+                ret     nz
+                ld      b, (ix+Player_phys_y)
+                ld      a, (ix+Player_phys_x)
+                add     a, c
+                ld      c, a
+                call    TryGrabItem
+                ld      a, e
+                or      a
+                ret     z
+                ld      (ix+Player_itemAttr), e
+                ld      (ix+Player_itemSpriteID), d
+                call    AllocSprite
+                ld      (ix+Player_itemSpriteRef), a
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -253,7 +288,8 @@ MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
                 jr      nz, @@didLeft
 @@leftOk:       dec     (ix+Player_phys_x)
                 jr      @@didLeft
-@@cantLeft:     ;FIXME TryGetItem(player, -8, oldX, oldY, oldState);
+@@cantLeft:     ld      c, -8
+                call    TryGetItem
 @@didLeft:      ld      a, (ix+Player_phys_flags)
                 and     ~PHYS_HORIZONTAL
                 ;or      PHYS_LEFT
@@ -281,7 +317,8 @@ MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
                 jr      nz, @@didRight
 @@rightOk:      inc     (ix+Player_phys_x)
                 jr      @@didRight
-@@cantRight:    ;FIXME TryGetItem(player, 8, oldX, oldY, oldState);
+@@cantRight:    ld      c, 8
+                call    TryGetItem
 @@didRight:     ld      a, (ix+Player_phys_flags)
                 and     ~PHYS_HORIZONTAL
                 or      PHYS_RIGHT
@@ -526,8 +563,24 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 @@5:            ld      b, (hl)
                 ld      d, (ix+Player_phys_y)
                 ld      e, (ix+Player_phys_x)
-                ld      a, (ix+Player_sprite)
+                ld      a, (ix+Player_spriteRef)
                 call    SetSprite
+                ld      a, (ix+Player_itemAttr)
+                or      a
+                jr      z, @@noItem
+                ld      a, (ix+Player_state)
+                cp      PLAYER_SITTING
+                ld      d, 7
+                jr      z, @@itemSitting
+                ld      d, 9
+@@itemSitting:  ld      a, (ix+Player_phys_y)
+                sub     a, d
+                ld      d, a
+                ld      e, (ix+Player_phys_x)
+                ld      a, (ix+Player_itemSpriteRef)
+                ld      b, (ix+Player_itemSpriteID)
+                call    SetSprite
+@@noItem:
 
 /*
     if (player->itemAttr)
