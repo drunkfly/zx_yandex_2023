@@ -39,11 +39,15 @@ void DrawLevel(const byte* level)
             else {
                 switch (value & 0x7f) {
                     case PLAYER_1_START:
-                        InitPhysObject(&player1.phys, x << 3, y << 3);
+                        player1.originalX = x << 3;
+                        player1.originalY = y << 3;
+                        InitPhysObject(&player1.phys, player1.originalX, player1.originalY);
                         DrawTile(x, y, &Tiles[0]);
                         break;
                     case PLAYER_2_START:
-                        InitPhysObject(&player2.phys, x << 3, y << 3);
+                        player2.originalX = x << 3;
+                        player2.originalY = y << 3;
+                        InitPhysObject(&player2.phys, player2.originalX, player2.originalY);
                         DrawTile(x, y, &Tiles[0]);
                         break;
                     case PLAYER_1_APPLE:
@@ -64,6 +68,13 @@ void DrawLevel(const byte* level)
                         player2.gatesX = (x << 3) - 8;
                         player2.gatesY = (y << 3) + 8;
                         DrawTile(x, y, (SinglePlayer ? &AppleTopTile : &AppleTop2Tile));
+                        break;
+                    case STONE:
+                        PlaceItem(x << 3, y << 3, Stone, STONE_ATTR);
+                        break;
+                    case GHOST:
+                        DrawTile(x, y, &Tiles[0]);
+                        SpawnEnemy(x << 3, y << 3, GhostSprites);
                         break;
                 }
             }

@@ -54,8 +54,29 @@ byte PlayerHandsDuckRight[8];
 byte PlayerGunDuckLeft[8];
 byte PlayerGunDuckRight[8];
 
+byte GhostLeft1[8];
+byte GhostLeft2[8];
+byte GhostLeft3[8];
+byte GhostLeft4[8];
+byte GhostRight1[8];
+byte GhostRight2[8];
+byte GhostRight3[8];
+byte GhostRight4[8];
+
+byte GhostDeath1[8];
+byte GhostDeath2[8];
+byte GhostDeath3[8];
+byte GhostDeath4[8];
+
+byte GhostAppear1[8];
+byte GhostAppear2[8];
+byte GhostAppear3[8];
+byte GhostAppear4[8];
+
 byte Empty[8];
 byte Bricks[8];
+
+byte Stone[8];
 
 byte AppleLeft[8];
 byte AppleTopLeft[8];
@@ -105,10 +126,10 @@ static const char* Level1Data[] = {
         "#       ##                     #", /*  5 */
         "#                              #", /*  6 */
         "#   ##                         #", /*  7 */
-        "#                              #", /*  8 */
+        "#       G                      #", /*  8 */
         "#      ###                     #", /*  9 */
         "#                              #", /* 10 */
-        "#           ##                 #", /* 11 */
+        "#           ##   O             #", /* 11 */
         "#                ##   ###      #", /* 12 */
         "#                              #", /* 13 */
         "#           ###            #   #", /* 14 */
@@ -182,6 +203,8 @@ static void GenerateLevel(byte* level, const char* const* data)
                 case '#': b = 1; break;
                 case '1': b = 0x80 | PLAYER_1_START; break;
                 case '2': b = 0x80 | PLAYER_2_START; break;
+                case 'O': b = 0x80 | STONE; break;
+                case 'G': b = 0x80 | GHOST; break;
                 default: abort();
             }
 
@@ -287,4 +310,25 @@ void LoadData(void)
     GetSprite(PlayerDuckRight, 8, 128);
     GetSprite(PlayerHandsDuckRight, 8, 136);
     GetSprite(PlayerGunDuckRight, 8, 120);
+
+    GetSprite(Stone, 0, 8);
+
+    GetMirrorSprite(GhostLeft1, 112, 96);
+    GetMirrorSprite(GhostLeft2, 120, 96);
+    GetMirrorSprite(GhostLeft3, 128, 96);
+    GetMirrorSprite(GhostLeft4, 136, 96);
+    GetSprite(GhostRight1, 112, 96);
+    GetSprite(GhostRight2, 120, 96);
+    GetSprite(GhostRight3, 128, 96);
+    GetSprite(GhostRight4, 136, 96);
+
+    GetSprite(GhostAppear1, 136, 104);
+    GetSprite(GhostAppear2, 128, 104);
+    GetSprite(GhostAppear3, 128, 112);
+    GetSprite(GhostAppear4, 120, 104);
+
+    GetSprite(GhostDeath1, 112, 80);
+    GetSprite(GhostDeath2, 120, 80);
+    GetSprite(GhostDeath3, 128, 80);
+    GetSprite(GhostDeath4, 136, 80);
 }

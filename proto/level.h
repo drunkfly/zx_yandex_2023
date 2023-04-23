@@ -1,8 +1,9 @@
 
-#define PASSABLE_ATTR   0x47
+#define PASSABLE_ATTR       0x47
 
-#define APPLE1_ATTR     0x46
-#define APPLE2_ATTR     0x42
+#define APPLE1_ATTR         0x46
+#define APPLE2_ATTR         0x45
+#define STONE_ATTR          0x07
 
 #define LEVEL_Y             2
 #define LEVEL_WIDTH         32
@@ -14,5 +15,7 @@
 #define PLAYER_2_APPLE      3
 #define PLAYER_1_TOP        4
 #define PLAYER_2_TOP        5
+#define STONE               6
+#define GHOST               7
 
 void DrawLevel(const byte* level);

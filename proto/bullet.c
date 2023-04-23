@@ -67,12 +67,19 @@ void UpdateDrawBullets(void)
         if (BulletCollidesWithWall(&bullets[i]))
             DestroyBullet(i);
         else if (BulletCollidesWithPlayer(&bullets[i], &player1)) {
-            KillPlayer(&player1, true);
+            KillPlayer(&player1, REASON_BULLET);
             DestroyBullet(i);
-        } else if (BulletCollidesWithPlayer(&bullets[i], &player2)) {
-            KillPlayer(&player2, true);
+        } else if (!SinglePlayer && BulletCollidesWithPlayer(&bullets[i], &player2)) {
+            KillPlayer(&player2, REASON_BULLET);
             DestroyBullet(i);
-        } else
-            XorBullet(&bullets[i]);
+        } else {
+            byte enemy = EnemyCollides(bullets[i].x, bullets[i].y);
+            if (enemy != 0xff) {
+                DestroyBullet(i);
+                KillEnemy(enemy);
+            }
+            else
+                XorBullet(&bullets[i]);
+        }
     }
 }

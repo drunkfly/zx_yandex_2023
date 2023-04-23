@@ -180,10 +180,26 @@ bool DoPlayer(Player* player)
                 player->state = DEAD;
             break;
 
+        case DEAD_FALLING_RESPAWN:
+            if (onGround)
+                player->state = DEAD_RESPAWN;
+            break;
+
         case DEAD:
             if (!onGround)
                 player->state = DEAD_FALLING;
             else if (player->cooldown == 0) {
+                player->cooldown = 10;
+                player->state = WAKING_UP;
+            }
+            break;
+
+        case DEAD_RESPAWN:
+            if (!onGround)
+                player->state = DEAD_FALLING_RESPAWN;
+            else if (player->cooldown == 0) {
+                player->phys.x = player->originalX;
+                player->phys.y = player->originalY;
                 player->cooldown = 10;
                 player->state = WAKING_UP;
             }
@@ -240,12 +256,14 @@ bool DoPlayer(Player* player)
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerLeftJump : PlayerRightJump);
             break;
         case DEAD_FALLING:
+        case DEAD_FALLING_RESPAWN:
             player->visualCooldown = 0;
             newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead1Left : PlayerDead1Right);
             break;
         case DEAD:
+        case DEAD_RESPAWN:
             player->visualCooldown = 0;
-            if ((player->cooldown & 15) < 7)
+            if ((player->cooldown & 31) < 15)
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead1Left : PlayerDead1Right);
             else
                 newSprite = ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT ? PlayerDead2Left : PlayerDead2Right);
@@ -275,7 +293,7 @@ bool DoPlayer(Player* player)
         XorSprite(player->phys.x, player->phys.y - (player->state == SITTING ? 7 : 9), player->itemSprite);
     player->oldSprite = newSprite;
 
-    if ((player->state != DEAD && player->state != DEAD_FALLING)
+    if ((player->state != DEAD && player->state != DEAD_FALLING && player->state != DEAD_FALLING_RESPAWN && player->state != DEAD_RESPAWN)
             && player->phys.x + 8 >= player->gatesX + 6 && player->phys.x <= player->gatesX + 3 * 8 - 6
             && player->phys.y + 8 >= player->gatesY && player->phys.y <= player->gatesY + 8) {
         byte myApple = (player == &player1 ? APPLE1_ATTR : APPLE2_ATTR);
@@ -309,9 +327,9 @@ bool DoPlayer(Player* player)
     return true;
 }
 
-void KillPlayer(Player* player, bool isShot)
+void KillPlayer(Player* player, byte reason)
 {
-    if (player->state != DEAD && player->state != DEAD_FALLING) {
+    if (player->state != DEAD && player->state != DEAD_FALLING && player->state != DEAD_FALLING_RESPAWN && player->state != DEAD_RESPAWN) {
         if (player->itemAttr) {
             XorSprite(player->phys.x, player->phys.y - (player->state == SITTING ? 7 : 9), player->itemSprite);
             if (SpawnFlyingItem(player->phys.x, player->phys.y - (player->state == SITTING ? 6 : 8), player->phys.flags,
@@ -322,8 +340,25 @@ void KillPlayer(Player* player, bool isShot)
                 PlaceItem(player->phys.x, player->phys.y, player->itemSprite, player->itemAttr);
             }
         }
-        player->state = DEAD_FALLING;
-        player->cooldown = (isShot ? DEATH_SHOOT_COOLDOWN : DEATH_STONE_COOLDOWN);
+        switch (reason) {
+            case REASON_BULLET:
+                player->state = DEAD_FALLING;
+                player->cooldown = DEATH_SHOOT_COOLDOWN;
+                break;
+            case REASON_ITEM:
+                player->state = DEAD_FALLING;
+                player->cooldown = DEATH_STONE_COOLDOWN;
+                break;
+            case REASON_ENEMY:
+                if (SinglePlayer) {
+                    player->state = DEAD_FALLING_RESPAWN;
+                    player->cooldown = DEATH_SHOOT_COOLDOWN;
+                } else {
+                    player->state = DEAD_FALLING;
+                    player->cooldown = DEATH_STONE_COOLDOWN;
+                }
+                break;
+        }
     }
 }
 

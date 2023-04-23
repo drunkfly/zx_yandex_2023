@@ -267,6 +267,16 @@ void UpdateFlying(void)
                 flying[i].didMirror = false;
         }
 
+        byte enemy = EnemyCollides(flying[i].phys.x, flying[i].phys.y);
+        if (enemy != 0xff)
+            KillEnemy(enemy);
+
+        if (CollidesWithPlayer(&flying[i], &player1))
+            KillPlayer(&player1, REASON_ITEM);
+
+        if (!SinglePlayer && CollidesWithPlayer(&flying[i], &player2))
+            KillPlayer(&player2, REASON_ITEM);
+
         if (!UpdatePhysObject(&flying[i].phys, 1)) {
             byte x = flying[i].phys.x & 7;
             if (x == 0) {
@@ -275,7 +285,7 @@ void UpdateFlying(void)
                     flying[i].moveHorz = true;
                 else if (CollidesWithPlayerFull(&flying[i], &player1) && canMoveHorz)
                     flying[i].moveHorz = true;
-                else if (CollidesWithPlayerFull(&flying[i], &player2) && canMoveHorz)
+                else if (!SinglePlayer && CollidesWithPlayerFull(&flying[i], &player2) && canMoveHorz)
                     flying[i].moveHorz = true;
                 else {
                     PlaceItem(flying[i].phys.x, flying[i].phys.y, flying[i].sprite, flying[i].attr);
@@ -284,12 +294,6 @@ void UpdateFlying(void)
                 }
             }
         }
-
-        if (CollidesWithPlayer(&flying[i], &player1))
-            KillPlayer(&player1, false);
-
-        if (CollidesWithPlayer(&flying[i], &player2))
-            KillPlayer(&player2, false);
 
         if (flying[i].moveHorz) {
             if ((flying[i].phys.flags & PHYS_DIRECTION) == PHYS_LEFT) {

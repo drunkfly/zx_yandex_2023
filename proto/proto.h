@@ -188,6 +188,8 @@ typedef int bool;
 #define KEYIDX_PC_TAB       70
 #endif
 
+extern byte Stone[8];
+
 extern byte AppleLeft[8];
 extern byte AppleTopLeft[8];
 extern byte AppleTop[8];
@@ -199,6 +201,25 @@ extern byte Apple1[8];
 extern byte Apple2[8];
 extern byte Apple3[8];
 extern byte Apple4[8];
+
+extern byte GhostLeft1[8];
+extern byte GhostLeft2[8];
+extern byte GhostLeft3[8];
+extern byte GhostLeft4[8];
+extern byte GhostRight1[8];
+extern byte GhostRight2[8];
+extern byte GhostRight3[8];
+extern byte GhostRight4[8];
+
+extern byte GhostDeath1[8];
+extern byte GhostDeath2[8];
+extern byte GhostDeath3[8];
+extern byte GhostDeath4[8];
+
+extern byte GhostAppear1[8];
+extern byte GhostAppear2[8];
+extern byte GhostAppear3[8];
+extern byte GhostAppear4[8];
 
 extern byte Timer;
 extern bool SinglePlayer;
@@ -284,3 +305,4 @@ void UpdateDrawBullets(void);
 #include "item.h"
 #include "player.h"
 #include "level.h"
+#include "enemies.h"

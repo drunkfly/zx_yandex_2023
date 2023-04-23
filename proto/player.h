@@ -9,6 +9,8 @@ typedef struct Player {
     byte itemAttr;
     byte gatesX;
     byte gatesY;
+    byte originalX;
+    byte originalY;
 } Player;
 
 #define IDLE 0
@@ -18,10 +20,16 @@ typedef struct Player {
 #define DEAD 4
 #define WAKING_UP 5
 #define SITTING 6
+#define DEAD_FALLING_RESPAWN 7
+#define DEAD_RESPAWN 8
 
 extern Player player1;
 extern Player player2;
 
 bool DoPlayers(void);
 
-void KillPlayer(Player* player, bool isShot);
+#define REASON_ENEMY 1
+#define REASON_ITEM 2
+#define REASON_BULLET 3
+
+void KillPlayer(Player* player, byte reason);

@@ -3,7 +3,7 @@
 
 byte Timer;
 const byte* CurrentLevel = Level1;
-bool SinglePlayer = false;
+bool SinglePlayer = true;
 
 void Interrupt(void)
 {
@@ -12,6 +12,7 @@ void Interrupt(void)
         exit(0);
     UpdateDrawBullets();
     UpdateItems();
+    UpdateEnemies();
     UpdateFlying();
 }
 

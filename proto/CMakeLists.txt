@@ -13,6 +13,8 @@ endif()
 add_executable(proto WIN32
     bullet.c
     data.c
+    enemies.c
+    enemies.h
     game.c
     item.c
     item.h
