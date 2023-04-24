@@ -4,6 +4,8 @@ MAX_FLYING          = 8
 MAX_ITEMS           = 16
 
 SHOOT_COOLDOWN      = 25
+DEATH_SHOOT_COOLDOWN = 50*2
+DEATH_STONE_COOLDOWN = 255
 
 LEVEL_Y             = 2
 LEVEL_WIDTH         = 32
@@ -30,5 +32,9 @@ PHYS_RIGHT          = 1
 PHYS_VERTICAL       = 0x02
 PHYS_DOWN           = 0
 PHYS_UP             = 2
+
+REASON_ENEMY        = 1
+REASON_ITEM         = 2
+REASON_BULLET       = 3
 
 Timer               = 0x5C78

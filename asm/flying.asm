@@ -57,6 +57,73 @@ CalcFlyingAddr: ld      bc, Items
                 ret
 
                 ; Input:
+                ;   B = flying Y
+                ;   C = flying X
+                ;   IX => player
+                ; Output:
+                ;   ZF=1: false, ZF=0: true
+                ; Preserves:
+                ;   BC
+
+FlyingCollidesWithPlayer:
+                ld      a, (ix+Player_phys_x)
+                add     a, 2-8
+                cp      c
+                jr      nc, @@retFalse
+                add     a, 5-(2-8)
+                cp      c
+                jr      c, @@retFalse
+                ld      a, (ix+Player_phys_y)
+                add     a, 6
+                cp      b
+                jr      c, @@retFalse
+                ld      e, a
+                ld      a, (ix+Player_state)
+                cp      PLAYER_SITTING
+                jr      nz, @@notSitting
+                ld      a, 4-8-(6)
+                add     a, e
+                cp      b
+                jr      nc, @@retFalse
+@@retTrue:      xor     a
+                inc     a
+                ret
+@@notSitting:   ld      a, 1-8-(6)
+                add     a, e
+                cp      b
+                jr      c, @@retTrue
+@@retFalse:     xor     a
+                ret
+
+                ; Input:
+                ;   B = flying Y
+                ;   C = flying X
+                ;   IX => player
+                ; Output:
+                ;   ZF=1: false, ZF=0: true
+                ; Preserves:
+                ;   BC
+
+FlyingCollidesWithPlayerFull:
+                ld      a, (ix+Player_phys_x)
+                add     a, -8
+                cp      c
+                jr      nc, FlyingCollidesWithPlayer@@retFalse
+                add     a, 7+8
+                cp      c
+                jr      c, FlyingCollidesWithPlayer@@retFalse
+                ld      a, (ix+Player_phys_y)
+                add     a, -8
+                cp      b
+                jr      nc, FlyingCollidesWithPlayer@@retFalse
+                add     a, 7+8
+                cp      b
+                jr      c, FlyingCollidesWithPlayer@@retFalse
+@@retTrue:      xor     a
+                inc     a
+                ret
+
+                ; Input:
                 ;   B = Y
                 ;   C = X
                 ;   E = sprite ID
@@ -112,25 +179,46 @@ UpdateFlying:   ld      a, (FlyingCount)
                 jr      z, @@noResetMirror
                 set     1, (ix+Flying_flags)    ; FLYING_DID_MIRROR
 @@noResetMirror:
-            /*
+                /* FIXME
+                byte enemy = EnemyCollides(flying[i].phys.x, flying[i].phys.y);
+                if (enemy != 0xff)
+                    KillEnemy(enemy);
+                */
 
-        byte enemy = EnemyCollides(flying[i].phys.x, flying[i].phys.y);
-        if (enemy != 0xff)
-            KillEnemy(enemy);
-
-        if (CollidesWithPlayer(&flying[i], &player1))
-            KillPlayer(&player1, REASON_ITEM);
-
-        if (!SinglePlayer && CollidesWithPlayer(&flying[i], &player2))
-            KillPlayer(&player2, REASON_ITEM);
-            */
-                ld      d, 1
+                ld      b, (ix+Flying_phys_y)
+                ld      c, (ix+Flying_phys_x)
+                push    ix
+                ld      ix, Player1
+                call    FlyingCollidesWithPlayer
+                pop     ix
+                jr      z, @@noHit1
+                push    bc
+                push    ix
+                ld      ix, Player1
+                ld      b, REASON_ITEM
+                call    KillPlayer
+                pop     ix
+                pop     bc
+@@noHit1:       ld      a, (SinglePlayer)
+                or      a
+                jr      nz, @@noHit2
+                push    ix
+                ld      ix, Player2
+                call    FlyingCollidesWithPlayer
+                pop     ix
+                jr      z, @@noHit2
+                push    ix
+                ld      ix, Player2
+                ld      b, REASON_ITEM
+                call    KillPlayer
+                pop     ix
+@@noHit2:       ld      d, 1
                 call    UpdatePhysObject
-                jr      nz, @@stillFlying
+                jp      nz, @@stillFlying
                 ld      a, (ix+Flying_phys_x)
                 ld      b, a
                 and     7
-                jr      nz, @@stillFlying
+                jp      nz, @@stillFlying
                 ld      a, (ix+Flying_flags)
                 bit     1, a                    ; FLYING_DID_MIRROR
                 jr      z, @@canMoveHorz
@@ -143,11 +231,21 @@ UpdateFlying:   ld      a, (FlyingCount)
                 ld      a, h
                 or      a
                 jr      nz, @@flyAgain
-
-                /*
-                if (CollidesWithPlayerFull(&flying[i], &player1) goto flyAgain
-                if (!SinglePlayer && CollidesWithPlayerFull(&flying[i], &player2)) goto flyAgain
-                */
+                ld      b, (ix+Flying_phys_y)
+                ld      c, (ix+Flying_phys_x)
+                push    ix
+                ld      ix, Player1
+                call    FlyingCollidesWithPlayerFull
+                pop     ix
+                jr      nz, @@flyAgain
+                ld      a, (SinglePlayer)
+                or      a
+                jr      nz, @@cantMoveHorz
+                push    ix
+                ld      ix, Player2
+                call    FlyingCollidesWithPlayerFull
+                pop     ix
+                jr      nz, @@flyAgain
 @@cantMoveHorz: ld      b, (ix+Flying_phys_y)
                 ld      c, (ix+Flying_phys_x)
                 ld      e, (ix+Flying_spriteID)
@@ -172,7 +270,8 @@ UpdateFlying:   ld      a, (FlyingCount)
                 pop     ix
                 ; continue
 @@continue:     pop     bc
-                djnz    @@loop
+                dec     b
+                jp      nz, @@loop
                 ret
 @@flyAgain:     set     0, (ix+Flying_flags)    ; FLYING_MOVE_HORZ
 @@stillFlying:  bit     0, (ix+Flying_flags)    ; FLYING_MOVE_HORZ

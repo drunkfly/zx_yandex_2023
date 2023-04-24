@@ -341,7 +341,8 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 ld      a, (ix+Player_itemAttr)
                 or      a
                 jr      z, @@weapon
-                ld      c, (ix+Player_phys_x)
+                ld      l, 4 << 5
+@@dropItem:     ld      c, (ix+Player_phys_x)
                 ld      a, (ix+Player_state)
                 cp      PLAYER_SITTING
                 ld      a, -6
@@ -352,18 +353,18 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 ld      e, (ix+Player_itemSpriteID)
                 ld      d, (ix+Player_itemAttr)
                 ld      h, (ix+Player_phys_flags)
-                ld      l, 4 << 5
                 push    ix
                 call    SpawnFlyingItem
                 pop     ix
                 ret     z
-                ld      a, (ix+Player_itemSpriteRef)
+@@freeItemSprte:ld      a, (ix+Player_itemSpriteRef)
                 call    ReleaseSprite
                 xor     a
                 ld      (ix+Player_itemSpriteID), a
                 ld      (ix+Player_itemSpriteRef), a
                 ld      (ix+Player_itemAttr), a
                 ld      (ix+Player_cooldown), SHOOT_COOLDOWN
+                inc     a ; return ZF == 0
                 ret
 @@weapon:
 /*
@@ -671,4 +672,56 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 }
 */
 
+                ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+                ; Input:
+                ;   IX => player
+                ;   B = reason
+
+KillPlayer:     ld      a, (ix+Player_state)
+                cp      PLAYER_DEAD
+                ret     z
+                cp      PLAYER_DEAD_FALLING
+                ret     z
+                cp      PLAYER_DEAD_RESPAWN
+                ret     z
+                cp      PLAYER_DEAD_FALLING_RESPAWN
+                ret     z
+                ld      a, (ix+Player_itemAttr)
+                or      a
+                push    bc
+                jr      z, @@noItem
+                ld      l, 3 | (1 << 5)
+                call    TryShoot@@dropItem
+                jr      nz, @@noItem
+                ld      b, (ix+Player_phys_y)
+                ld      c, (ix+Player_phys_x)
+                ld      e, (ix+Player_itemSpriteID)
+                ld      d, (ix+Player_itemAttr)
+                call    PlaceItem
+                call    TryShoot@@freeItemSprte
+@@noItem:       pop     bc
+                ld      a, b
+                cp      REASON_ENEMY
+                jr      z, @@enemy
+                cp      REASON_ITEM
+                jr      z, @@item
+
+@@bullet:       ld      a, (SinglePlayer)
+                or      a
+                jr      nz, @@respawn
+                ld      (ix+Player_state), PLAYER_DEAD_FALLING
+                jr      @@shootCooldown
+
+@@item:         ld      (ix+Player_state), PLAYER_DEAD_FALLING
+                ld      (ix+Player_cooldown), DEATH_STONE_COOLDOWN
+                ret
+
+@@enemy:        ld      a, (SinglePlayer)
+                or      a
+                jr      z, @@item
+@@respawn:      ld      (ix+Player_state), PLAYER_DEAD_FALLING_RESPAWN
+@@shootCooldown:ld      (ix+Player_cooldown), DEATH_SHOOT_COOLDOWN
                 ret
