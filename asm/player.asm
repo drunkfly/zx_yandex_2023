@@ -459,8 +459,12 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 call    CanGoUp
                 jr      z, @@noJump
                 ld      (ix+Player_state), PLAYER_JUMPING
-                ld      a, (ix+Player_phys_flags)
+                ld      a, (ix+Player_itemAttr)
+                or      a
                 ld      c, 4 << 5
+                jr      z, @@jumpNoItem
+                ld      c, 7 | (3 << 5)
+@@jumpNoItem:   ld      a, (ix+Player_phys_flags)
                 call    JumpPhysObject
                 jr      @@jumpingInAir
 @@noJump:       ; check if we can duck
