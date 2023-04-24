@@ -17,5 +17,6 @@
 #define PLAYER_2_TOP        5
 #define STONE               6
 #define GHOST               7
+#define WEAPON              8
 
 void DrawLevel(const byte* level);

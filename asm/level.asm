@@ -1,3 +1,4 @@
+
                 section data_tiles
 
 Tiles:          db      PASSABLE_ATTR       ; 0
@@ -112,7 +113,9 @@ LoadLevel:      xor     a
                 cp      OBJ_STONE
                 jp      z, @@stone
                 cp      OBJ_GHOST
-                jr      z, @@ghost
+                jp      z, @@ghost
+                cp      OBJ_WEAPON
+                jr      z, @@weapon
 @@doneEmpty:    xor     a
                 jr      @@single
 
@@ -130,6 +133,10 @@ LoadLevel:      xor     a
                 pop     bc
                 jr      @@doneEmpty
 
+@@weapon:       push    de
+                ld      de, WEAPON_ATTR*256 + SPRITE_Weapon1
+                jr      @@placeItem
+
 @@player2coin:  push    de
                 ld      d, COIN2_ATTR
                 jr      @@playerCoin
@@ -139,7 +146,7 @@ LoadLevel:      xor     a
                 push    de
                 ld      d, COIN1_ATTR
 @@playerCoin:   ld      e, SPRITE_Coin1
-                push    bc
+@@placeItem:    push    bc
                 sla     b
                 sla     b
                 sla     b

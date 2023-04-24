@@ -20,7 +20,7 @@ Player_phys_speed       = 3
 Player_phys_accel       = 4
 Player_state            = 5
 Player_cooldown         = 6
-Player_visualCooldown   = 7
+Player_hasGun           = 7
 Player_itemSpriteID     = 8
 Player_itemAttr         = 9
 Player_gatesX           = 10
@@ -50,7 +50,7 @@ Player1:        db      0           ; phys.x
                 db      0           ; phys.accel
                 db      0           ; state
                 db      0           ; cooldown
-                db      0           ; visualCooldown
+                db      0           ; hasGun
                 db      0           ; itemSpriteID
                 db      0           ; itemAttr
                 db      0           ; gatesX
@@ -80,7 +80,7 @@ Player2:        db      0           ; phys.x
                 db      0           ; phys.accel
                 db      0           ; state
                 db      0           ; cooldown
-                db      0           ; visualCooldown
+                db      0           ; hasGun
                 db      0           ; itemSpriteID
                 db      0           ; itemAttr
                 db      0           ; gatesX
@@ -233,9 +233,9 @@ InitPlayer:     ld      (ix+Player_originalX), c
                 ld      (ix+Player_itemAttr), a
                 ld      (ix+Player_itemSpriteID), a
                 ld      (ix+Player_cooldown), a
-                ld      (ix+Player_visualCooldown), a
-                ld      (ix+Player_visualCooldown), a
-                ld      (ix+Player_itemSpriteRef), a
+                ld      (ix+Player_hasGun), a
+                dec     a
+                ld      (ix+Player_itemSpriteRef), a    ; 0xff
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -262,10 +262,15 @@ TryGetItem:     ld      a, (ix+Player_state)
                 ld      a, e
                 or      a
                 ret     z
+                ld      a, SPRITE_Weapon1
+                cp      d
+                jr      z, @@weapon
                 ld      (ix+Player_itemAttr), e
                 ld      (ix+Player_itemSpriteID), d
                 call    AllocSprite
                 ld      (ix+Player_itemSpriteRef), a
+                ret
+@@weapon:       ld      (ix+Player_hasGun), 1
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -368,14 +373,19 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 ret     z
                 ld      (ix+Player_cooldown), SHOOT_COOLDOWN
 @@freeItemSprte:ld      a, (ix+Player_itemSpriteRef)
+                cp      0xff
+                jr      z, @@skipRelSprte
                 call    ReleaseSprite
-                xor     a
+@@skipRelSprte: xor     a
                 ld      (ix+Player_itemSpriteID), a
-                ld      (ix+Player_itemSpriteRef), a
                 ld      (ix+Player_itemAttr), a
-                inc     a ; return ZF == 0
-                ret
-@@weapon:       ld      a, (ix+Player_state)
+                dec     a
+                ld      (ix+Player_itemSpriteRef), a    ; 0xff
+                ret     ; return ZF == 0
+@@weapon:       ld      a, (ix+Player_hasGun)
+                or      a
+                ret     z
+                ld      a, (ix+Player_state)
                 cp      PLAYER_SITTING
                 jr      nz, @@notSitting
                 ld      a, 4
@@ -405,7 +415,6 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 call    SpawnBullet
                 pop     ix
                 ld      (ix+Player_cooldown), SHOOT_COOLDOWN
-                ld      (ix+Player_visualCooldown), GUN_VISUAL_COOLDOWN
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -418,12 +427,6 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@1
                 dec     (ix+Player_cooldown)
 @@1:
-
-                ld      a, (ix+Player_visualCooldown)
-                or      a
-                jr      z, @@2
-                dec     (ix+Player_visualCooldown)
-@@2:
 
                 ld      a, 1
                 ld      (onGround), a
@@ -562,7 +565,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@drawIdle1
                 ld      hl, PlayerHands
                 jr      @@setSpriteResetCooldown
-@@drawIdle1:    ld      a, (ix+Player_visualCooldown)
+@@drawIdle1:    ld      a, (ix+Player_hasGun)
                 or      a
                 jr      z, @@drawIdle2
                 ld      hl, PlayerGun
@@ -579,10 +582,9 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 ld      a, (ix+Player_itemAttr)
                 or      a
                 jr      z, @@drawMoving1
-                ld      (ix+Player_visualCooldown), 0
                 ld      hl, PlayerHands
                 jr      @@drawMoving3
-@@drawMoving1:  ld      a, (ix+Player_visualCooldown)
+@@drawMoving1:  ld      a, (ix+Player_hasGun)
                 or      a
                 jr      z, @@drawMoving2
                 ld      hl, PlayerGun
@@ -596,7 +598,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@drawJumping1
                 ld      hl, PlayerHandsJump
                 jr      @@setSpriteResetCooldown
-@@drawJumping1: ld      a, (ix+Player_visualCooldown)
+@@drawJumping1: ld      a, (ix+Player_hasGun)
                 or      a
                 jr      z, @@drawJumping2
                 ld      hl, PlayerGunJump
@@ -627,9 +629,8 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@drawSitting1
                 ld      hl, PlayerHandsDuck
 @@setSpriteResetCooldown:
-                ld      (ix+Player_visualCooldown), 0
                 jr      @@setSprite
-@@drawSitting1: ld      a, (ix+Player_visualCooldown)
+@@drawSitting1: ld      a, (ix+Player_hasGun)
                 or      a
                 jr      z, @@drawSitting2
                 ld      hl, PlayerGunDuck
@@ -770,19 +771,24 @@ KillPlayer:     ld      a, (ix+Player_state)
                 ret     z
                 ld      a, (ix+Player_itemAttr)
                 or      a
-                push    bc
                 jr      z, @@noItem
-                ld      l, 3 | (1 << 5)
-                call    TryShoot@@dropItem
-                jr      nz, @@noItem
-                ld      b, (ix+Player_phys_y)
-                ld      c, (ix+Player_phys_x)
-                ld      e, (ix+Player_itemSpriteID)
-                ld      d, (ix+Player_itemAttr)
-                call    PlaceItem
-                call    TryShoot@@freeItemSprte
-@@noItem:       pop     bc
-                ld      a, b
+                push    bc
+                call    @@dropItem
+                pop     bc
+@@noItem:       ld      a, (ix+Player_hasGun)
+                or      a
+                jr      z, @@noGun
+                ld      (ix+Player_hasGun), 0
+                ld      (ix+Player_itemSpriteID), SPRITE_Weapon1
+                ld      (ix+Player_itemAttr), WEAPON_ATTR
+                ld      (ix+Player_itemSpriteRef), 0xff
+                ld      a, (ix+Player_phys_flags)
+                xor     1
+                ld      (ix+Player_phys_flags), a
+                push    bc
+                call    @@dropItem
+                pop     bc
+@@noGun:        ld      a, b
                 cp      REASON_ENEMY
                 jr      z, @@enemy
                 cp      REASON_ITEM
@@ -804,3 +810,13 @@ KillPlayer:     ld      a, (ix+Player_state)
 @@respawn:      ld      (ix+Player_state), PLAYER_DEAD_FALLING_RESPAWN
 @@shootCooldown:ld      (ix+Player_cooldown), DEATH_SHOOT_COOLDOWN
                 ret
+
+@@dropItem:     ld      l, 3 | (1 << 5)
+                call    TryShoot@@dropItem
+                ret     nz
+                ld      b, (ix+Player_phys_y)
+                ld      c, (ix+Player_phys_x)
+                ld      e, (ix+Player_itemSpriteID)
+                ld      d, (ix+Player_itemAttr)
+                call    PlaceItem
+                jp      TryShoot@@freeItemSprte

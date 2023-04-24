@@ -88,12 +88,13 @@ PlaceItem:      ld      a, (ItemCount)
 
 GetRealItemSprite:
                 cp      SPRITE_Coin1
+                jr      z, @@coin
+                cp      SPRITE_Weapon1
                 ret     nz
 @@coin:         push    hl
                 inc     hl          ; skip spriteID
                 inc     hl          ; skip attr
-                ld      a, (hl)     ; index
-                add     a, SPRITE_Coin1
+                add     a, (hl)     ; index
                 pop     hl
                 ret
 
@@ -230,11 +231,17 @@ UpdateItems:    ld      a, (Timer)
                 inc     hl
                 ld      a, (hl)     ; spriteID
                 cp      SPRITE_Coin1
+                ld      c, 4
+                jr      z, @@changeSprite
+                cp      SPRITE_Weapon1
+                ld      c, 6
                 jr      nz, @@continue
-                call    GetRealItemSprite
+@@changeSprite: call    GetRealItemSprite@@coin
                 push    hl
                 push    de
+                push    bc
                 call    DrawSprites@@draw
+                pop     bc
                 pop     de
                 pop     hl
                 push    hl
@@ -242,9 +249,12 @@ UpdateItems:    ld      a, (Timer)
                 inc     hl          ; skip attr
                 ld      a, (hl)     ; index
                 inc     a
-                and     3
-                ld      (hl), a
+                cp      c
+                jr      nz, @@notLimit
+                xor     a
+@@notLimit:     ld      (hl), a
                 pop     hl
+                ld      a, (hl)
                 call    GetRealItemSprite@@coin
                 push    hl
                 call    DrawSprites@@draw

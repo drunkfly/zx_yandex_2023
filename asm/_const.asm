@@ -9,8 +9,6 @@ SHOOT_COOLDOWN      = 25
 DEATH_SHOOT_COOLDOWN = 50*2
 DEATH_STONE_COOLDOWN = 255
 
-GUN_VISUAL_COOLDOWN = 40
-
 LEVEL_Y             = 2
 LEVEL_WIDTH         = 32
 LEVEL_HEIGHT        = 22
@@ -23,12 +21,14 @@ OBJ_PLAYER1_TOP     = 4
 OBJ_PLAYER2_TOP     = 5
 OBJ_STONE           = 6
 OBJ_GHOST           = 7
+OBJ_WEAPON          = 8
 
 PASSABLE_ATTR       = 0x47
 COIN1_ATTR          = 0x46
 COIN2_ATTR          = 0x44
 STONE_ATTR          = 0x07
 BRICKS_ATTR         = 0x57
+WEAPON_ATTR         = 0x45
 
 PHYS_HORIZONTAL     = 0x01
 PHYS_LEFT           = 0

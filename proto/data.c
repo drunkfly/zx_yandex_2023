@@ -76,6 +76,13 @@ byte GhostAppear2[8];
 byte GhostAppear3[8];
 byte GhostAppear4[8];
 
+byte Weapon1[8];
+byte Weapon2[8];
+byte Weapon3[8];
+byte Weapon4[8];
+byte Weapon5[8];
+byte Weapon6[8];
+
 byte Empty[8];
 byte Bricks[8];
 
@@ -218,6 +225,7 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
                 case '2': FLUSH(); *level++ = 0x80 | PLAYER_2_START; continue;
                 case 'O': FLUSH(); *level++ = 0x80 | STONE; continue;
                 case 'G': FLUSH(); *level++ = 0x80 | GHOST; continue;
+                case 'W': FLUSH(); *level++ = 0x80 | WEAPON; continue;
                 default: abort();
             }
 
@@ -403,6 +411,13 @@ void LoadData(void)
     GetSprite("GhostDeath2", GhostDeath2, 120, 80);
     GetSprite("GhostDeath3", GhostDeath3, 128, 80);
     GetSprite("GhostDeath4", GhostDeath4, 136, 80);
+
+    GetSprite("Weapon1", Weapon1,  80, 160);
+    GetSprite("Weapon2", Weapon2,  88, 160);
+    GetSprite("Weapon3", Weapon3,  96, 160);
+    GetSprite("Weapon4", Weapon4, 104, 160);
+    GetSprite("Weapon5", Weapon5, 112, 160);
+    GetSprite("Weapon6", Weapon6, 120, 160);
 
     fclose(f);
 }
