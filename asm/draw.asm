@@ -6,9 +6,18 @@
 
 ClearAttrib:    ld      hl, 0x5800
                 ld      de, 0x5801
-                xor     a
-                ld      (hl), a
+                ld      (hl), l
                 ld      bc, 768
+                ldir
+                ret
+
+                ; Input:
+                ;   None
+
+ClearScreen:    ld      hl, 0x4000
+                ld      de, 0x4001
+                ld      (hl), l
+                ld      bc, 6144
                 ldir
                 ret
 

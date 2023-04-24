@@ -35,6 +35,7 @@ LoadLevel:      xor     a
                 push    hl
                 halt
                 call    ClearAttrib
+                call    ClearScreen
                 pop     hl
                 ld      de, 0x4000
                 call    Unzx7

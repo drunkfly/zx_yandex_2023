@@ -248,6 +248,8 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
         fprintf(f, "db 0x%02X\n", *--level);
 }
 
+char tmp[6912];
+
 void LoadData(void)
 {
     char buf[256] = __FILE__;
@@ -263,6 +265,20 @@ void LoadData(void)
         if (*p == '\\')
             *p = '/';
     }
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "coinz3b.scr");
+    f = fopen(buf, "rb");
+    fread(tmp, 1, 6912, f);
+    fclose(f);
+
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "../asm/data_intro.asm");
+    f = fopen(buf, "w");
+    fprintf(f, "section data_intro\n");
+    for (int i = 0; i < 6912; i++)
+        fprintf(f, "db 0x%02X\n", (unsigned char)tmp[i]);
+    fclose(f);
+
     *(strrchr(buf, '/') + 1) = 0;
     strcat(buf, "../asm/data_levels.asm");
     f = fopen(buf, "w");

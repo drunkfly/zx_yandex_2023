@@ -12,7 +12,7 @@
     ],
     "dontOutputMainFile": false,
     "generateBlobs": false,
-    "loaderFileName": "BOOT",
+    "loaderFileName": "COINZ",
     "omitFramePointer": false,
     "programFileName": "GAME",
     "stackAutomaticVariables": false,

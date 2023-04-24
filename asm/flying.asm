@@ -14,7 +14,7 @@ Flying_spriteID = 7
 Flying_attr = 8
 Flying_spriteRef = 9
 
-                section y_bss_flying
+                section bss
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

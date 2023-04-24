@@ -11,7 +11,7 @@ PLAYER_DEAD_RESPAWN         = 0xee + 8*2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section y_bss_player
+                section bss
 
 Player_phys_x           = 0
 Player_phys_y           = 1
@@ -27,19 +27,20 @@ Player_gatesX           = 10
 Player_gatesY           = 11
 Player_originalX        = 12
 Player_originalY        = 13
-Player_keyLeft_port     = 14
-Player_keyLeft_mask     = 15
-Player_keyRight_port    = 16
-Player_keyRight_mask    = 17
-Player_keyUp_port       = 18
-Player_keyUp_mask       = 19
-Player_keyDown_port     = 20
-Player_keyDown_mask     = 21
-Player_keyFire_port     = 22
-Player_keyFire_mask     = 23
+Player_keyLeft_mask     = 14
+Player_keyLeft_port     = 15
+Player_keyRight_mask    = 16
+Player_keyRight_port    = 17
+Player_keyUp_mask       = 18
+Player_keyUp_port       = 19
+Player_keyDown_mask     = 20
+Player_keyDown_port     = 21
+Player_keyFire_mask     = 22
+Player_keyFire_port     = 23
 Player_spriteRef        = 24
 Player_itemSpriteRef    = 25
-
+Player_kempston         = 26
+ 
 Player1:        db      0           ; phys.x
                 db      0           ; phys.y
                 db      0           ; phys.flags
@@ -54,18 +55,19 @@ Player1:        db      0           ; phys.x
                 db      0           ; gatesY
                 db      0           ; originalX
                 db      0           ; originalY
-                db      0xDF        ; keyLeft.port      ; O
                 db      0x02        ; keyLeft.mask
-                db      0xDF        ; keyRight.port     ; P
+                db      0xDF        ; keyLeft.port      ; O
                 db      0x01        ; keyRight.mask
-                db      0xFB        ; keyUp.port        ; Q
+                db      0xDF        ; keyRight.port     ; P
                 db      0x01        ; keyUp.mask
-                db      0xFD        ; keyDown.port      ; A
+                db      0xFB        ; keyUp.port        ; Q
                 db      0x01        ; keyDown.mask
-                db      0x7F        ; keyFire.port      ; M
+                db      0xFD        ; keyDown.port      ; A
                 db      0x04        ; keyFire.mask
+                db      0x7F        ; keyFire.port      ; M
                 db      0           ; spriteRef
                 db      0           ; itemSpriteRef
+                db      0           ; kempston
 
 Player2:        db      0           ; phys.x
                 db      0           ; phys.y
@@ -81,18 +83,19 @@ Player2:        db      0           ; phys.x
                 db      0           ; gatesY
                 db      0           ; originalX
                 db      0           ; originalY
-                db      0xBF        ; keyLeft.port      ; K
                 db      0x04        ; keyLeft.mask
-                db      0xBF        ; keyRight.port     ; L
+                db      0xBF        ; keyLeft.port      ; K
                 db      0x02        ; keyRight.mask
-                db      0xFB        ; keyUp.port        ; W
+                db      0xBF        ; keyRight.port     ; L
                 db      0x02        ; keyUp.mask
-                db      0xFD        ; keyDown.port      ; S
+                db      0xFB        ; keyUp.port        ; W
                 db      0x02        ; keyDown.mask
-                db      0x7F        ; keyFire.port      ; Space
+                db      0xFD        ; keyDown.port      ; S
                 db      0x01        ; keyFire.mask
+                db      0x7F        ; keyFire.port      ; Space
                 db      0           ; spriteRef
                 db      0           ; itemSpriteRef
+                db      0           ; kempston
 
 onGround        db      0
 

@@ -22,7 +22,7 @@ OBJ_GHOST           = 7
 
 PASSABLE_ATTR       = 0x47
 COIN1_ATTR          = 0x46
-COIN2_ATTR          = 0x45
+COIN2_ATTR          = 0x44
 STONE_ATTR          = 0x07
 
 PHYS_HORIZONTAL     = 0x01
