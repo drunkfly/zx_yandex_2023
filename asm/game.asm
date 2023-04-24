@@ -39,8 +39,13 @@ Campaign:       ld      hl, Level1
                 ld      hl, Level11
                 ld      de, Level11_size
                 call    RunLevel
-                ; FIXME: you win!
-                ret
+                ld      hl, Level12
+                ld      de, Level12_size
+                call    RunLevel
+                halt
+                call    ClearAttrib
+                ld      hl, msgGameComplete
+                jr      RunLevel@@win1
 
 RunLevel:       call    LoadLevel
 @@loop:         halt
@@ -92,4 +97,8 @@ PlayerWinner:   db      '1'
 
 msgLevelComplete:
                 db      INK,7,PAPER,1,FLASH,1,BRIGHT,1,22,12,7,' LEVEL COMPLETE! '
+                db      0xff
+
+msgGameComplete:
+                db      INK,7,PAPER,1,FLASH,1,BRIGHT,1,22,12,8,' GAME COMPLETE! '
                 db      0xff

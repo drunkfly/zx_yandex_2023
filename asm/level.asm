@@ -31,6 +31,7 @@ LoadLevel:      xor     a
                 ld      (SpriteCount), a
                 ld      (ItemCount), a
                 ld      (FlyingCount), a
+                ld      (EnemyCount), a
                 ld      (GameLevelDone), a
                 push    de
                 push    hl
@@ -109,7 +110,9 @@ LoadLevel:      xor     a
                 cp      OBJ_PLAYER2_COIN
                 jr      z, @@player2coin
                 cp      OBJ_STONE
-                jr      z, @@stone
+                jp      z, @@stone
+                cp      OBJ_GHOST
+                jr      z, @@ghost
 @@doneEmpty:    xor     a
                 jr      @@single
 
@@ -173,6 +176,19 @@ LoadLevel:      xor     a
                 pop     bc
                 ld      ixl, 1
                 jp      @@drawTile
+
+@@ghost:        push    bc
+                push    de
+                sla     b
+                sla     b
+                sla     b
+                sla     c
+                sla     c
+                sla     c
+                ;ld      de, GhostSprites
+                ;call    SpawnEnemy
+                pop     de
+                pop     bc
 
 @@stone:        push    bc
                 push    de

@@ -93,7 +93,7 @@ msgFire2:       db      FLASH,0
                 db      FLASH,1," "
                 db      0xff
 
-msgChooseLevel: db      22,2,2,"CHOOSE LEVEL [1-2]: ",FLASH,1," "
+msgChooseLevel: db      22,2,2,"CHOOSE LEVEL [1-3]: ",FLASH,1," "
                 db      0xff
 
                 ; Input:
@@ -173,17 +173,22 @@ MainMenu:       halt
                 jr      z, @@pvp1
                 cp      0x1c        ; 2
                 jr      z, @@pvp2
+                cp      0x14        ; 3
+                jr      z, @@pvp3
                 jr      @@pvpLoop
 
 @@pvp1:         ld      hl, PvpLevel2
                 ld      de, PvpLevel2_size
-                call    RunLevel
+@@runPvp:       call    RunLevel
                 jp      MainMenu
 
 @@pvp2:         ld      hl, PvpLevel1
                 ld      de, PvpLevel1_size
-                call    RunLevel
-                jp      MainMenu
+                jr      @@runPvp
+
+@@pvp3:         ld      hl, PvpLevel3
+                ld      de, PvpLevel3_size
+                jr      @@runPvp
 
                 ; Input:
                 ;   A = sprite index

@@ -295,9 +295,11 @@ void LoadData(void)
     GenerateLevel("level9", "Level9", Level1, Level9Data);
     GenerateLevel("level10", "Level10", Level1, Level10Data);
     GenerateLevel("level11", "Level11", Level1, Level11Data);
+    GenerateLevel("level12", "Level12", Level1, Level12Data);
 
     GenerateLevel("pvpLevel1", "PvpLevel1", Level1, PvpLevel1Data);
     GenerateLevel("pvpLevel2", "PvpLevel2", Level1, PvpLevel2Data);
+    GenerateLevel("pvpLevel3", "PvpLevel3", Level1, PvpLevel3Data);
 
     fclose(f);
     

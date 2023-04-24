@@ -2,6 +2,7 @@
 MAX_SPRITES         = 32
 MAX_FLYING          = 8
 MAX_ITEMS           = 16
+MAX_ENEMIES         = 8
 
 SHOOT_COOLDOWN      = 25
 DEATH_SHOOT_COOLDOWN = 50*2

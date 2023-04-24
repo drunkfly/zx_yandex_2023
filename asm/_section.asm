@@ -19,8 +19,10 @@ section data_level8 [compress=zx7]
 section data_level9 [compress=zx7]
 section data_level10 [compress=zx7]
 section data_level11 [compress=zx7]
+section data_level12 [compress=zx7]
 section data_pvpLevel1 [compress=zx7]
 section data_pvpLevel2 [compress=zx7]
+section data_pvpLevel3 [compress=zx7]
 section data_tiles
 section data_menu
 
@@ -34,5 +36,6 @@ section code_zx7
 section code_items
 section code_game
 section code_flying
+section code_enemies
 
 section y_bss_sprites
