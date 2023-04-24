@@ -142,7 +142,7 @@ KillEnemy:      ld      de, Enemy_state
 
 EnemyCollides:  ld      a, (EnemyCount)
                 or      a
-                ret     z
+                jr      z, @@notFound
                 push    ix
                 ld      hl, Enemies
                 ld      de, sizeof_Enemy-1
@@ -169,7 +169,7 @@ EnemyCollides:  ld      a, (EnemyCount)
                 dec     ixl
                 jr      nz, @@loop
                 pop     ix
-                ld      h, 0
+@@notFound:     ld      h, 0
                 ret
 
                 ; Input:

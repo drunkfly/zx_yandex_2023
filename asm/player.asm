@@ -375,21 +375,37 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 ld      (ix+Player_itemAttr), a
                 inc     a ; return ZF == 0
                 ret
-@@weapon:
-/*
-        } else {
-            byte xx;
-            if ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT)
-                xx = player->phys.x + 1;
-            else
-                xx = player->phys.x + 6;
-            byte id = (player->state == SITTING ? 5 :
-                        (player->state == MOVING ? 1 + ((Timer >> 2) & 3) : 0));
-            SpawnBullet(xx, player->phys.y + ShootY[id], player->phys.flags & PHYS_DIRECTION);
-            player->cooldown = SHOOT_COOLDOWN;
-            player->visualCooldown = GUN_VISUAL_COOLDOWN;
-        }
-*/
+@@weapon:       ld      a, (ix+Player_state)
+                cp      PLAYER_SITTING
+                jr      nz, @@notSitting
+                ld      a, 4
+                jr      @@selected
+@@notSitting:   cp      PLAYER_MOVING
+                jr      nz, @@notMoving
+                ld      a, (Timer)
+                rrca
+                rrca
+                and     3
+                cp      3
+                jr      nz, @@notMoving
+                ld      a, 3
+                jr      @@selected
+@@notMoving:    ld      a, 2
+@@selected:     add     a, (ix+Player_phys_y)
+                ld      d, a
+                ld      a, (ix+Player_phys_x)
+                inc     a
+                ld      b, (ix+Player_phys_flags)   ; PHYS_HORIZONTAL
+                bit     0, b
+                jr      z, @@left                   ; PHYS_LEFT
+                add     a, 6-1
+@@left:         ld      e, a
+                push    ix
+                ld      ixl, b
+                call    SpawnBullet
+                pop     ix
+                ld      (ix+Player_cooldown), SHOOT_COOLDOWN
+                ld      (ix+Player_visualCooldown), GUN_VISUAL_COOLDOWN
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

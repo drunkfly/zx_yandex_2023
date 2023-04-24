@@ -93,7 +93,7 @@ msgFire2:       db      FLASH,0
                 db      FLASH,1," "
                 db      0xff
 
-msgChooseLevel: db      22,2,2,"CHOOSE LEVEL [1-3]: ",FLASH,1," "
+msgChooseLevel: db      22,2,2,"CHOOSE LEVEL [1-4]: ",FLASH,1," "
                 db      0xff
 
                 ; Input:
@@ -175,6 +175,8 @@ MainMenu:       halt
                 jr      z, @@pvp2
                 cp      0x14        ; 3
                 jr      z, @@pvp3
+                cp      0x0c        ; 4
+                jr      z, @@pvp4
                 jr      @@pvpLoop
 
 @@pvp1:         ld      hl, PvpLevel2
@@ -188,6 +190,10 @@ MainMenu:       halt
 
 @@pvp3:         ld      hl, PvpLevel3
                 ld      de, PvpLevel3_size
+                jr      @@runPvp
+
+@@pvp4:         ld      hl, PvpLevel4
+                ld      de, PvpLevel4_size
                 jr      @@runPvp
 
                 ; Input:

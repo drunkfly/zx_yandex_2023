@@ -57,6 +57,7 @@ RunLevel:       call    LoadLevel
                 call    UpdateItems
                 call    UpdateEnemies
                 call    UpdateFlying
+                call    UpdateDrawBullets
                 ld      ix, Player1
                 call    DoPlayer
                 ld      a, (GameLevelDone)

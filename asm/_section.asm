@@ -1,9 +1,10 @@
 section data_intro [file "INTRO", base 0x4000]
 
-section bss [base 0x5d80, imaginary]
+section bss [base 0x5d0c, imaginary]
 
 section data_player_jumps_1 [base 0x5fee]
-section data_player_tables [base 0x6060]
+section data_bullets [base 0x60b6]
+section data_player_tables [base 0x60be]
 section data_player_jumps_2 [base 0x60ee]
 section data_tiles [base 0x6100]     ; aligned on 256 bytes
 
@@ -23,6 +24,7 @@ section data_level12 [compress=zx7]
 section data_pvpLevel1 [compress=zx7]
 section data_pvpLevel2 [compress=zx7]
 section data_pvpLevel3 [compress=zx7]
+section data_pvpLevel4 [compress=zx7]
 section data_tiles
 section data_menu
 

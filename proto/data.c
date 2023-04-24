@@ -166,6 +166,9 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
         }
 
     for (int y = LEVEL_HEIGHT - 1; y >= 0; y--) {
+        if (strlen(data[y]) != LEVEL_WIDTH)
+            abort();
+
         for (int x = 0; x < LEVEL_WIDTH; x++) {
             byte b;
 
@@ -300,6 +303,7 @@ void LoadData(void)
     GenerateLevel("pvpLevel1", "PvpLevel1", Level1, PvpLevel1Data);
     GenerateLevel("pvpLevel2", "PvpLevel2", Level1, PvpLevel2Data);
     GenerateLevel("pvpLevel3", "PvpLevel3", Level1, PvpLevel3Data);
+    GenerateLevel("pvpLevel4", "PvpLevel4", Level1, PvpLevel4Data);
 
     fclose(f);
     

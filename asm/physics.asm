@@ -105,10 +105,11 @@ UpdatePhysObject:
                 ;   B = PhysObject.y
                 ;   D = height
                 ;   E = width
-                ;   IX => PhysObject
                 ; Output:
                 ;   HL => address
                 ;   A = attribute
+                ; Preserves:
+                ;   BC
 
 ReadCollision:  ld      a, b
                 rrca

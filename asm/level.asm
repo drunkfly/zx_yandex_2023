@@ -31,6 +31,7 @@ LoadLevel:      xor     a
                 ld      (ItemCount), a
                 ld      (FlyingCount), a
                 ld      (EnemyCount), a
+                ld      (BulletCount), a
                 ld      (GameLevelDone), a
                 push    de
                 push    hl
