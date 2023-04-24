@@ -76,8 +76,7 @@ PlaceItem:      ld      a, (ItemCount)
                 ld      a, e
                 ld      e, c
                 ld      d, b
-                call    DrawSprites@@draw
-                ret
+                jp      DrawSprites@@draw
 
                 ; Input:
                 ;   A = sprite ID

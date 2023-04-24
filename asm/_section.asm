@@ -37,5 +37,3 @@ section code_items
 section code_game
 section code_flying
 section code_enemies
-
-section y_bss_sprites

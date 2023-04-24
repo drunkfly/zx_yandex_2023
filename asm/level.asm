@@ -185,10 +185,11 @@ LoadLevel:      xor     a
                 sla     c
                 sla     c
                 sla     c
-                ;ld      de, GhostSprites
-                ;call    SpawnEnemy
+                ld      de, GhostSprites
+                call    SpawnEnemy
                 pop     de
                 pop     bc
+                jp      @@doneEmpty
 
 @@stone:        push    bc
                 push    de

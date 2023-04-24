@@ -14,7 +14,7 @@ PhysObject_accel = 4
                 ;   C = X
                 ;   IX => PhysObject
                 ; Preserves:
-                ;   DE, HL
+                ;   BC, DE, HL
 
 InitPhysObject: ld      (ix+PhysObject_x), c
                 ld      (ix+PhysObject_y), b
@@ -77,7 +77,7 @@ UpdatePhysObject:
                 jr      nz, @@loop1
 @@retTrue:      inc     a       ; return true
                 ret
-@@falling:      cp      0xf0
+@@falling:      cp      0xa0;0xf0
                 jr      nc, @@1
 @@falling1:     add     a, 8
                 ld      (ix+PhysObject_speed), a

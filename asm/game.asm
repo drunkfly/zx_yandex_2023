@@ -55,6 +55,7 @@ RunLevel:       call    LoadLevel
                 ld      a, 4
                 out     (0xfe), a
                 call    UpdateItems
+                call    UpdateEnemies
                 call    UpdateFlying
                 ld      ix, Player1
                 call    DoPlayer

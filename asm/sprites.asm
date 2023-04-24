@@ -1,5 +1,5 @@
 
-                section y_bss_sprites
+                section bss
 
 sizeof_Sprite       = 7
 Sprite_oldX         = 0
