@@ -30,6 +30,7 @@ CoinTop2Tile:   db      PASSABLE_ATTR
 LoadLevel:      xor     a
                 ld      (SpriteCount), a
                 ld      (ItemCount), a
+                ld      (FlyingCount), a
                 push    de
                 push    hl
                 halt

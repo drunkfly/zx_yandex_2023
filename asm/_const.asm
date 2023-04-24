@@ -1,6 +1,9 @@
 
 MAX_SPRITES         = 32
+MAX_FLYING          = 8
 MAX_ITEMS           = 16
+
+SHOOT_COOLDOWN      = 25
 
 LEVEL_Y             = 2
 LEVEL_WIDTH         = 32

@@ -47,6 +47,8 @@ CalcItemAddr:   ld      bc, Items
                 ;   C = X
                 ;   E = sprite ID
                 ;   D = attr
+                ; Preserves:
+                ;   IX
 
 PlaceItem:      ld      a, (ItemCount)
                 cp      MAX_ITEMS

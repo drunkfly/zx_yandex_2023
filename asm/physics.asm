@@ -14,7 +14,7 @@ PhysObject_accel = 4
                 ;   C = X
                 ;   IX => PhysObject
                 ; Preserves:
-                ;   DE
+                ;   DE, HL
 
 InitPhysObject: ld      (ix+PhysObject_x), c
                 ld      (ix+PhysObject_y), b
@@ -28,6 +28,8 @@ InitPhysObject: ld      (ix+PhysObject_x), c
                 ;   C = speed
                 ;   A = dir
                 ;   IX => PhysObject
+                ; Preserves:
+                ;   HL
 
 JumpPhysObject: and     PHYS_HORIZONTAL
                 or      PHYS_UP
@@ -63,10 +65,11 @@ UpdatePhysObject:
                 call    CanGoUp
                 pop     de
                 jr      nz, @@canGoUp
-@@fall:         ld      a, (ix+PhysObject_flags)
-                and     ~PHYS_VERTICAL
+@@fall:         ;ld      a, (ix+PhysObject_flags)
+                ;and     ~PHYS_VERTICAL
                 ;or      PHYS_DOWN
-                ld      (ix+PhysObject_flags), a
+                ;ld      (ix+PhysObject_flags), a
+                res     1, (ix+PhysObject_flags)    ; PHYS_DOWN
                 xor     a
                 jr      @@falling1
 @@canGoUp:      dec     (ix+PhysObject_y)

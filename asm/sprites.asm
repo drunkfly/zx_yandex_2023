@@ -1,13 +1,14 @@
 
                 section y_bss_sprites
 
-sizeof_Sprite       = 6
+sizeof_Sprite       = 7
 Sprite_oldX         = 0
 Sprite_oldY         = 1
 Sprite_oldSprite    = 2
 Sprite_newX         = 3
 Sprite_newY         = 4
 Sprite_newSprite    = 5
+Sprite_inUse        = 6
 
 Sprites:        repeat  MAX_SPRITES
                 db      0           ; oldX
@@ -16,6 +17,7 @@ Sprites:        repeat  MAX_SPRITES
                 db      0           ; newX
                 db      0           ; newY
                 db      0           ; newSprite
+                db      0           ; inUse
                 endrepeat
 
 SpriteCount     db      0
@@ -33,10 +35,12 @@ SpriteCount     db      0
                 ;   DE, IX
 
 CalcSpriteAddr: ld      bc, Sprites
-@@raw:          add     a, a        ; *= 2
+@@raw:          ld      h, a
+                add     a, a        ; *= 2
                 ld      l, a
                 add     a, a        ; *= 4
                 add     a, l        ; *= 6
+                add     a, h        ; *= 7
                 ld      l, a
                 ld      h, 0
                 add     hl, bc
@@ -52,17 +56,41 @@ CalcSpriteAddr: ld      bc, Sprites
                 ;   IX, DE
 
 AllocSprite:    ld      a, (SpriteCount)
+                or      a
+                jr      z, @@notFound
+                ld      b, a
+                ld      c, 0
+                ld      hl, Sprites+Sprite_inUse
+                push    de
+                ld      de, sizeof_Sprite
+@@loop:         ld      a, (hl)
+                or      a
+                jr      z, @@found
+                inc     c
+                add     hl, de
+                djnz    @@loop
+                pop     de
+                jr      @@notFound
+@@found:        pop     de
+                ld      a, c
+                jr      @@init
+@@notFound:     ld      a, (SpriteCount)
                 cp      MAX_SPRITES
                 jr      z, @@overflow
-                push    af
                 inc     a
                 ld      (SpriteCount), a
-                ld      bc, Sprites+2-sizeof_Sprite
+                dec     a
+@@init:         ld      bc, Sprites+Sprite_oldSprite
+                push    af
                 call    CalcSpriteAddr@@raw
-                ld      (hl), SPRITE_EMPTY
+                xor     a ; SPRITE_EMPTY
+                ld      (hl), a
                 inc     hl
                 inc     hl
-                ld      (hl), SPRITE_EMPTY
+                inc     hl
+                ld      (hl), a
+                inc     hl
+                ld      (hl), 1
                 pop     af
                 ret
 @@overflow:     xor     a
@@ -72,18 +100,23 @@ AllocSprite:    ld      a, (SpriteCount)
 
                 ; Input:
                 ;   A = sprite index
+                ; Preserves:
+                ;   IX
 
 ReleaseSprite:  call    CalcSpriteAddr
                 push    hl
                 call    DrawSprites@@xor
-                ld      a, (SpriteCount)
-                dec     a
-                ld      (SpriteCount), a
-                call    CalcSpriteAddr
-                pop     de
-                repeat  sizeof_Sprite
-                ldi
-                endrepeat
+                pop     hl
+                xor     a ; SPRITE_EMPTY
+                inc     hl
+                inc     hl
+                ld      (hl), a
+                inc     hl
+                inc     hl
+                inc     hl
+                ld      (hl), a
+                inc     hl
+                ld      (hl), a ; inUse = 0
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -97,7 +130,7 @@ ReleaseSprite:  call    CalcSpriteAddr
                 ;   IX
 
 SetSprite:      push    bc
-                ld      bc, Sprites+3
+                ld      bc, Sprites+Sprite_newX
                 call    CalcSpriteAddr@@raw
                 pop     bc
                 ld      (hl), e
@@ -119,12 +152,14 @@ DrawSprites:    ; draw
                 call    @@xor
                 ; draw
                 call    @@xor
+                inc     hl
                 dec     ixl
                 jr      nz, @@loop1
                 ; update
                 ld      a, (SpriteCount)
                 ld      b, a
 @@loop2:        dec     hl
+                dec     hl
                 ld      a, (hl)
                 dec     hl
                 ld      d, (hl)

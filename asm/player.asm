@@ -290,10 +290,11 @@ MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
                 jr      @@didLeft
 @@cantLeft:     ld      c, -8
                 call    TryGetItem
-@@didLeft:      ld      a, (ix+Player_phys_flags)
-                and     ~PHYS_HORIZONTAL
+@@didLeft:      ;ld      a, (ix+Player_phys_flags)
+                ;and     ~PHYS_HORIZONTAL
                 ;or      PHYS_LEFT
-                ld      (ix+Player_phys_flags), a
+                ;ld      (ix+Player_phys_flags), a
+                res     0, (ix+Player_phys_flags)   ; PHYS_LEFT
                 ret     ; CF=0: return true
 @@noLeft:       ld      b, (ix+Player_keyRight_port)
                 ld      a, (ix+Player_keyRight_mask)
@@ -319,17 +320,66 @@ MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
                 jr      @@didRight
 @@cantRight:    ld      c, 8
                 call    TryGetItem
-@@didRight:     ld      a, (ix+Player_phys_flags)
-                and     ~PHYS_HORIZONTAL
-                or      PHYS_RIGHT
-                ld      (ix+Player_phys_flags), a
+@@didRight:     ;ld      a, (ix+Player_phys_flags)
+                ;and     ~PHYS_HORIZONTAL
+                ;or      PHYS_RIGHT
+                ;ld      (ix+Player_phys_flags), a
+                set     0, (ix+Player_phys_flags)   ; PHYS_RIGHT
                 ret     ; CF=0: return true
 @@noRight:      scf
                 ret     ; CF=1: return false
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-TryShoot:
+TryShoot:       ld      b, (ix+Player_keyFire_port)
+                ld      a, (ix+Player_keyFire_mask)
+                call    KeyPressed
+                ret     nz
+                ld      a, (ix+Player_cooldown)
+                or      a
+                ret     nz
+                ld      a, (ix+Player_itemAttr)
+                or      a
+                jr      z, @@weapon
+                ld      c, (ix+Player_phys_x)
+                ld      a, (ix+Player_state)
+                cp      PLAYER_SITTING
+                ld      a, -6
+                jr      z, @@itemSitting
+                ld      a, -8
+@@itemSitting:  add     a, (ix+Player_phys_y)
+                ld      b, a
+                ld      e, (ix+Player_itemSpriteID)
+                ld      d, (ix+Player_itemAttr)
+                ld      h, (ix+Player_phys_flags)
+                ld      l, 4 << 5
+                push    ix
+                call    SpawnFlyingItem
+                pop     ix
+                ret     z
+                ld      a, (ix+Player_itemSpriteRef)
+                call    ReleaseSprite
+                xor     a
+                ld      (ix+Player_itemSpriteID), a
+                ld      (ix+Player_itemSpriteRef), a
+                ld      (ix+Player_itemAttr), a
+                ld      (ix+Player_cooldown), SHOOT_COOLDOWN
+                ret
+@@weapon:
+/*
+        } else {
+            byte xx;
+            if ((player->phys.flags & PHYS_DIRECTION) == PHYS_LEFT)
+                xx = player->phys.x + 1;
+            else
+                xx = player->phys.x + 6;
+            byte id = (player->state == SITTING ? 5 :
+                        (player->state == MOVING ? 1 + ((Timer >> 2) & 3) : 0));
+            SpawnBullet(xx, player->phys.y + ShootY[id], player->phys.flags & PHYS_DIRECTION);
+            player->cooldown = SHOOT_COOLDOWN;
+            player->visualCooldown = GUN_VISUAL_COOLDOWN;
+        }
+*/
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

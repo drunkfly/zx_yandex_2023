@@ -16,8 +16,10 @@ section code_sprites
 section code_zx7
 section code_items
 section code_game
+section code_flying
 
 section y_bss_game
 section y_bss_player
 section y_bss_sprites
 section y_bss_items
+section y_bss_flying
