@@ -9,6 +9,18 @@ section data_tiles [base 0x6100]     ; aligned on 256 bytes
 
 section data_gfx
 section data_level1 [compress=zx7]
+section data_level2 [compress=zx7]
+section data_level3 [compress=zx7]
+section data_level4 [compress=zx7]
+section data_level5 [compress=zx7]
+section data_level6 [compress=zx7]
+section data_level7 [compress=zx7]
+section data_level8 [compress=zx7]
+section data_level9 [compress=zx7]
+section data_level10 [compress=zx7]
+section data_level11 [compress=zx7]
+section data_pvpLevel1 [compress=zx7]
+section data_pvpLevel2 [compress=zx7]
 section data_tiles
 section data_menu
 
@@ -23,5 +35,4 @@ section code_items
 section code_game
 section code_flying
 
-section y_bss_game
 section y_bss_sprites

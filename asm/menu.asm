@@ -93,6 +93,9 @@ msgFire2:       db      FLASH,0
                 db      FLASH,1," "
                 db      0xff
 
+msgChooseLevel: db      22,2,2,"CHOOSE LEVEL [1-2]: ",FLASH,1," "
+                db      0xff
+
                 ; Input:
                 ;   none
 
@@ -144,17 +147,43 @@ MainMenu:       halt
 
 @@single:       ld      a, 1
                 ld      (SinglePlayer), a
-                ld      hl, Level1
-                ld      de, Level1_size
-                call    RunLevel
+                call    Campaign
                 jr      MainMenu
 
 @@pvp:          xor     a
                 ld      (SinglePlayer), a
-                ld      hl, Level1
-                ld      de, Level1_size
+
+                halt
+                call    ClearAttrib
+                call    ClearScreen
+
+                ld      hl, msgChooseLevel
+                call    DrawString
+
+@@pvpLoop:      call    0x028E
+                ld      a, e
+                cp      0xff
+                jr      z, @@pvpLoop
+
+                push    af
+                call    WaitKeyReleased
+                pop     af
+
+                cp      0x24        ; 1
+                jr      z, @@pvp1
+                cp      0x1c        ; 2
+                jr      z, @@pvp2
+                jr      @@pvpLoop
+
+@@pvp1:         ld      hl, PvpLevel2
+                ld      de, PvpLevel2_size
                 call    RunLevel
-                jr      MainMenu
+                jp      MainMenu
+
+@@pvp2:         ld      hl, PvpLevel1
+                ld      de, PvpLevel1_size
+                call    RunLevel
+                jp      MainMenu
 
                 ; Input:
                 ;   A = sprite index

@@ -40,7 +40,9 @@ Player_keyFire_port     = 23
 Player_spriteRef        = 24
 Player_itemSpriteRef    = 25
 Player_kempston         = 26
- 
+Player_myCoin           = 27
+Player_enemyCoin        = 28
+
 Player1:        db      0           ; phys.x
                 db      0           ; phys.y
                 db      0           ; phys.flags
@@ -68,6 +70,8 @@ Player1:        db      0           ; phys.x
                 db      0           ; spriteRef
                 db      0           ; itemSpriteRef
                 db      0           ; kempston
+                db      0           ; myCoin
+                db      0           ; enemyCoin
 
 Player2:        db      0           ; phys.x
                 db      0           ; phys.y
@@ -96,6 +100,8 @@ Player2:        db      0           ; phys.x
                 db      0           ; spriteRef
                 db      0           ; itemSpriteRef
                 db      0           ; kempston
+                db      0           ; myCoin
+                db      0           ; enemyCoin
 
 onGround        db      0
 
@@ -360,13 +366,13 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 call    SpawnFlyingItem
                 pop     ix
                 ret     z
+                ld      (ix+Player_cooldown), SHOOT_COOLDOWN
 @@freeItemSprte:ld      a, (ix+Player_itemSpriteRef)
                 call    ReleaseSprite
                 xor     a
                 ld      (ix+Player_itemSpriteID), a
                 ld      (ix+Player_itemSpriteRef), a
                 ld      (ix+Player_itemAttr), a
-                ld      (ix+Player_cooldown), SHOOT_COOLDOWN
                 inc     a ; return ZF == 0
                 ret
 @@weapon:
@@ -634,47 +640,97 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 ld      a, (ix+Player_itemSpriteRef)
                 ld      b, (ix+Player_itemSpriteID)
                 call    SetSprite
-@@noItem:
+@@noItem:       ld      a, (ix+Player_state)
+                cp      PLAYER_DEAD
+                ret     z
+                cp      PLAYER_DEAD_FALLING
+                ret     z
+                cp      PLAYER_DEAD_FALLING_RESPAWN
+                ret     z
+                cp      PLAYER_DEAD_RESPAWN
+                ret     z
+                ld      a, (ix+Player_phys_x)
+                add     a, -6+8
+                cp      (ix+Player_gatesX)
+                ret     c
+                ld      a, (ix+Player_gatesX)
+                add     a, 3*8 - 6
+                cp      (ix+Player_phys_x)
+                ret     c
+                ld      a, (ix+Player_phys_y)
+                add     a, 8
+                cp      (ix+Player_gatesY)
+                ret     c
+                add     a, -8-8-1
+                cp      (ix+Player_gatesY)
+                ret     nc
 
-/*
-    if (player->itemAttr)
-        XorSprite(player->phys.x, player->phys.y - (player->state == SITTING ? 7 : 9), player->itemSprite);
+                ld      a, (ix+Player_itemAttr)
+                cp      (ix+Player_myCoin)
+                jr      nz, @@notMyCoin
 
-    if ((player->state != DEAD && player->state != DEAD_FALLING && player->state != DEAD_FALLING_RESPAWN && player->state != DEAD_RESPAWN)
-            && player->phys.x + 8 >= player->gatesX + 6 && player->phys.x <= player->gatesX + 3 * 8 - 6
-            && player->phys.y + 8 >= player->gatesY && player->phys.y <= player->gatesY + 8) {
-        byte myApple = (player == &player1 ? APPLE1_ATTR : APPLE2_ATTR);
-        byte enemyApple = (player == &player1 ? APPLE2_ATTR : APPLE1_ATTR);
+                ld      a, (ix+Player_gatesX)
+                add     a, 8
+                ld      c, a
+                ld      b, (ix+Player_gatesY)
+                ld      e, (ix+Player_itemSpriteID)
+                ld      d, (ix+Player_itemAttr)
+                call    PlaceItem
+                call    TryShoot@@freeItemSprte
 
-        if (player->itemAttr == myApple) {
-            XorSprite(player->phys.x, player->phys.y - (player->state == SITTING ? 7 : 9), player->itemSprite);
-            PlaceItem(player->gatesX + 8, player->gatesY, player->itemSprite, player->itemAttr);
-            player->itemSprite = NULL;
-            player->itemAttr = 0;
-        }
+@@notMyCoin:    ld      b, (ix+Player_gatesY)
+                ld      c, (ix+Player_gatesX)
+                ld      a, 8
+                call    @@itemAtGates
+                ld      (@@itemAtGates1+1), a
+                ld      a, 16
+                call    @@itemAtGates
+                ld      (@@itemAtGates2+1), a
+                xor     a
+                call    @@itemAtGates
+                ld      b, a
 
-        const Item* itemAtOurGates1 = ItemAt(player->gatesX + 8, player->gatesY);
-        const Item* itemAtOurGates2 = ItemAt(player->gatesX, player->gatesY);
-        const Item* itemAtOurGates3 = ItemAt(player->gatesX + 16, player->gatesY);
+                ld      a, (ix+Player_enemyCoin)
+                ld      c, (ix+Player_itemAttr)
+                cp      c
+                jr      z, @@haveEnemyCoin
+                cp      b
+                jr      z, @@haveEnemyCoin
+@@itemAtGates1: cp      0
+                jr      z, @@haveEnemyCoin
+@@itemAtGates2: cp      0
+                ret     nz
+@@haveEnemyCoin:ld      a, (SinglePlayer)
+                or      a
+                jr      nz, @@haveOurCoin
+                ld      a, (ix+Player_myCoin)
+                cp      c
+                jr      z, @@haveOurCoin
+                cp      b
+                jr      z, @@haveOurCoin
+                ld      hl, @@itemAtGates1+1
+                cp      (hl)
+                jr      z, @@haveOurCoin
+                ld      hl, @@itemAtGates2+1
+                cp      (hl)
+                ret     nz
+@@haveOurCoin:  ld      (GameLevelDone), a
+                ret
 
-        bool haveEnemyCoin = (player->itemAttr == enemyApple ||
-            (itemAtOurGates1 != NULL && itemAtOurGates1->attr == enemyApple) ||
-            (itemAtOurGates2 != NULL && itemAtOurGates2->attr == enemyApple) ||
-            (itemAtOurGates3 != NULL && itemAtOurGates3->attr == enemyApple));
-
-        bool haveOurCoin = (player->itemAttr == myApple ||
-            (itemAtOurGates1 != NULL && itemAtOurGates1->attr == myApple) ||
-            (itemAtOurGates2 != NULL && itemAtOurGates2->attr == myApple) ||
-            (itemAtOurGates3 != NULL && itemAtOurGates3->attr == myApple));
-
-        if (haveOurCoin && haveEnemyCoin)
-            return false;
-    }
-
-    return true;
-}
-*/
-
+@@itemAtGates:  push    bc
+                add     a, c
+                ld      c, a
+                call    ItemAt
+                pop     bc
+                ld      a, h
+                or      a
+                jr      z, @@none
+                inc     hl
+                inc     hl
+                inc     hl
+                ld      a, (hl)
+                ret
+@@none:         ld      a, 0xff
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

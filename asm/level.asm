@@ -31,6 +31,7 @@ LoadLevel:      xor     a
                 ld      (SpriteCount), a
                 ld      (ItemCount), a
                 ld      (FlyingCount), a
+                ld      (GameLevelDone), a
                 push    de
                 push    hl
                 halt
@@ -157,15 +158,16 @@ LoadLevel:      xor     a
                 jr      z, @@playerTop1
                 ld      hl, CoinTopTile
 @@playerTop1:   push    bc
+                sla     c
+                sla     c
+                sla     c
+                ld      a, c
+                sub     a, 8
+                ld      (ix+Player_gatesX), a
                 sla     b
                 sla     b
                 sla     b
                 ld      a, b
-                sub     8
-                ld      (ix+Player_gatesX), a
-                sla     c
-                sla     c
-                sla     c
                 add     a, 8
                 ld      (ix+Player_gatesY), a
                 pop     bc

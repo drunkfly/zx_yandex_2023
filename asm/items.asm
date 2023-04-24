@@ -155,12 +155,14 @@ ItemAt:         ld      a, (ItemCount)
                 dec     hl
                 and     ~7
                 cp      b
-                ret     z
+                jr      z, @@found
 @@continue:     add     hl, de
                 dec     ixl
                 jr      nz, @@loop
                 pop     ix
 @@notFound:     ld      h, 0
+                ret
+@@found:        pop     ix
                 ret
 
                 ; Input:

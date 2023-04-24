@@ -14,6 +14,7 @@ add_executable(proto WIN32
     bullet.c
     data.c
     data_levels.h
+    data_levels_2.h
     enemies.c
     enemies.h
     game.c

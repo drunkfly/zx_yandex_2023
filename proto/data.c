@@ -143,6 +143,7 @@ static void GetMirrorSprite(const char* name, byte* dst, byte x, byte y)
 }
 
 #include "data_levels.h"
+#include "data_levels_2.h"
 
 static void GenerateLevel(const char* section, const char* name, byte* level, const char* const* data)
 {
@@ -284,6 +285,19 @@ void LoadData(void)
     f = fopen(buf, "w");
 
     GenerateLevel("level1", "Level1", Level1, Level1Data);
+    GenerateLevel("level2", "Level2", Level1, Level2Data);
+    GenerateLevel("level3", "Level3", Level1, Level3Data);
+    GenerateLevel("level4", "Level4", Level1, Level4Data);
+    GenerateLevel("level5", "Level5", Level1, Level5Data);
+    GenerateLevel("level6", "Level6", Level1, Level6Data);
+    GenerateLevel("level7", "Level7", Level1, Level7Data);
+    GenerateLevel("level8", "Level8", Level1, Level8Data);
+    GenerateLevel("level9", "Level9", Level1, Level9Data);
+    GenerateLevel("level10", "Level10", Level1, Level10Data);
+    GenerateLevel("level11", "Level11", Level1, Level11Data);
+
+    GenerateLevel("pvpLevel1", "PvpLevel1", Level1, PvpLevel1Data);
+    GenerateLevel("pvpLevel2", "PvpLevel2", Level1, PvpLevel2Data);
 
     fclose(f);
     
