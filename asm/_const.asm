@@ -25,6 +25,7 @@ PASSABLE_ATTR       = 0x47
 COIN1_ATTR          = 0x46
 COIN2_ATTR          = 0x44
 STONE_ATTR          = 0x07
+BRICKS_ATTR         = 0x57
 
 PHYS_HORIZONTAL     = 0x01
 PHYS_LEFT           = 0

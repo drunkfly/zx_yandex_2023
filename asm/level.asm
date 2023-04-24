@@ -1,9 +1,8 @@
-
                 section data_tiles
 
 Tiles:          db      PASSABLE_ATTR       ; 0
                 dw      Empty
-                db      0x57                ; 1
+                db      BRICKS_ATTR         ; 1
                 dw      Bricks
                 db      PASSABLE_ATTR       ; 2
                 dw      CoinTopLeft
