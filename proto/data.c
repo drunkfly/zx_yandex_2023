@@ -119,6 +119,7 @@ byte Bricks2[8];
 byte Bricks3[8];
 byte Bricks4[8];
 byte Bricks5[8];
+byte Bricks6[8];
 byte Stones1[8];
 byte Stones2[8];
 
@@ -262,63 +263,65 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
                     if (!hasLeft && !hasRight)
                         b = 6;
                     else if (!hasLeft && hasRight)
-                        b = 7;
-                    else if (hasLeft && !hasRight)
                         b = 8;
-                    else
+                    else if (hasLeft && !hasRight)
                         b = 9;
+                    else
+                        b = 10;
                     break;
                 }
                 case '@': {
                     bool hasLeft = (x != 0 && data[y][x-1] == '@');
                     bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '@');
                     if (!hasLeft && !hasRight)
-                        b = 11;
-                    else if (!hasLeft && hasRight)
                         b = 12;
-                    else if (hasLeft && !hasRight)
-                        b = 13;
-                    else
+                    else if (!hasLeft && hasRight)
                         b = 14;
+                    else if (hasLeft && !hasRight)
+                        b = 15;
+                    else
+                        b = 16;
                     break;
                 }
                 case '%': {
                     bool hasLeft = (x != 0 && data[y][x-1] == '%');
                     bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '%');
                     if (!hasLeft && !hasRight)
-                        b = 18;
-                    else if (!hasLeft && hasRight)
-                        b = 19;
-                    else if (hasLeft && !hasRight)
                         b = 20;
+                    else if (!hasLeft && hasRight)
+                        b = 22;
+                    else if (hasLeft && !hasRight)
+                        b = 23;
                     else
-                        b = 21;
+                        b = 24;
                     break;
                 }
                 case '?': {
                     bool hasLeft = (x != 0 && data[y][x-1] == '&');
                     bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '&');
                     if (!hasLeft && !hasRight)
-                        b = 23;
-                    else if (!hasLeft && hasRight)
-                        b = 24;
-                    else if (hasLeft && !hasRight)
-                        b = 25;
-                    else
                         b = 26;
+                    else if (!hasLeft && hasRight)
+                        b = 28;
+                    else if (hasLeft && !hasRight)
+                        b = 29;
+                    else
+                        b = 30;
                     break;
                 }
-                case 'X': b = 16; break;
-                case 'x': b = 28; break;
-                case 'Y': b = 30; break;
-                case 'y': b = 32; break;
+                case 'X': b = 18; break;
+                case 'x': b = 32; break;
+                case 'Y': b = 34; break;
+                case 'y': b = 36; break;
                 case '1': FLUSH(); *level++ = 0x80 | PLAYER_1_START; continue;
                 case '2': FLUSH(); *level++ = 0x80 | PLAYER_2_START; continue;
                 case 'O': FLUSH(); *level++ = 0x80 | STONE; continue;
                 case 'G': FLUSH(); *level++ = 0x80 | GHOST; continue;
                 case 'B': FLUSH(); *level++ = 0x80 | BAT; continue;
                 case 'W': FLUSH(); *level++ = 0x80 | WEAPON; continue;
-                case 'F': FLUSH(); *level++ = 0x80 | FLOWER; continue;
+                case 'F': FLUSH(); *level++ = 0x80 | FLOWER_LEFT; continue;
+                case 'f': FLUSH(); *level++ = 0x80 | FLOWER_RIGHT; continue;
+                case 'L': FLUSH(); *level++ = 0x80 | FLOWER_AUTO; continue;
                 default: abort();
             }
 
@@ -423,6 +426,7 @@ void LoadData(void)
     GetSprite("Bricks3", Bricks3, 16, 24);
     GetSprite("Bricks4", Bricks4, 24, 24);
     GetSprite("Bricks5", Bricks5, 32, 24);
+    GetSprite("Bricks6", Bricks6, 40, 24);
     GetSprite("Stones1", Stones1, 0, 32);
     GetSprite("Stones2", Stones2, 8, 32);
 

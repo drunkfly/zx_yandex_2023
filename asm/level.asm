@@ -14,68 +14,76 @@ Tiles:          db      PASSABLE_ATTR       ; 0
                 db      PASSABLE_ATTR       ; 5
                 dw      CoinRight
                 ; bricks
-                db      BRICKS_ATTR         ; 6
+                db      BRICKS_ATTR         ; 6     ++
                 dw      Bricks5
                 db      BRICKS_ATTR         ; 7
-                dw      Bricks1
+                dw      Bricks6
                 db      BRICKS_ATTR         ; 8
+                dw      Bricks1
+                db      BRICKS_ATTR         ; 9
                 dw      Bricks4
-                db      BRICKS_ATTR         ; 9     ++
+                db      BRICKS_ATTR         ; 10    ++
                 dw      Bricks2
-                db      BRICKS_ATTR         ; 10
+                db      BRICKS_ATTR         ; 11
                 dw      Bricks3
                 ; bricks 2
-                db      BRICKS2_ATTR        ; 11
+                db      BRICKS2_ATTR        ; 12    ++
                 dw      Bricks5
-                db      BRICKS2_ATTR        ; 12
-                dw      Bricks1
                 db      BRICKS2_ATTR        ; 13
-                dw      Bricks4
-                db      BRICKS2_ATTR        ; 14    ++
-                dw      Bricks2
+                dw      Bricks6
+                db      BRICKS2_ATTR        ; 14
+                dw      Bricks1
                 db      BRICKS2_ATTR        ; 15
+                dw      Bricks4
+                db      BRICKS2_ATTR        ; 16    ++
+                dw      Bricks2
+                db      BRICKS2_ATTR        ; 17
                 dw      Bricks3
                 ; stones 1
-                db      STONES1_ATTR        ; 16    ++
+                db      STONES1_ATTR        ; 18    ++
                 dw      Stones1
-                db      STONES1_ATTR        ; 17
+                db      STONES1_ATTR        ; 19
                 dw      Stones2
                 ; bricks 3
-                db      BRICKS3_ATTR        ; 18
+                db      BRICKS3_ATTR        ; 20    ++
                 dw      Bricks5
-                db      BRICKS3_ATTR        ; 19
-                dw      Bricks1
-                db      BRICKS3_ATTR        ; 20
-                dw      Bricks4
-                db      BRICKS3_ATTR        ; 21     ++
-                dw      Bricks2
+                db      BRICKS3_ATTR        ; 21
+                dw      Bricks6
                 db      BRICKS3_ATTR        ; 22
+                dw      Bricks1
+                db      BRICKS3_ATTR        ; 23
+                dw      Bricks4
+                db      BRICKS3_ATTR        ; 24    ++
+                dw      Bricks2
+                db      BRICKS3_ATTR        ; 25
                 dw      Bricks3
                 ; bricks 4
-                db      BRICKS4_ATTR        ; 23
-                dw      Bricks5
-                db      BRICKS4_ATTR        ; 24
-                dw      Bricks1
-                db      BRICKS4_ATTR        ; 25
-                dw      Bricks4
                 db      BRICKS4_ATTR        ; 26    ++
-                dw      Bricks2
+                dw      Bricks5
                 db      BRICKS4_ATTR        ; 27
+                dw      Bricks6
+                db      BRICKS4_ATTR        ; 28
+                dw      Bricks1
+                db      BRICKS4_ATTR        ; 29
+                dw      Bricks4
+                db      BRICKS4_ATTR        ; 30    ++
+                dw      Bricks2
+                db      BRICKS4_ATTR        ; 31
                 dw      Bricks3
                 ; stones 2
-                db      STONES2_ATTR        ; 28    ++
+                db      STONES2_ATTR        ; 32    ++
                 dw      Stones1
-                db      STONES2_ATTR        ; 29
+                db      STONES2_ATTR        ; 33
                 dw      Stones2
                 ; stones 3
-                db      STONES3_ATTR        ; 30    ++
+                db      STONES3_ATTR        ; 34    ++
                 dw      Stones1
-                db      STONES3_ATTR        ; 31
+                db      STONES3_ATTR        ; 35
                 dw      Stones2
                 ; stones 4
-                db      STONES4_ATTR        ; 32    ++
+                db      STONES4_ATTR        ; 36    ++
                 dw      Stones1
-                db      STONES4_ATTR        ; 33
+                db      STONES4_ATTR        ; 37
                 dw      Stones2
 
 CoinTopTile:    db      PASSABLE_ATTR
@@ -129,21 +137,29 @@ LoadLevel:      xor     a
                 ; read value
                 dec     de
 @@rleLoop:      ld      a, (de)
-                cp      9
+                cp      6
                 jr      z, @@randomize
-                cp      14
+                cp      10
+                jr      z, @@randomize
+                cp      12
                 jr      z, @@randomize
                 cp      16
                 jr      z, @@randomize
-                cp      21
+                cp      18
+                jr      z, @@randomize
+                cp      20
+                jr      z, @@randomize
+                cp      24
                 jr      z, @@randomize
                 cp      26
-                jr      z, @@randomize
-                cp      28
                 jr      z, @@randomize
                 cp      30
                 jr      z, @@randomize
                 cp      32
+                jr      z, @@randomize
+                cp      34
+                jr      z, @@randomize
+                cp      36
                 jr      nz, @@do
 @@randomize:    ex      af, af'
                 ld      hl, 0x500-0x4000
@@ -211,8 +227,12 @@ LoadLevel:      xor     a
                 jp      z, @@ghost
                 cp      OBJ_BAT
                 jp      z, @@bat
-                cp      OBJ_FLOWER
-                jp      z, @@flower
+                cp      OBJ_FLOWER_LEFT
+                jp      z, @@flowerLeft
+                cp      OBJ_FLOWER_RIGHT
+                jp      z, @@flowerRight
+                cp      OBJ_FLOWER_AUTO
+                jp      z, @@flowerAuto
                 cp      OBJ_WEAPON
                 jr      z, @@weapon
 @@doneEmpty:    xor     a
@@ -255,7 +275,7 @@ LoadLevel:      xor     a
                 call    PlaceItem
                 pop     bc
                 pop     de
-                jr      @@doneObject
+                jp      @@doneObject
 
 @@player1top:   ld      ix, Player1
                 ld      hl, CoinTop1Tile
@@ -289,9 +309,25 @@ LoadLevel:      xor     a
 @@bat:          push    de
                 ld      de, BatSprites
                 jr      @@enemy
-@@flower:       push    de
+@@flowerLeft:   push    de
                 ld      de, FlowerSprites
-@@enemy:        push    bc
+@@enemy:        call    @@spawnEnemy
+@@doneSpawn:    pop     de
+                jp      @@doneEmpty
+
+@@flowerRight:  push    de
+                ld      de, FlowerSprites
+                call    @@spawnEnemy
+                set     0, (ix+Enemy_phys_flags)    ; PHYS_RIGHT
+                jr      @@doneSpawn
+
+@@flowerAuto:   push    de
+                ld      de, FlowerSprites
+                call    @@spawnEnemy
+                set     6, (ix+Enemy_state)         ; ENEMY_FLIP_AFTER_SHOOT
+                jr      @@doneSpawn
+
+@@spawnEnemy:   push    bc
                 sla     b
                 sla     b
                 sla     b
@@ -300,8 +336,7 @@ LoadLevel:      xor     a
                 sla     c
                 call    SpawnEnemy
                 pop     bc
-                pop     de
-                jp      @@doneEmpty
+                ret
 
 @@stone:        push    bc
                 push    de

@@ -226,6 +226,7 @@ extern byte Bricks2[8];
 extern byte Bricks3[8];
 extern byte Bricks4[8];
 extern byte Bricks5[8];
+extern byte Bricks6[8];
 extern byte Stones1[8];
 extern byte Stones2[8];
 

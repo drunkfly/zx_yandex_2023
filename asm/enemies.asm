@@ -7,6 +7,7 @@ ENEMY_WAITING = 3
 ENEMY_STATE_MASK = 0x0f
 ENEMY_SHOOTING = 0x10
 ENEMY_STATIC = 0x20
+ENEMY_FLIP_AFTER_SHOOT = 0x40
 
 ENEMY_VISIBLE_WHEN_DEAD = 0x02
 ENEMY_FALL_WHEN_DEAD = 0x04
@@ -173,6 +174,8 @@ CalcEnemyAddr:  ld      bc, Enemies
                 ;   B = Y
                 ;   C = X
                 ;   DE => sprites
+                ; Output:
+                ;   IX => enemy
 
 SpawnEnemy:     ld      a, (EnemyCount)
                 cp      MAX_ENEMIES
@@ -418,7 +421,7 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 ld      (ix+Enemy_state), a
                 xor     a
 @@updateIndex:  ld      (ix+Enemy_index), a
-                jr      @@setSprite
+                jp      @@setSprite
 @@notWaiting:   ld      a, (ix+Enemy_phys_flags)
                 rlca
                 rlca
@@ -445,7 +448,17 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 ld      a, (ix+Enemy_originalX)
                 dec     a
                 ld      (ix+Enemy_originalX), a
-                jr      nz, @@setSprite
+                cp      ENEMY_SHOOT_COOLDOWN/2
+                ld      c, a
+                jr      nz, @@noFlip2
+                bit     6, (ix+Enemy_state)         ; ENEMY_FLIP_AFTER_SHOOT
+                jr      z, @@noFlip2
+                ld      a, (ix+Enemy_phys_flags)
+                xor     1                           ; PHYS_HORIZONTAL
+                ld      (ix+Enemy_phys_flags), a
+@@noFlip2:      ld      a, c
+                or      a
+@@noFlip:       jr      nz, @@setSprite
                 ld      (ix+Enemy_originalX), ENEMY_SHOOT_COOLDOWN
                 push    ix
                 push    de

@@ -1,4 +1,5 @@
 #include "proto.h"
+#include <stdlib.h>
 
 typedef struct Tile { const byte* image; byte attr; } Tile;
 
@@ -25,33 +26,37 @@ static Tile Tiles[] = {
         { AppleLeft,        PASSABLE_ATTR },    /* 4 */
         { AppleRight,       PASSABLE_ATTR },    /* 5 */
         { Bricks5,          BRICKS_ATTR },      /* 6 */
-        { Bricks1,          BRICKS_ATTR },      /* 7 */
-        { Bricks4,          BRICKS_ATTR },      /* 8 */
-        { Bricks2,          BRICKS_ATTR },      /* 9 */
-        { Bricks3,          BRICKS_ATTR },      /* 10 */
-        { Bricks5,          BRICKS2_ATTR },     /* 11 */
-        { Bricks1,          BRICKS2_ATTR },     /* 12 */
-        { Bricks4,          BRICKS2_ATTR },     /* 13 */
-        { Bricks2,          BRICKS2_ATTR },     /* 14 */
-        { Bricks3,          BRICKS2_ATTR },     /* 15 */
-        { Stones1,          STONES1_ATTR },     /* 16 */
-        { Stones2,          STONES1_ATTR },     /* 17 */
-        { Bricks5,          BRICKS3_ATTR },     /* 18 */
-        { Bricks1,          BRICKS3_ATTR },     /* 19 */
-        { Bricks4,          BRICKS3_ATTR },     /* 20 */
-        { Bricks2,          BRICKS3_ATTR },     /* 21 */
-        { Bricks3,          BRICKS3_ATTR },     /* 22 */
-        { Bricks5,          BRICKS4_ATTR },     /* 23 */
-        { Bricks1,          BRICKS4_ATTR },     /* 24 */
-        { Bricks4,          BRICKS4_ATTR },     /* 25 */
-        { Bricks2,          BRICKS4_ATTR },     /* 26 */
-        { Bricks3,          BRICKS4_ATTR },     /* 27 */
-        { Stones1,          STONES2_ATTR },     /* 28 */
-        { Stones2,          STONES2_ATTR },     /* 29 */
-        { Stones1,          STONES3_ATTR },     /* 30 */
-        { Stones2,          STONES3_ATTR },     /* 31 */
-        { Stones1,          STONES4_ATTR },     /* 32 */
-        { Stones2,          STONES4_ATTR },     /* 33 */
+        { Bricks6,          BRICKS_ATTR },      /* 7 */
+        { Bricks1,          BRICKS_ATTR },      /* 8 */
+        { Bricks4,          BRICKS_ATTR },      /* 9 */
+        { Bricks2,          BRICKS_ATTR },      /* 10 */
+        { Bricks3,          BRICKS_ATTR },      /* 11 */
+        { Bricks5,          BRICKS2_ATTR },     /* 12 */
+        { Bricks6,          BRICKS2_ATTR },     /* 13 */
+        { Bricks1,          BRICKS2_ATTR },     /* 14 */
+        { Bricks4,          BRICKS2_ATTR },     /* 15 */
+        { Bricks2,          BRICKS2_ATTR },     /* 16 */
+        { Bricks3,          BRICKS2_ATTR },     /* 17 */
+        { Stones1,          STONES1_ATTR },     /* 18 */
+        { Stones2,          STONES1_ATTR },     /* 19 */
+        { Bricks5,          BRICKS3_ATTR },     /* 20 */
+        { Bricks6,          BRICKS3_ATTR },     /* 21 */
+        { Bricks1,          BRICKS3_ATTR },     /* 22 */
+        { Bricks4,          BRICKS3_ATTR },     /* 23 */
+        { Bricks2,          BRICKS3_ATTR },     /* 24 */
+        { Bricks3,          BRICKS3_ATTR },     /* 25 */
+        { Bricks5,          BRICKS4_ATTR },     /* 26 */
+        { Bricks6,          BRICKS4_ATTR },     /* 27 */
+        { Bricks1,          BRICKS4_ATTR },     /* 28 */
+        { Bricks4,          BRICKS4_ATTR },     /* 29 */
+        { Bricks2,          BRICKS4_ATTR },     /* 30 */
+        { Bricks3,          BRICKS4_ATTR },     /* 31 */
+        { Stones1,          STONES2_ATTR },     /* 32 */
+        { Stones2,          STONES2_ATTR },     /* 33 */
+        { Stones1,          STONES3_ATTR },     /* 34 */
+        { Stones2,          STONES3_ATTR },     /* 35 */
+        { Stones1,          STONES4_ATTR },     /* 36 */
+        { Stones2,          STONES4_ATTR },     /* 37 */
 };
 
 static void DrawTile(byte x, byte y, const Tile* tile)
@@ -130,8 +135,9 @@ void DrawLevel(const byte* level)
         byte value = *level++;
         while (count-- > 0) {
             byte id = value;
-            if (value == 9 || value == 14 || value == 16 || value == 21 || value == 26
-                    || value == 28 || value == 30 || value == 32) {
+            if (value == 6 || value == 10 || value == 12 || value == 16 || value == 18
+                    || value == 20 || value == 24 || value == 26 || value == 30 || value == 32
+                    || value == 34 || value == 36) {
                 if (rand() % 2 == 0)
                     value++;
             }

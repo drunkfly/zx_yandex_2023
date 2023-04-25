@@ -25,7 +25,9 @@ OBJ_STONE           = 6
 OBJ_GHOST           = 7
 OBJ_WEAPON          = 8
 OBJ_BAT             = 9
-OBJ_FLOWER          = 10
+OBJ_FLOWER_LEFT     = 10
+OBJ_FLOWER_RIGHT    = 11
+OBJ_FLOWER_AUTO     = 12
 
 PASSABLE_ATTR       = 0x47
 COIN1_ATTR          = 0x46

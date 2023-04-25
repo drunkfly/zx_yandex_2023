@@ -30,23 +30,23 @@ SPRITE_Bricks2 = 3
 Bricks2:
 db 0x00
 db 0x7E
-db 0xC4
-db 0xAA
+db 0xD4
+db 0xA2
 db 0x00
 db 0xE7
 db 0x4D
-db 0xAA
+db 0xA8
 
 SPRITE_Bricks3 = 4
 Bricks3:
 db 0x00
 db 0x7E
-db 0xD0
+db 0xD4
 db 0x8A
 db 0x00
 db 0xE7
-db 0x4C
-db 0x2A
+db 0x4D
+db 0x8A
 
 SPRITE_Bricks4 = 5
 Bricks4:
@@ -57,7 +57,7 @@ db 0xA2
 db 0x00
 db 0xE6
 db 0x4D
-db 0xAA
+db 0x8A
 
 SPRITE_Bricks5 = 6
 Bricks5:
@@ -70,7 +70,18 @@ db 0x66
 db 0xCD
 db 0xAA
 
-SPRITE_Stones1 = 7
+SPRITE_Bricks6 = 7
+Bricks6:
+db 0x00
+db 0x7E
+db 0xD5
+db 0xA8
+db 0x00
+db 0x66
+db 0xCD
+db 0xA8
+
+SPRITE_Stones1 = 8
 Stones1:
 db 0x00
 db 0x7E
@@ -81,18 +92,18 @@ db 0x90
 db 0xC0
 db 0x80
 
-SPRITE_Stones2 = 8
+SPRITE_Stones2 = 9
 Stones2:
 db 0x00
 db 0x7E
 db 0xD4
 db 0xA0
-db 0xD0
+db 0xD2
 db 0x80
 db 0xC4
 db 0xA0
 
-SPRITE_CoinLeft = 9
+SPRITE_CoinLeft = 10
 CoinLeft:
 db 0x0F
 db 0x0C
@@ -103,7 +114,7 @@ db 0x0C
 db 0x0E
 db 0x1F
 
-SPRITE_CoinTopLeft = 10
+SPRITE_CoinTopLeft = 11
 CoinTopLeft:
 db 0x00
 db 0x00
@@ -114,7 +125,7 @@ db 0x00
 db 0x0E
 db 0x00
 
-SPRITE_CoinTop = 11
+SPRITE_CoinTop = 12
 CoinTop:
 db 0x00
 db 0x00
@@ -125,7 +136,7 @@ db 0x00
 db 0xFF
 db 0x00
 
-SPRITE_CoinTop1 = 12
+SPRITE_CoinTop1 = 13
 CoinTop1:
 db 0x00
 db 0x18
@@ -136,7 +147,7 @@ db 0x00
 db 0xFF
 db 0x00
 
-SPRITE_CoinTop2 = 13
+SPRITE_CoinTop2 = 14
 CoinTop2:
 db 0x00
 db 0x38
@@ -147,7 +158,7 @@ db 0x00
 db 0xFF
 db 0x00
 
-SPRITE_CoinTopRight = 14
+SPRITE_CoinTopRight = 15
 CoinTopRight:
 db 0x00
 db 0x00
@@ -158,7 +169,7 @@ db 0x00
 db 0x70
 db 0x00
 
-SPRITE_CoinRight = 15
+SPRITE_CoinRight = 16
 CoinRight:
 db 0xF0
 db 0x60
@@ -169,7 +180,7 @@ db 0x60
 db 0x70
 db 0xF8
 
-SPRITE_Coin1 = 16
+SPRITE_Coin1 = 17
 Coin1:
 db 0x00
 db 0x38
@@ -180,7 +191,7 @@ db 0xE6
 db 0x54
 db 0x38
 
-SPRITE_Coin2 = 17
+SPRITE_Coin2 = 18
 Coin2:
 db 0x00
 db 0x18
@@ -191,7 +202,7 @@ db 0x34
 db 0x24
 db 0x18
 
-SPRITE_Coin3 = 18
+SPRITE_Coin3 = 19
 Coin3:
 db 0x00
 db 0x18
@@ -202,7 +213,7 @@ db 0x18
 db 0x18
 db 0x18
 
-SPRITE_Coin4 = 19
+SPRITE_Coin4 = 20
 Coin4:
 db 0x00
 db 0x18
@@ -213,7 +224,7 @@ db 0x2C
 db 0x24
 db 0x18
 
-SPRITE_PlayerLeft1 = 20
+SPRITE_PlayerLeft1 = 21
 PlayerLeft1:
 db 0x18
 db 0x10
@@ -224,7 +235,7 @@ db 0x1C
 db 0x14
 db 0x34
 
-SPRITE_PlayerLeft2 = 21
+SPRITE_PlayerLeft2 = 22
 PlayerLeft2:
 db 0x18
 db 0x10
@@ -235,7 +246,7 @@ db 0x0C
 db 0x0E
 db 0x1A
 
-SPRITE_PlayerLeft3 = 22
+SPRITE_PlayerLeft3 = 23
 PlayerLeft3:
 db 0x18
 db 0x10
@@ -246,7 +257,7 @@ db 0x1C
 db 0x06
 db 0x0C
 
-SPRITE_PlayerLeft4 = 23
+SPRITE_PlayerLeft4 = 24
 PlayerLeft4:
 db 0x18
 db 0x10
@@ -257,7 +268,7 @@ db 0x3C
 db 0x12
 db 0x06
 
-SPRITE_PlayerLeft5 = 24
+SPRITE_PlayerLeft5 = 25
 PlayerLeft5:
 db 0x00
 db 0x18
@@ -268,7 +279,7 @@ db 0x3C
 db 0x17
 db 0x32
 
-SPRITE_PlayerLeftJump = 25
+SPRITE_PlayerLeftJump = 26
 PlayerLeftJump:
 db 0x1A
 db 0x52
@@ -279,7 +290,7 @@ db 0x14
 db 0x0A
 db 0x01
 
-SPRITE_PlayerRight1 = 26
+SPRITE_PlayerRight1 = 27
 PlayerRight1:
 db 0x18
 db 0x08
@@ -290,7 +301,7 @@ db 0x38
 db 0x28
 db 0x2C
 
-SPRITE_PlayerRight2 = 27
+SPRITE_PlayerRight2 = 28
 PlayerRight2:
 db 0x18
 db 0x08
@@ -301,7 +312,7 @@ db 0x30
 db 0x70
 db 0x58
 
-SPRITE_PlayerRight3 = 28
+SPRITE_PlayerRight3 = 29
 PlayerRight3:
 db 0x18
 db 0x08
@@ -312,7 +323,7 @@ db 0x38
 db 0x60
 db 0x30
 
-SPRITE_PlayerRight4 = 29
+SPRITE_PlayerRight4 = 30
 PlayerRight4:
 db 0x18
 db 0x08
@@ -323,7 +334,7 @@ db 0x3C
 db 0x48
 db 0x60
 
-SPRITE_PlayerRight5 = 30
+SPRITE_PlayerRight5 = 31
 PlayerRight5:
 db 0x00
 db 0x18
@@ -334,7 +345,7 @@ db 0x3C
 db 0xE8
 db 0x4C
 
-SPRITE_PlayerRightJump = 31
+SPRITE_PlayerRightJump = 32
 PlayerRightJump:
 db 0x58
 db 0x4A
@@ -345,7 +356,7 @@ db 0x28
 db 0x50
 db 0x80
 
-SPRITE_PlayerHandsLeft1 = 32
+SPRITE_PlayerHandsLeft1 = 33
 PlayerHandsLeft1:
 db 0x5A
 db 0x52
@@ -356,7 +367,7 @@ db 0x1C
 db 0x14
 db 0x34
 
-SPRITE_PlayerHandsLeft2 = 33
+SPRITE_PlayerHandsLeft2 = 34
 PlayerHandsLeft2:
 db 0x5A
 db 0x52
@@ -367,7 +378,7 @@ db 0x0C
 db 0x0E
 db 0x1A
 
-SPRITE_PlayerHandsLeft3 = 34
+SPRITE_PlayerHandsLeft3 = 35
 PlayerHandsLeft3:
 db 0x5A
 db 0x52
@@ -378,7 +389,7 @@ db 0x1C
 db 0x06
 db 0x0C
 
-SPRITE_PlayerHandsLeft4 = 35
+SPRITE_PlayerHandsLeft4 = 36
 PlayerHandsLeft4:
 db 0x5A
 db 0x52
@@ -389,7 +400,7 @@ db 0x3C
 db 0x12
 db 0x06
 
-SPRITE_PlayerHandsLeft5 = 36
+SPRITE_PlayerHandsLeft5 = 37
 PlayerHandsLeft5:
 db 0x42
 db 0x5A
@@ -400,7 +411,7 @@ db 0x1C
 db 0x17
 db 0x32
 
-SPRITE_PlayerHandsLeftJump = 37
+SPRITE_PlayerHandsLeftJump = 38
 PlayerHandsLeftJump:
 db 0x5A
 db 0x52
@@ -411,7 +422,7 @@ db 0x14
 db 0x0A
 db 0x01
 
-SPRITE_PlayerHandsRight1 = 38
+SPRITE_PlayerHandsRight1 = 39
 PlayerHandsRight1:
 db 0x5A
 db 0x4A
@@ -422,7 +433,7 @@ db 0x38
 db 0x28
 db 0x2C
 
-SPRITE_PlayerHandsRight2 = 39
+SPRITE_PlayerHandsRight2 = 40
 PlayerHandsRight2:
 db 0x5A
 db 0x4A
@@ -433,7 +444,7 @@ db 0x30
 db 0x70
 db 0x58
 
-SPRITE_PlayerHandsRight3 = 40
+SPRITE_PlayerHandsRight3 = 41
 PlayerHandsRight3:
 db 0x5A
 db 0x4A
@@ -444,7 +455,7 @@ db 0x38
 db 0x60
 db 0x30
 
-SPRITE_PlayerHandsRight4 = 41
+SPRITE_PlayerHandsRight4 = 42
 PlayerHandsRight4:
 db 0x5A
 db 0x4A
@@ -455,7 +466,7 @@ db 0x3C
 db 0x48
 db 0x60
 
-SPRITE_PlayerHandsRight5 = 42
+SPRITE_PlayerHandsRight5 = 43
 PlayerHandsRight5:
 db 0x42
 db 0x5A
@@ -466,7 +477,7 @@ db 0x38
 db 0xE8
 db 0x4C
 
-SPRITE_PlayerHandsRightJump = 43
+SPRITE_PlayerHandsRightJump = 44
 PlayerHandsRightJump:
 db 0x5A
 db 0x4A
@@ -477,7 +488,7 @@ db 0x28
 db 0x50
 db 0x80
 
-SPRITE_PlayerGunLeft1 = 44
+SPRITE_PlayerGunLeft1 = 45
 PlayerGunLeft1:
 db 0x18
 db 0x10
@@ -488,7 +499,7 @@ db 0x1C
 db 0x14
 db 0x34
 
-SPRITE_PlayerGunLeft2 = 45
+SPRITE_PlayerGunLeft2 = 46
 PlayerGunLeft2:
 db 0x18
 db 0x10
@@ -499,7 +510,7 @@ db 0x0C
 db 0x0E
 db 0x1A
 
-SPRITE_PlayerGunLeft3 = 46
+SPRITE_PlayerGunLeft3 = 47
 PlayerGunLeft3:
 db 0x18
 db 0x10
@@ -510,7 +521,7 @@ db 0x1C
 db 0x06
 db 0x0C
 
-SPRITE_PlayerGunLeft4 = 47
+SPRITE_PlayerGunLeft4 = 48
 PlayerGunLeft4:
 db 0x18
 db 0x10
@@ -521,7 +532,7 @@ db 0x3C
 db 0x12
 db 0x06
 
-SPRITE_PlayerGunLeft5 = 48
+SPRITE_PlayerGunLeft5 = 49
 PlayerGunLeft5:
 db 0x00
 db 0x18
@@ -532,7 +543,7 @@ db 0x1C
 db 0x17
 db 0x32
 
-SPRITE_PlayerGunLeftJump = 49
+SPRITE_PlayerGunLeftJump = 50
 PlayerGunLeftJump:
 db 0x18
 db 0x10
@@ -543,7 +554,7 @@ db 0x14
 db 0x0A
 db 0x01
 
-SPRITE_PlayerGunRight1 = 50
+SPRITE_PlayerGunRight1 = 51
 PlayerGunRight1:
 db 0x18
 db 0x08
@@ -554,7 +565,7 @@ db 0x38
 db 0x28
 db 0x2C
 
-SPRITE_PlayerGunRight2 = 51
+SPRITE_PlayerGunRight2 = 52
 PlayerGunRight2:
 db 0x18
 db 0x08
@@ -565,7 +576,7 @@ db 0x30
 db 0x70
 db 0x58
 
-SPRITE_PlayerGunRight3 = 52
+SPRITE_PlayerGunRight3 = 53
 PlayerGunRight3:
 db 0x18
 db 0x08
@@ -576,7 +587,7 @@ db 0x38
 db 0x60
 db 0x30
 
-SPRITE_PlayerGunRight4 = 53
+SPRITE_PlayerGunRight4 = 54
 PlayerGunRight4:
 db 0x18
 db 0x08
@@ -587,7 +598,7 @@ db 0x3C
 db 0x48
 db 0x60
 
-SPRITE_PlayerGunRight5 = 54
+SPRITE_PlayerGunRight5 = 55
 PlayerGunRight5:
 db 0x00
 db 0x18
@@ -598,7 +609,7 @@ db 0x38
 db 0xE8
 db 0x4C
 
-SPRITE_PlayerGunRightJump = 55
+SPRITE_PlayerGunRightJump = 56
 PlayerGunRightJump:
 db 0x18
 db 0x08
@@ -609,7 +620,7 @@ db 0x28
 db 0x50
 db 0x80
 
-SPRITE_PlayerDead1Left = 56
+SPRITE_PlayerDead1Left = 57
 PlayerDead1Left:
 db 0x00
 db 0x00
@@ -620,7 +631,7 @@ db 0xD8
 db 0x3C
 db 0xB7
 
-SPRITE_PlayerDead2Left = 57
+SPRITE_PlayerDead2Left = 58
 PlayerDead2Left:
 db 0x00
 db 0x00
@@ -631,7 +642,7 @@ db 0x3C
 db 0x5C
 db 0xB7
 
-SPRITE_PlayerDead3Left = 58
+SPRITE_PlayerDead3Left = 59
 PlayerDead3Left:
 db 0x00
 db 0x00
@@ -642,7 +653,7 @@ db 0xB8
 db 0x24
 db 0x63
 
-SPRITE_PlayerDead1Right = 59
+SPRITE_PlayerDead1Right = 60
 PlayerDead1Right:
 db 0x00
 db 0x00
@@ -653,7 +664,7 @@ db 0x1B
 db 0x3C
 db 0xED
 
-SPRITE_PlayerDead2Right = 60
+SPRITE_PlayerDead2Right = 61
 PlayerDead2Right:
 db 0x00
 db 0x00
@@ -664,7 +675,7 @@ db 0x3C
 db 0x3A
 db 0xED
 
-SPRITE_PlayerDead3Right = 61
+SPRITE_PlayerDead3Right = 62
 PlayerDead3Right:
 db 0x00
 db 0x00
@@ -675,7 +686,7 @@ db 0x1D
 db 0x24
 db 0xC6
 
-SPRITE_PlayerDuckLeft = 62
+SPRITE_PlayerDuckLeft = 63
 PlayerDuckLeft:
 db 0x00
 db 0x00
@@ -686,7 +697,7 @@ db 0x35
 db 0x1E
 db 0x37
 
-SPRITE_PlayerHandsDuckLeft = 63
+SPRITE_PlayerHandsDuckLeft = 64
 PlayerHandsDuckLeft:
 db 0x00
 db 0x00
@@ -697,7 +708,7 @@ db 0x38
 db 0x3C
 db 0x6E
 
-SPRITE_PlayerGunDuckLeft = 64
+SPRITE_PlayerGunDuckLeft = 65
 PlayerGunDuckLeft:
 db 0x00
 db 0x00
@@ -708,7 +719,7 @@ db 0x66
 db 0x1E
 db 0x37
 
-SPRITE_PlayerDuckRight = 65
+SPRITE_PlayerDuckRight = 66
 PlayerDuckRight:
 db 0x00
 db 0x00
@@ -719,7 +730,7 @@ db 0xAC
 db 0x78
 db 0xEC
 
-SPRITE_PlayerHandsDuckRight = 66
+SPRITE_PlayerHandsDuckRight = 67
 PlayerHandsDuckRight:
 db 0x00
 db 0x00
@@ -730,7 +741,7 @@ db 0x1C
 db 0x3C
 db 0x76
 
-SPRITE_PlayerGunDuckRight = 67
+SPRITE_PlayerGunDuckRight = 68
 PlayerGunDuckRight:
 db 0x00
 db 0x00
@@ -741,7 +752,7 @@ db 0x66
 db 0x78
 db 0xEC
 
-SPRITE_Stone = 68
+SPRITE_Stone = 69
 Stone:
 db 0x00
 db 0x7C
@@ -752,7 +763,7 @@ db 0x94
 db 0xFA
 db 0x54
 
-SPRITE_GhostLeft1 = 69
+SPRITE_GhostLeft1 = 70
 GhostLeft1:
 db 0x3C
 db 0x6A
@@ -763,7 +774,7 @@ db 0x7B
 db 0x7E
 db 0x70
 
-SPRITE_GhostLeft2 = 70
+SPRITE_GhostLeft2 = 71
 GhostLeft2:
 db 0x3C
 db 0x6A
@@ -774,7 +785,7 @@ db 0x7A
 db 0x7E
 db 0x0E
 
-SPRITE_GhostLeft3 = 71
+SPRITE_GhostLeft3 = 72
 GhostLeft3:
 db 0x3C
 db 0x6A
@@ -785,7 +796,7 @@ db 0xFA
 db 0x7E
 db 0x70
 
-SPRITE_GhostLeft4 = 72
+SPRITE_GhostLeft4 = 73
 GhostLeft4:
 db 0x3C
 db 0x7E
@@ -796,7 +807,7 @@ db 0x7A
 db 0x7E
 db 0x0E
 
-SPRITE_GhostRight1 = 73
+SPRITE_GhostRight1 = 74
 GhostRight1:
 db 0x3C
 db 0x56
@@ -807,7 +818,7 @@ db 0xDE
 db 0x7E
 db 0x0E
 
-SPRITE_GhostRight2 = 74
+SPRITE_GhostRight2 = 75
 GhostRight2:
 db 0x3C
 db 0x56
@@ -818,7 +829,7 @@ db 0x5E
 db 0x7E
 db 0x70
 
-SPRITE_GhostRight3 = 75
+SPRITE_GhostRight3 = 76
 GhostRight3:
 db 0x3C
 db 0x56
@@ -829,7 +840,7 @@ db 0x5F
 db 0x7E
 db 0x0E
 
-SPRITE_GhostRight4 = 76
+SPRITE_GhostRight4 = 77
 GhostRight4:
 db 0x3C
 db 0x7E
@@ -840,7 +851,7 @@ db 0x5E
 db 0x7E
 db 0x70
 
-SPRITE_GhostAppear1 = 77
+SPRITE_GhostAppear1 = 78
 GhostAppear1:
 db 0x00
 db 0x00
@@ -851,7 +862,7 @@ db 0x00
 db 0x00
 db 0x00
 
-SPRITE_GhostAppear2 = 78
+SPRITE_GhostAppear2 = 79
 GhostAppear2:
 db 0x00
 db 0x00
@@ -862,7 +873,7 @@ db 0x08
 db 0x00
 db 0x00
 
-SPRITE_GhostAppear3 = 79
+SPRITE_GhostAppear3 = 80
 GhostAppear3:
 db 0x00
 db 0x00
@@ -873,7 +884,7 @@ db 0x1C
 db 0x08
 db 0x00
 
-SPRITE_GhostAppear4 = 80
+SPRITE_GhostAppear4 = 81
 GhostAppear4:
 db 0x00
 db 0x00
@@ -884,7 +895,7 @@ db 0x3E
 db 0x1C
 db 0x00
 
-SPRITE_GhostDeath1 = 81
+SPRITE_GhostDeath1 = 82
 GhostDeath1:
 db 0x7E
 db 0x99
@@ -895,7 +906,7 @@ db 0x42
 db 0x7E
 db 0x66
 
-SPRITE_GhostDeath2 = 82
+SPRITE_GhostDeath2 = 83
 GhostDeath2:
 db 0x00
 db 0x7E
@@ -906,7 +917,7 @@ db 0x42
 db 0x5A
 db 0x66
 
-SPRITE_GhostDeath3 = 83
+SPRITE_GhostDeath3 = 84
 GhostDeath3:
 db 0x00
 db 0x00
@@ -917,7 +928,7 @@ db 0xC3
 db 0xDB
 db 0x3E
 
-SPRITE_GhostDeath4 = 84
+SPRITE_GhostDeath4 = 85
 GhostDeath4:
 db 0x00
 db 0x00
@@ -928,7 +939,7 @@ db 0x66
 db 0xC3
 db 0x7E
 
-SPRITE_Weapon1 = 85
+SPRITE_Weapon1 = 86
 Weapon1:
 db 0x00
 db 0x00
@@ -939,7 +950,7 @@ db 0x1C
 db 0x30
 db 0x30
 
-SPRITE_Weapon2 = 86
+SPRITE_Weapon2 = 87
 Weapon2:
 db 0x00
 db 0x00
@@ -950,7 +961,7 @@ db 0x08
 db 0x18
 db 0x10
 
-SPRITE_Weapon3 = 87
+SPRITE_Weapon3 = 88
 Weapon3:
 db 0x00
 db 0x00
@@ -961,7 +972,7 @@ db 0x08
 db 0x0C
 db 0x04
 
-SPRITE_Weapon4 = 88
+SPRITE_Weapon4 = 89
 Weapon4:
 db 0x00
 db 0x00
@@ -972,7 +983,7 @@ db 0x1C
 db 0x06
 db 0x06
 
-SPRITE_Weapon5 = 89
+SPRITE_Weapon5 = 90
 Weapon5:
 db 0x00
 db 0x00
@@ -983,7 +994,7 @@ db 0x08
 db 0x0C
 db 0x04
 
-SPRITE_Weapon6 = 90
+SPRITE_Weapon6 = 91
 Weapon6:
 db 0x00
 db 0x00
@@ -994,7 +1005,7 @@ db 0x08
 db 0x18
 db 0x10
 
-SPRITE_BatLeft1 = 91
+SPRITE_BatLeft1 = 92
 BatLeft1:
 db 0x00
 db 0x00
@@ -1005,7 +1016,7 @@ db 0x10
 db 0x00
 db 0x00
 
-SPRITE_BatLeft2 = 92
+SPRITE_BatLeft2 = 93
 BatLeft2:
 db 0x00
 db 0x00
@@ -1016,7 +1027,7 @@ db 0x10
 db 0x00
 db 0x00
 
-SPRITE_BatLeft3 = 93
+SPRITE_BatLeft3 = 94
 BatLeft3:
 db 0x00
 db 0x00
@@ -1027,7 +1038,7 @@ db 0x6A
 db 0x62
 db 0x20
 
-SPRITE_BatLeft4 = 94
+SPRITE_BatLeft4 = 95
 BatLeft4:
 db 0x00
 db 0x00
@@ -1038,7 +1049,7 @@ db 0x00
 db 0x00
 db 0x00
 
-SPRITE_BatRight1 = 95
+SPRITE_BatRight1 = 96
 BatRight1:
 db 0x00
 db 0x00
@@ -1049,7 +1060,7 @@ db 0x08
 db 0x00
 db 0x00
 
-SPRITE_BatRight2 = 96
+SPRITE_BatRight2 = 97
 BatRight2:
 db 0x00
 db 0x00
@@ -1060,7 +1071,7 @@ db 0x08
 db 0x00
 db 0x00
 
-SPRITE_BatRight3 = 97
+SPRITE_BatRight3 = 98
 BatRight3:
 db 0x00
 db 0x00
@@ -1071,7 +1082,7 @@ db 0x56
 db 0x46
 db 0x04
 
-SPRITE_BatRight4 = 98
+SPRITE_BatRight4 = 99
 BatRight4:
 db 0x00
 db 0x00
@@ -1082,7 +1093,7 @@ db 0x00
 db 0x00
 db 0x00
 
-SPRITE_BatFall1 = 99
+SPRITE_BatFall1 = 100
 BatFall1:
 db 0x00
 db 0x00
@@ -1093,7 +1104,7 @@ db 0x3C
 db 0x18
 db 0x00
 
-SPRITE_BatFall2 = 100
+SPRITE_BatFall2 = 101
 BatFall2:
 db 0x00
 db 0x00
@@ -1104,7 +1115,7 @@ db 0x00
 db 0x7E
 db 0xD7
 
-SPRITE_BatRevive = 101
+SPRITE_BatRevive = 102
 BatRevive:
 db 0x00
 db 0x00
@@ -1115,7 +1126,7 @@ db 0x6E
 db 0x3C
 db 0x14
 
-SPRITE_FlowerLeft1 = 102
+SPRITE_FlowerLeft1 = 103
 FlowerLeft1:
 db 0x06
 db 0x0F
@@ -1126,7 +1137,7 @@ db 0x08
 db 0x6A
 db 0xB7
 
-SPRITE_FlowerLeft2 = 103
+SPRITE_FlowerLeft2 = 104
 FlowerLeft2:
 db 0x0C
 db 0x1E
@@ -1137,7 +1148,7 @@ db 0x08
 db 0x6A
 db 0xB7
 
-SPRITE_FlowerLeft3 = 104
+SPRITE_FlowerLeft3 = 105
 FlowerLeft3:
 db 0x18
 db 0x3C
@@ -1148,7 +1159,7 @@ db 0x18
 db 0x6A
 db 0xB7
 
-SPRITE_FlowerLeft4 = 105
+SPRITE_FlowerLeft4 = 106
 FlowerLeft4:
 db 0x0C
 db 0x1E
@@ -1159,7 +1170,7 @@ db 0x10
 db 0x6A
 db 0xB7
 
-SPRITE_FlowerRight1 = 106
+SPRITE_FlowerRight1 = 107
 FlowerRight1:
 db 0x60
 db 0xF0
@@ -1170,7 +1181,7 @@ db 0x10
 db 0x56
 db 0xED
 
-SPRITE_FlowerRight2 = 107
+SPRITE_FlowerRight2 = 108
 FlowerRight2:
 db 0x30
 db 0x78
@@ -1181,7 +1192,7 @@ db 0x10
 db 0x56
 db 0xED
 
-SPRITE_FlowerRight3 = 108
+SPRITE_FlowerRight3 = 109
 FlowerRight3:
 db 0x18
 db 0x3C
@@ -1192,7 +1203,7 @@ db 0x18
 db 0x56
 db 0xED
 
-SPRITE_FlowerRight4 = 109
+SPRITE_FlowerRight4 = 110
 FlowerRight4:
 db 0x30
 db 0x78
@@ -1203,7 +1214,7 @@ db 0x08
 db 0x56
 db 0xED
 
-SPRITE_FlowerDeathRight1 = 110
+SPRITE_FlowerDeathRight1 = 111
 FlowerDeathRight1:
 db 0x00
 db 0x30
@@ -1214,7 +1225,7 @@ db 0x08
 db 0x6A
 db 0xB7
 
-SPRITE_FlowerDeathRight2 = 111
+SPRITE_FlowerDeathRight2 = 112
 FlowerDeathRight2:
 db 0x00
 db 0x00
@@ -1225,7 +1236,7 @@ db 0xB8
 db 0xEE
 db 0xFF
 
-SPRITE_FlowerReviveRight = 112
+SPRITE_FlowerReviveRight = 113
 FlowerReviveRight:
 db 0x00
 db 0x00
@@ -1236,7 +1247,7 @@ db 0x38
 db 0x6E
 db 0xBF
 
-SPRITE_FlowerDeathLeft1 = 113
+SPRITE_FlowerDeathLeft1 = 114
 FlowerDeathLeft1:
 db 0x00
 db 0x0C
@@ -1247,7 +1258,7 @@ db 0x10
 db 0x56
 db 0xED
 
-SPRITE_FlowerDeathLeft2 = 114
+SPRITE_FlowerDeathLeft2 = 115
 FlowerDeathLeft2:
 db 0x00
 db 0x00
@@ -1258,7 +1269,7 @@ db 0x1D
 db 0x77
 db 0xFF
 
-SPRITE_FlowerReviveLeft = 115
+SPRITE_FlowerReviveLeft = 116
 FlowerReviveLeft:
 db 0x00
 db 0x00
