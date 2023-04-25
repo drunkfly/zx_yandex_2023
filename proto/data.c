@@ -114,6 +114,13 @@ byte FlowerReviveRight[8];
 
 byte Empty[8];
 byte Bricks[8];
+byte Bricks1[8];
+byte Bricks2[8];
+byte Bricks3[8];
+byte Bricks4[8];
+byte Bricks5[8];
+byte Stones1[8];
+byte Stones2[8];
 
 byte Stone[8];
 
@@ -249,7 +256,62 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
             switch (data[y][x]) {
                 case ' ': b = 0; break;
                 case '-': b = 0; break;
-                case '#': b = 1; break;
+                case '#': {
+                    bool hasLeft = (x != 0 && data[y][x-1] == '#');
+                    bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '#');
+                    if (!hasLeft && !hasRight)
+                        b = 6;
+                    else if (!hasLeft && hasRight)
+                        b = 7;
+                    else if (hasLeft && !hasRight)
+                        b = 8;
+                    else
+                        b = 9;
+                    break;
+                }
+                case '@': {
+                    bool hasLeft = (x != 0 && data[y][x-1] == '@');
+                    bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '@');
+                    if (!hasLeft && !hasRight)
+                        b = 11;
+                    else if (!hasLeft && hasRight)
+                        b = 12;
+                    else if (hasLeft && !hasRight)
+                        b = 13;
+                    else
+                        b = 14;
+                    break;
+                }
+                case '%': {
+                    bool hasLeft = (x != 0 && data[y][x-1] == '%');
+                    bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '%');
+                    if (!hasLeft && !hasRight)
+                        b = 18;
+                    else if (!hasLeft && hasRight)
+                        b = 19;
+                    else if (hasLeft && !hasRight)
+                        b = 20;
+                    else
+                        b = 21;
+                    break;
+                }
+                case '?': {
+                    bool hasLeft = (x != 0 && data[y][x-1] == '&');
+                    bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '&');
+                    if (!hasLeft && !hasRight)
+                        b = 23;
+                    else if (!hasLeft && hasRight)
+                        b = 24;
+                    else if (hasLeft && !hasRight)
+                        b = 25;
+                    else
+                        b = 26;
+                    break;
+                }
+                case 'X': b = 16; break;
+                case 'x': b = 28; break;
+                case 'Y': b = 30; break;
+                case 'y': b = 32; break;
                 case '1': FLUSH(); *level++ = 0x80 | PLAYER_1_START; continue;
                 case '2': FLUSH(); *level++ = 0x80 | PLAYER_2_START; continue;
                 case 'O': FLUSH(); *level++ = 0x80 | STONE; continue;
@@ -356,6 +418,14 @@ void LoadData(void)
     fprintf(f, "db 0, 0, 0, 0, 0, 0, 0, 0\n");
 
     GetSprite("Bricks", Bricks, 0, 16);//64, 24);
+    GetSprite("Bricks1", Bricks1,  0, 24);
+    GetSprite("Bricks2", Bricks2,  8, 24);
+    GetSprite("Bricks3", Bricks3, 16, 24);
+    GetSprite("Bricks4", Bricks4, 24, 24);
+    GetSprite("Bricks5", Bricks5, 32, 24);
+    GetSprite("Stones1", Stones1, 0, 32);
+    GetSprite("Stones2", Stones2, 8, 32);
+
     GetSprite("CoinLeft", AppleLeft, 72, 128);
     GetSprite("CoinTopLeft", AppleTopLeft, 72, 120);
     GetSprite("CoinTop", AppleTop, 112, 120);

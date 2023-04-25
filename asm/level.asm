@@ -13,6 +13,70 @@ Tiles:          db      PASSABLE_ATTR       ; 0
                 dw      CoinLeft
                 db      PASSABLE_ATTR       ; 5
                 dw      CoinRight
+                ; bricks
+                db      BRICKS_ATTR         ; 6
+                dw      Bricks5
+                db      BRICKS_ATTR         ; 7
+                dw      Bricks1
+                db      BRICKS_ATTR         ; 8
+                dw      Bricks4
+                db      BRICKS_ATTR         ; 9     ++
+                dw      Bricks2
+                db      BRICKS_ATTR         ; 10
+                dw      Bricks3
+                ; bricks 2
+                db      BRICKS2_ATTR        ; 11
+                dw      Bricks5
+                db      BRICKS2_ATTR        ; 12
+                dw      Bricks1
+                db      BRICKS2_ATTR        ; 13
+                dw      Bricks4
+                db      BRICKS2_ATTR        ; 14    ++
+                dw      Bricks2
+                db      BRICKS2_ATTR        ; 15
+                dw      Bricks3
+                ; stones 1
+                db      STONES1_ATTR        ; 16    ++
+                dw      Stones1
+                db      STONES1_ATTR        ; 17
+                dw      Stones2
+                ; bricks 3
+                db      BRICKS3_ATTR        ; 18
+                dw      Bricks5
+                db      BRICKS3_ATTR        ; 19
+                dw      Bricks1
+                db      BRICKS3_ATTR        ; 20
+                dw      Bricks4
+                db      BRICKS3_ATTR        ; 21     ++
+                dw      Bricks2
+                db      BRICKS3_ATTR        ; 22
+                dw      Bricks3
+                ; bricks 4
+                db      BRICKS4_ATTR        ; 23
+                dw      Bricks5
+                db      BRICKS4_ATTR        ; 24
+                dw      Bricks1
+                db      BRICKS4_ATTR        ; 25
+                dw      Bricks4
+                db      BRICKS4_ATTR        ; 26    ++
+                dw      Bricks2
+                db      BRICKS4_ATTR        ; 27
+                dw      Bricks3
+                ; stones 2
+                db      STONES2_ATTR        ; 28    ++
+                dw      Stones1
+                db      STONES2_ATTR        ; 29
+                dw      Stones2
+                ; stones 3
+                db      STONES3_ATTR        ; 30    ++
+                dw      Stones1
+                db      STONES3_ATTR        ; 31
+                dw      Stones2
+                ; stones 4
+                db      STONES4_ATTR        ; 32    ++
+                dw      Stones1
+                db      STONES4_ATTR        ; 33
+                dw      Stones2
 
 CoinTopTile:    db      PASSABLE_ATTR
                 dw      CoinTop
@@ -64,7 +128,38 @@ LoadLevel:      xor     a
                 ld      ixl, a
                 ; read value
                 dec     de
-                ld      a, (de)
+@@rleLoop:      ld      a, (de)
+                cp      9
+                jr      z, @@randomize
+                cp      14
+                jr      z, @@randomize
+                cp      16
+                jr      z, @@randomize
+                cp      21
+                jr      z, @@randomize
+                cp      26
+                jr      z, @@randomize
+                cp      28
+                jr      z, @@randomize
+                cp      30
+                jr      z, @@randomize
+                cp      32
+                jr      nz, @@do
+@@randomize:    ex      af, af'
+                ld      hl, 0x500-0x4000
+                add     hl, de
+                ld      a, r
+                xor     (hl)
+                rrca
+                xor     (hl)
+                rrca
+                xor     (hl)
+                and     2
+                ld      l, 1
+                jr      z, @@do1
+                dec     l
+@@do1:          ex      af, af'
+                add     a, l
                 ; resolve tile address
 @@do:           ld      l, a
                 rlca                        ; A *= 2
@@ -81,7 +176,7 @@ LoadLevel:      xor     a
                 ld      h, (hl)
                 ld      l, a
                 ; draw tiles
-@@rleLoop:      push    hl
+                push    hl
                 push    de
                 push    bc
                 ld      e, c

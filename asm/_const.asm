@@ -31,7 +31,14 @@ PASSABLE_ATTR       = 0x47
 COIN1_ATTR          = 0x46
 COIN2_ATTR          = 0x44
 STONE_ATTR          = 0x07
-BRICKS_ATTR         = 0x42
+BRICKS_ATTR         = 0x02
+BRICKS2_ATTR        = 0x03
+BRICKS3_ATTR        = 0x05
+BRICKS4_ATTR        = 0x06
+STONES1_ATTR        = 0x42
+STONES2_ATTR        = 0x43
+STONES3_ATTR        = 0x45
+STONES4_ATTR        = 0x46
 WEAPON_ATTR         = 0x45
 
 PHYS_HORIZONTAL     = 0x01
@@ -48,6 +55,6 @@ REASON_ENEMY        = 1
 REASON_ITEM         = 2
 REASON_BULLET       = 3
 
-ENEMY_RESPAWN_TIME  = 80
+ENEMY_RESPAWN_TIME  = 120
 
 Timer               = 0x5C78

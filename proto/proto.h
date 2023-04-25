@@ -221,6 +221,14 @@ extern byte GhostAppear2[8];
 extern byte GhostAppear3[8];
 extern byte GhostAppear4[8];
 
+extern byte Bricks1[8];
+extern byte Bricks2[8];
+extern byte Bricks3[8];
+extern byte Bricks4[8];
+extern byte Bricks5[8];
+extern byte Stones1[8];
+extern byte Stones2[8];
+
 extern byte Timer;
 extern bool SinglePlayer;
 

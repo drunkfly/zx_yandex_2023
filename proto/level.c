@@ -2,18 +2,57 @@
 
 typedef struct Tile { const byte* image; byte attr; } Tile;
 
+enum {
+BRICKS_ATTR = 0x02,
+BRICKS2_ATTR = 0x03,
+BRICKS3_ATTR = 0x05,
+BRICKS4_ATTR = 0x06,
+STONES1_ATTR = 0x42,
+STONES2_ATTR = 0x43,
+STONES3_ATTR = 0x45,
+STONES4_ATTR = 0x46,
+};
+
 const Tile AppleTopTile  = { AppleTop,  PASSABLE_ATTR };
 const Tile AppleTop1Tile = { AppleTop1, PASSABLE_ATTR };
 const Tile AppleTop2Tile = { AppleTop2, PASSABLE_ATTR };
 
 static Tile Tiles[] = {
         { Empty,            PASSABLE_ATTR },    /* 0 */
-        { Bricks,           0x57 },             /* 1 */
+        { Bricks,           BRICKS_ATTR },      /* 1 */
         { AppleTopLeft,     PASSABLE_ATTR },    /* 2 */
         { AppleTopRight,    PASSABLE_ATTR },    /* 3 */
         { AppleLeft,        PASSABLE_ATTR },    /* 4 */
         { AppleRight,       PASSABLE_ATTR },    /* 5 */
-    };
+        { Bricks5,          BRICKS_ATTR },      /* 6 */
+        { Bricks1,          BRICKS_ATTR },      /* 7 */
+        { Bricks4,          BRICKS_ATTR },      /* 8 */
+        { Bricks2,          BRICKS_ATTR },      /* 9 */
+        { Bricks3,          BRICKS_ATTR },      /* 10 */
+        { Bricks5,          BRICKS2_ATTR },     /* 11 */
+        { Bricks1,          BRICKS2_ATTR },     /* 12 */
+        { Bricks4,          BRICKS2_ATTR },     /* 13 */
+        { Bricks2,          BRICKS2_ATTR },     /* 14 */
+        { Bricks3,          BRICKS2_ATTR },     /* 15 */
+        { Stones1,          STONES1_ATTR },     /* 16 */
+        { Stones2,          STONES1_ATTR },     /* 17 */
+        { Bricks5,          BRICKS3_ATTR },     /* 18 */
+        { Bricks1,          BRICKS3_ATTR },     /* 19 */
+        { Bricks4,          BRICKS3_ATTR },     /* 20 */
+        { Bricks2,          BRICKS3_ATTR },     /* 21 */
+        { Bricks3,          BRICKS3_ATTR },     /* 22 */
+        { Bricks5,          BRICKS4_ATTR },     /* 23 */
+        { Bricks1,          BRICKS4_ATTR },     /* 24 */
+        { Bricks4,          BRICKS4_ATTR },     /* 25 */
+        { Bricks2,          BRICKS4_ATTR },     /* 26 */
+        { Bricks3,          BRICKS4_ATTR },     /* 27 */
+        { Stones1,          STONES2_ATTR },     /* 28 */
+        { Stones2,          STONES2_ATTR },     /* 29 */
+        { Stones1,          STONES3_ATTR },     /* 30 */
+        { Stones2,          STONES3_ATTR },     /* 31 */
+        { Stones1,          STONES4_ATTR },     /* 32 */
+        { Stones2,          STONES4_ATTR },     /* 33 */
+};
 
 static void DrawTile(byte x, byte y, const Tile* tile)
 {
@@ -90,6 +129,12 @@ void DrawLevel(const byte* level)
 
         byte value = *level++;
         while (count-- > 0) {
+            byte id = value;
+            if (value == 9 || value == 14 || value == 16 || value == 21 || value == 26
+                    || value == 28 || value == 30 || value == 32) {
+                if (rand() % 2 == 0)
+                    value++;
+            }
             DrawTile(x, y, &Tiles[value]);
             if (++x == 32) {
                 x = 0;
