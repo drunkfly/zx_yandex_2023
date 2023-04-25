@@ -4,6 +4,7 @@ ENEMY_ALIVE = 1
 ENEMY_DYING = 2
 ENEMY_WAITING = 3
 
+ENEMY_RESPAWN_WHERE_DIED = 0x08
 ENEMY_MOVE_VERTICALLY = 0x10
 
 sizeof_Enemy = 12
@@ -43,15 +44,15 @@ EnemyCount      db      0
 
                 section data_enemies
 
-                db      (3 << 1) | 1
-BatSprites:     db      SPRITE_GhostAppear1
-                db      SPRITE_GhostAppear2
-                db      SPRITE_GhostAppear3
-                db      SPRITE_GhostAppear4
-                db      SPRITE_GhostAppear1
-                db      SPRITE_GhostAppear2
-                db      SPRITE_GhostAppear3
-                db      SPRITE_GhostAppear4
+                db      (3 << 5) | ENEMY_MOVE_VERTICALLY | ENEMY_RESPAWN_WHERE_DIED
+BatSprites:     db      SPRITE_BatFall1
+                db      SPRITE_BatFall2
+                db      SPRITE_BatFall1
+                db      SPRITE_BatFall2
+                db      SPRITE_BatFall1
+                db      SPRITE_BatFall2
+                db      SPRITE_BatFall1
+                db      SPRITE_BatFall2
 
                 db      SPRITE_BatRight1
                 db      SPRITE_BatRight2
@@ -62,16 +63,16 @@ BatSprites:     db      SPRITE_GhostAppear1
                 db      SPRITE_BatLeft3
                 db      SPRITE_BatLeft4
 
-                db      SPRITE_GhostAppear4
-                db      SPRITE_GhostAppear3
-                db      SPRITE_GhostAppear2
-                db      SPRITE_GhostAppear1
-                db      SPRITE_GhostAppear4
-                db      SPRITE_GhostAppear3
-                db      SPRITE_GhostAppear2
-                db      SPRITE_GhostAppear1
+                db      SPRITE_BatFall1
+                db      SPRITE_BatFall1
+                db      SPRITE_BatFall1
+                db      SPRITE_BatFall1
+                db      SPRITE_BatFall2
+                db      SPRITE_BatFall2
+                db      SPRITE_BatFall2
+                db      SPRITE_BatFall2
 
-                db      (7 << 1) | 0
+                db      (7 << 5)
 GhostSprites:   db      SPRITE_GhostAppear1
                 db      SPRITE_GhostAppear2
                 db      SPRITE_GhostAppear3
@@ -143,15 +144,12 @@ SpawnEnemy:     ld      a, (EnemyCount)
                 ld      (ix+Enemy_sprites+1), d
                 dec     de
                 ld      a, (de)
-                rrca
-                rrca
-                rrca
-                rrca
+                and     PHYS_USERDATA
                 or      (ix+Enemy_phys_flags)
                 ld      (ix+Enemy_phys_flags), a
                 xor     a
                 ld      (ix+Enemy_index), a
-                ld      (ix+Enemy_state), a ; ENEMY_APPEAR
+                ld      (ix+Enemy_state), ENEMY_ALIVE
                 call    AllocSprite
                 ld      (ix+Enemy_spriteRef), a
                 ret
@@ -223,6 +221,7 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 ld      a, (ix+Enemy_state)
                 cp      ENEMY_DYING
                 jr      nz, @@notDying
+                call    @@maybeFallDown
                 ld      a, (Timer)
                 and     31
                 cp      31
@@ -290,19 +289,25 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 inc     a
                 cp      ENEMY_RESPAWN_TIME
                 jr      c, @@updateIndex
+                ld      c, (ix+Enemy_sprites)
+                ld      b, (ix+Enemy_sprites+1)
+                dec     bc
+                ld      a, (bc)
+                and     ENEMY_RESPAWN_WHERE_DIED
+                jr      nz, @@respawn
                 ld      c, (ix+Enemy_originalX)
                 ld      b, (ix+Enemy_originalY)
                 ld      (ix+Enemy_phys_x), c
                 ld      (ix+Enemy_phys_y), b
-                ld      (ix+Enemy_state), ENEMY_APPEAR
+@@respawn:      ld      (ix+Enemy_state), ENEMY_APPEAR
                 xor     a
 @@updateIndex:  ld      (ix+Enemy_index), a
                 jr      @@setSprite
 @@notWaiting:   ld      a, (ix+Enemy_phys_flags)
-                and     PHYS_USERDATA & ~ENEMY_MOVE_VERTICALLY
                 rlca
                 rlca
                 rlca
+                and     7
                 ld      c, a
                 ld      a, (Timer)
                 and     c
@@ -323,12 +328,12 @@ UpdateEnemies:  ld      a, (EnemyCount)
 @@appear:       ld      (ix+Enemy_state), ENEMY_ALIVE
 @@setSprite:    ld      a, (ix+Enemy_state)
                 cp      ENEMY_WAITING
-                jr      z, @@removeSprite
+                jr      z, @@isWaiting
                 rlca
                 rlca
                 rlca
                 add     a, (ix+Enemy_index)
-                bit     0, (ix+Enemy_phys_flags)    ; PHYS_HORIZONTAL
+@@doSetSprite:  bit     0, (ix+Enemy_phys_flags)    ; PHYS_HORIZONTAL
                 jr      z, @@getSprite              ; PHYS_LEFT
                 add     a, 4
 @@getSprite:    ld      e, a
@@ -349,3 +354,29 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 dec     e
                 jp      nz, @@loop
                 ret
+
+@@isWaiting:    ld      l, (ix+Enemy_sprites)
+                ld      h, (ix+Enemy_sprites+1)
+                dec     hl
+                ld      a, (hl)
+                and     ENEMY_RESPAWN_WHERE_DIED
+                jr      z, @@removeSprite
+                call    @@maybeFallDown
+                ld      a, ENEMY_DYING << 3
+                jr      @@doSetSprite
+
+@@maybeFallDown:bit     4, (ix+Enemy_phys_flags)    ; ENEMY_MOVING_VERTICALLY
+                jr      z, @@notFalling
+                ld      c, (ix+Enemy_phys_x)
+                ld      b, (ix+Enemy_phys_y)
+                call    CanGoDown
+                jr      z, @@notFalling
+                res     0, (ix+Enemy_phys_flags)    ; PHYS_LEFT
+                inc     b
+                ld      (ix+Enemy_phys_y), b
+                call    CanGoDown
+                jr      z, @@notFalling
+                inc     (ix+Enemy_phys_y)
+                jr      @@doneFalling
+@@notFalling:   set     0, (ix+Enemy_phys_flags)    ; PHYS_RIGHT
+@@doneFalling:  ret

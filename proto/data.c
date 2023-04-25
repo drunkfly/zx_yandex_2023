@@ -92,6 +92,9 @@ byte BatRight2[8];
 byte BatRight3[8];
 byte BatRight4[8];
 
+byte BatFall1[8];
+byte BatFall2[8];
+
 byte Empty[8];
 byte Bricks[8];
 
@@ -437,6 +440,9 @@ void LoadData(void)
     GetSprite("BatRight2", BatRight2, 120, 48);
     GetSprite("BatRight3", BatRight3, 128, 48);
     GetSprite("BatRight4", BatRight4, 136, 48);
+
+    GetSprite("BatFall1", BatFall1, 144, 48);
+    GetSprite("BatFall2", BatFall2, 152, 48);
 
     fclose(f);
 }
