@@ -116,6 +116,8 @@ LoadLevel:      xor     a
                 jp      z, @@ghost
                 cp      OBJ_BAT
                 jp      z, @@bat
+                cp      OBJ_FLOWER
+                jp      z, @@flower
                 cp      OBJ_WEAPON
                 jr      z, @@weapon
 @@doneEmpty:    xor     a
@@ -191,6 +193,9 @@ LoadLevel:      xor     a
                 jr      @@enemy
 @@bat:          push    de
                 ld      de, BatSprites
+                jr      @@enemy
+@@flower:       push    de
+                ld      de, FlowerSprites
 @@enemy:        push    bc
                 sla     b
                 sla     b

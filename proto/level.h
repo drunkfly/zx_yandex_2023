@@ -19,5 +19,6 @@
 #define GHOST               7
 #define WEAPON              8
 #define BAT                 9
+#define FLOWER              10
 
 void DrawLevel(const byte* level);

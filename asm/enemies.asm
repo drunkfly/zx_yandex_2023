@@ -4,6 +4,12 @@ ENEMY_ALIVE = 1
 ENEMY_DYING = 2
 ENEMY_WAITING = 3
 
+ENEMY_STATE_MASK = 0x0f
+ENEMY_SHOOTING = 0x10
+ENEMY_STATIC = 0x20
+
+ENEMY_VISIBLE_WHEN_DEAD = 0x02
+ENEMY_FALL_WHEN_DEAD = 0x04
 ENEMY_RESPAWN_WHERE_DIED = 0x08
 ENEMY_MOVE_VERTICALLY = 0x10
 
@@ -44,14 +50,16 @@ EnemyCount      db      0
 
                 section data_enemies
 
-                db      (3 << 5) | ENEMY_MOVE_VERTICALLY | ENEMY_RESPAWN_WHERE_DIED
-BatSprites:     db      SPRITE_BatFall1
+                db      31
+                db      ENEMY_ALIVE
+                db      (3 << 5) | ENEMY_MOVE_VERTICALLY | ENEMY_RESPAWN_WHERE_DIED | ENEMY_FALL_WHEN_DEAD | ENEMY_VISIBLE_WHEN_DEAD
+BatSprites:     db      SPRITE_BatRevive
                 db      SPRITE_BatFall2
-                db      SPRITE_BatFall1
+                db      SPRITE_BatRevive
                 db      SPRITE_BatFall2
-                db      SPRITE_BatFall1
+                db      SPRITE_BatRevive
                 db      SPRITE_BatFall2
-                db      SPRITE_BatFall1
+                db      SPRITE_BatRevive
                 db      SPRITE_BatFall2
 
                 db      SPRITE_BatRight1
@@ -72,6 +80,11 @@ BatSprites:     db      SPRITE_BatFall1
                 db      SPRITE_BatFall2
                 db      SPRITE_BatFall2
 
+                db      SPRITE_BatFall2
+                db      SPRITE_BatFall2
+
+                db      31
+                db      ENEMY_ALIVE
                 db      (7 << 5)
 GhostSprites:   db      SPRITE_GhostAppear1
                 db      SPRITE_GhostAppear2
@@ -99,6 +112,39 @@ GhostSprites:   db      SPRITE_GhostAppear1
                 db      SPRITE_GhostDeath2
                 db      SPRITE_GhostDeath3
                 db      SPRITE_GhostDeath4
+
+                db      7
+                db      ENEMY_ALIVE | ENEMY_SHOOTING | ENEMY_STATIC
+                db      (7 << 5) | ENEMY_RESPAWN_WHERE_DIED | ENEMY_VISIBLE_WHEN_DEAD
+FlowerSprites:  db      SPRITE_FlowerReviveLeft
+                db      SPRITE_FlowerDeathLeft2
+                db      SPRITE_FlowerReviveLeft
+                db      SPRITE_FlowerDeathLeft2
+                db      SPRITE_FlowerReviveRight
+                db      SPRITE_FlowerDeathRight2
+                db      SPRITE_FlowerReviveRight
+                db      SPRITE_FlowerDeathRight2
+
+                db      SPRITE_FlowerRight1
+                db      SPRITE_FlowerRight2
+                db      SPRITE_FlowerRight3
+                db      SPRITE_FlowerRight4
+                db      SPRITE_FlowerLeft1
+                db      SPRITE_FlowerLeft2
+                db      SPRITE_FlowerLeft3
+                db      SPRITE_FlowerLeft4
+
+                db      SPRITE_FlowerDeathLeft1
+                db      SPRITE_FlowerDeathLeft1
+                db      SPRITE_FlowerDeathLeft2
+                db      SPRITE_FlowerDeathLeft2
+                db      SPRITE_FlowerDeathRight1
+                db      SPRITE_FlowerDeathRight1
+                db      SPRITE_FlowerDeathRight2
+                db      SPRITE_FlowerDeathRight2
+
+                db      SPRITE_FlowerDeathLeft2
+                db      SPRITE_FlowerDeathRight2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -147,9 +193,10 @@ SpawnEnemy:     ld      a, (EnemyCount)
                 and     PHYS_USERDATA
                 or      (ix+Enemy_phys_flags)
                 ld      (ix+Enemy_phys_flags), a
-                xor     a
-                ld      (ix+Enemy_index), a
-                ld      (ix+Enemy_state), ENEMY_ALIVE
+                dec     de
+                ld      a, (de)
+                ld      (ix+Enemy_state), a
+                ld      (ix+Enemy_index), 0
                 call    AllocSprite
                 ld      (ix+Enemy_spriteRef), a
                 ret
@@ -161,10 +208,15 @@ SpawnEnemy:     ld      a, (EnemyCount)
 
 KillEnemy:      ld      de, Enemy_state
                 add     hl, de
-                ld      a, ENEMY_ALIVE
-                cp      (hl)
+                ld      a, (hl)
+                ld      e, a
+                and     ENEMY_STATE_MASK
+                cp      ENEMY_ALIVE
                 ret     nz
-                ld      (hl), ENEMY_DYING
+                ld      a, e
+                and     ~ENEMY_STATE_MASK
+                or      ENEMY_DYING
+                ld      (hl), a
                 dec     hl
                 ld      (hl), 0     ; Enemy_index
                 ret
@@ -219,14 +271,25 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 ld      e, a
 @@loop:         push    de
                 ld      a, (ix+Enemy_state)
+                ld      e, a
+                and     ENEMY_STATE_MASK
                 cp      ENEMY_DYING
                 jr      nz, @@notDying
-                call    @@maybeFallDown
+                ld      a, e
+                and     ENEMY_STATIC
+                call    z, @@maybeFallDown
+                ld      l, (ix+Enemy_sprites)
+                ld      h, (ix+Enemy_sprites+1)
+                dec     hl
+                dec     hl
+                dec     hl
+                ld      l, (hl)
                 ld      a, (Timer)
-                and     31
-                cp      31
+                and     l
+                cp      l
                 jp      nz, @@setSprite
 @@notDying:     ld      a, (ix+Enemy_state)
+                and     ENEMY_STATE_MASK
                 cp      ENEMY_ALIVE
                 jp      nz, @@doneAlive
                 ld      c, (ix+Enemy_phys_x)
@@ -251,6 +314,8 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 ld      a, (Timer)
                 and     1
                 jr      z, @@doneAlive
+                bit     5, (ix+Enemy_state)         ; ENEMY_STATIC
+                jr      nz, @@doneAlive
                 bit     0, (ix+Enemy_phys_flags)    ; PHYS_HORIZONTAL
                 jr      nz, @@right
                 call    CanGoLeft
@@ -281,6 +346,7 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 jr      @@doneAlive
 @@cantUp:       res     1, (ix+Enemy_phys_flags)    ; PHYS_DOWN
 @@doneAlive:    ld      a, (ix+Enemy_state)
+                and     ENEMY_STATE_MASK
                 ld      b, a
                 cp      ENEMY_WAITING
                 jr      nz, @@notWaiting
@@ -299,7 +365,10 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 ld      b, (ix+Enemy_originalY)
                 ld      (ix+Enemy_phys_x), c
                 ld      (ix+Enemy_phys_y), b
-@@respawn:      ld      (ix+Enemy_state), ENEMY_APPEAR
+@@respawn:      ld      a, (ix+Enemy_state)
+                and     ~ENEMY_STATE_MASK
+                or      ENEMY_APPEAR
+                ld      (ix+Enemy_state), a
                 xor     a
 @@updateIndex:  ld      (ix+Enemy_index), a
                 jr      @@setSprite
@@ -322,18 +391,45 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 cp      ENEMY_APPEAR
                 jr      z, @@appear
                 cp      ENEMY_DYING
-                jr      nz, @@setSprite
-                ld      (ix+Enemy_state), ENEMY_WAITING
+                ld      a, (ix+Enemy_state)
+                jr      z, @@dying
+                and     ENEMY_SHOOTING
+                jr      z, @@setSprite
+                push    ix
+                push    de
+                ld      a, (ix+Enemy_phys_x)
+                ;dec     a
+          sub a,9
+                ld      c, (ix+Enemy_phys_flags)
+                bit     0, c                        ; PHYS_HORIZONTAL
+                jr      z, @@shootLeft              ; PHYS_LEFT
+                add     a, 9
+@@shootLeft:    ld      e, a
+                ld      a, (ix+Enemy_phys_y)
+                add     a, 2
+                ld      d, a
+                ld      ixl, c
+                call    SpawnBullet
+                pop     de
+                pop     ix
                 jr      @@setSprite
-@@appear:       ld      (ix+Enemy_state), ENEMY_ALIVE
+@@dying:        and     ~ENEMY_STATE_MASK
+                or      ENEMY_WAITING
+                ld      (ix+Enemy_state), a
+                jr      @@setSprite
+@@appear:       ld      a, (ix+Enemy_state)
+                and     ~ENEMY_STATE_MASK
+                or      ENEMY_ALIVE
+                ld      (ix+Enemy_state), a
 @@setSprite:    ld      a, (ix+Enemy_state)
+                and     ENEMY_STATE_MASK
                 cp      ENEMY_WAITING
                 jr      z, @@isWaiting
                 rlca
                 rlca
                 rlca
                 add     a, (ix+Enemy_index)
-@@doSetSprite:  bit     0, (ix+Enemy_phys_flags)    ; PHYS_HORIZONTAL
+                bit     0, (ix+Enemy_phys_flags)    ; PHYS_HORIZONTAL
                 jr      z, @@getSprite              ; PHYS_LEFT
                 add     a, 4
 @@getSprite:    ld      e, a
@@ -359,13 +455,19 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 ld      h, (ix+Enemy_sprites+1)
                 dec     hl
                 ld      a, (hl)
-                and     ENEMY_RESPAWN_WHERE_DIED
+                and     ENEMY_FALL_WHEN_DEAD
+                call    nz, @@maybeFallDown
+                ld      a, ENEMY_VISIBLE_WHEN_DEAD
+                and     (hl)
                 jr      z, @@removeSprite
-                call    @@maybeFallDown
-                ld      a, ENEMY_DYING << 3
-                jr      @@doSetSprite
+                ld      a, ENEMY_WAITING << 3
+                bit     0, (ix+Enemy_phys_flags)    ; PHYS_HORIZONTAL
+                jr      z, @@getSprite              ; PHYS_LEFT
+                inc     a
+                jr      @@getSprite
 
-@@maybeFallDown:bit     4, (ix+Enemy_phys_flags)    ; ENEMY_MOVING_VERTICALLY
+@@maybeFallDown:push    hl
+                bit     4, (ix+Enemy_phys_flags)    ; ENEMY_MOVING_VERTICALLY
                 jr      z, @@notFalling
                 ld      c, (ix+Enemy_phys_x)
                 ld      b, (ix+Enemy_phys_y)
@@ -379,4 +481,5 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 inc     (ix+Enemy_phys_y)
                 jr      @@doneFalling
 @@notFalling:   set     0, (ix+Enemy_phys_flags)    ; PHYS_RIGHT
-@@doneFalling:  ret
+@@doneFalling:  pop     hl
+                ret

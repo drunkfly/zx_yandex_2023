@@ -23,11 +23,12 @@ OBJ_STONE           = 6
 OBJ_GHOST           = 7
 OBJ_WEAPON          = 8
 OBJ_BAT             = 9
+OBJ_FLOWER          = 10
 
 PASSABLE_ATTR       = 0x47
 COIN1_ATTR          = 0x46
 COIN2_ATTR          = 0x44
-STONE_ATTR          = 0x42
+STONE_ATTR          = 0x07
 BRICKS_ATTR         = 0x57
 WEAPON_ATTR         = 0x45
 

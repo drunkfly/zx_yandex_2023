@@ -94,6 +94,23 @@ byte BatRight4[8];
 
 byte BatFall1[8];
 byte BatFall2[8];
+byte BatRevive[8];
+
+byte FlowerLeft1[8];
+byte FlowerLeft2[8];
+byte FlowerLeft3[8];
+byte FlowerLeft4[8];
+byte FlowerRight1[8];
+byte FlowerRight2[8];
+byte FlowerRight3[8];
+byte FlowerRight4[8];
+
+byte FlowerDeathLeft1[8];
+byte FlowerDeathLeft2[8];
+byte FlowerDeathRight1[8];
+byte FlowerDeathRight2[8];
+byte FlowerReviveLeft[8];
+byte FlowerReviveRight[8];
 
 byte Empty[8];
 byte Bricks[8];
@@ -239,6 +256,7 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
                 case 'G': FLUSH(); *level++ = 0x80 | GHOST; continue;
                 case 'B': FLUSH(); *level++ = 0x80 | BAT; continue;
                 case 'W': FLUSH(); *level++ = 0x80 | WEAPON; continue;
+                case 'F': FLUSH(); *level++ = 0x80 | FLOWER; continue;
                 default: abort();
             }
 
@@ -443,6 +461,23 @@ void LoadData(void)
 
     GetSprite("BatFall1", BatFall1, 144, 48);
     GetSprite("BatFall2", BatFall2, 152, 48);
+    GetSprite("BatRevive", BatRevive, 160, 48);
+
+    GetMirrorSprite("FlowerLeft1", FlowerLeft1, 112, 56);
+    GetMirrorSprite("FlowerLeft2", FlowerLeft2, 120, 56);
+    GetMirrorSprite("FlowerLeft3", FlowerLeft3, 128, 56);
+    GetMirrorSprite("FlowerLeft4", FlowerLeft4, 136, 56);
+    GetSprite("FlowerRight1", FlowerRight1, 112, 56);
+    GetSprite("FlowerRight2", FlowerRight2, 120, 56);
+    GetSprite("FlowerRight3", FlowerRight3, 128, 56);
+    GetSprite("FlowerRight4", FlowerRight4, 136, 56);
+
+    GetMirrorSprite("FlowerDeathRight1", FlowerDeathRight1, 144, 56);
+    GetMirrorSprite("FlowerDeathRight2", FlowerDeathRight2, 152, 56);
+    GetMirrorSprite("FlowerReviveRight", FlowerReviveRight, 160, 56);
+    GetSprite("FlowerDeathLeft1", FlowerDeathLeft1, 144, 56);
+    GetSprite("FlowerDeathLeft2", FlowerDeathLeft2, 152, 56);
+    GetSprite("FlowerReviveLeft", FlowerReviveLeft, 160, 56);
 
     fclose(f);
 }
