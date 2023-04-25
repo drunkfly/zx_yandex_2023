@@ -22,11 +22,12 @@ OBJ_PLAYER2_TOP     = 5
 OBJ_STONE           = 6
 OBJ_GHOST           = 7
 OBJ_WEAPON          = 8
+OBJ_BAT             = 9
 
 PASSABLE_ATTR       = 0x47
 COIN1_ATTR          = 0x46
 COIN2_ATTR          = 0x44
-STONE_ATTR          = 0x07
+STONE_ATTR          = 0x42
 BRICKS_ATTR         = 0x57
 WEAPON_ATTR         = 0x45
 
@@ -38,8 +39,12 @@ PHYS_VERTICAL       = 0x02
 PHYS_DOWN           = 0
 PHYS_UP             = 2
 
+PHYS_USERDATA       = 0xf0
+
 REASON_ENEMY        = 1
 REASON_ITEM         = 2
 REASON_BULLET       = 3
+
+ENEMY_RESPAWN_TIME  = 80
 
 Timer               = 0x5C78

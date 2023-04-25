@@ -114,6 +114,8 @@ LoadLevel:      xor     a
                 jp      z, @@stone
                 cp      OBJ_GHOST
                 jp      z, @@ghost
+                cp      OBJ_BAT
+                jp      z, @@bat
                 cp      OBJ_WEAPON
                 jr      z, @@weapon
 @@doneEmpty:    xor     a
@@ -184,18 +186,21 @@ LoadLevel:      xor     a
                 ld      ixl, 1
                 jp      @@drawTile
 
-@@ghost:        push    bc
-                push    de
-                sla     b
-                sla     b
-                sla     b
-                sla     c
-                sla     c
-                sla     c
+@@ghost:        push    de
                 ld      de, GhostSprites
+                jr      @@enemy
+@@bat:          push    de
+                ld      de, BatSprites
+@@enemy:        push    bc
+                sla     b
+                sla     b
+                sla     b
+                sla     c
+                sla     c
+                sla     c
                 call    SpawnEnemy
-                pop     de
                 pop     bc
+                pop     de
                 jp      @@doneEmpty
 
 @@stone:        push    bc

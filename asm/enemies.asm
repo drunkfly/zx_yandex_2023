@@ -4,6 +4,8 @@ ENEMY_ALIVE = 1
 ENEMY_DYING = 2
 ENEMY_WAITING = 3
 
+ENEMY_MOVE_VERTICALLY = 0x10
+
 sizeof_Enemy = 12
 Enemy_phys_x = 0
 Enemy_phys_y = 1
@@ -41,6 +43,35 @@ EnemyCount      db      0
 
                 section data_enemies
 
+                db      (3 << 1) | 1
+BatSprites:     db      SPRITE_GhostAppear1
+                db      SPRITE_GhostAppear2
+                db      SPRITE_GhostAppear3
+                db      SPRITE_GhostAppear4
+                db      SPRITE_GhostAppear1
+                db      SPRITE_GhostAppear2
+                db      SPRITE_GhostAppear3
+                db      SPRITE_GhostAppear4
+
+                db      SPRITE_BatRight1
+                db      SPRITE_BatRight2
+                db      SPRITE_BatRight3
+                db      SPRITE_BatRight4
+                db      SPRITE_BatLeft1
+                db      SPRITE_BatLeft2
+                db      SPRITE_BatLeft3
+                db      SPRITE_BatLeft4
+
+                db      SPRITE_GhostAppear4
+                db      SPRITE_GhostAppear3
+                db      SPRITE_GhostAppear2
+                db      SPRITE_GhostAppear1
+                db      SPRITE_GhostAppear4
+                db      SPRITE_GhostAppear3
+                db      SPRITE_GhostAppear2
+                db      SPRITE_GhostAppear1
+
+                db      (7 << 1) | 0
 GhostSprites:   db      SPRITE_GhostAppear1
                 db      SPRITE_GhostAppear2
                 db      SPRITE_GhostAppear3
@@ -110,6 +141,14 @@ SpawnEnemy:     ld      a, (EnemyCount)
                 ld      (ix+Enemy_originalY), b
                 ld      (ix+Enemy_sprites), e
                 ld      (ix+Enemy_sprites+1), d
+                dec     de
+                ld      a, (de)
+                rrca
+                rrca
+                rrca
+                rrca
+                or      (ix+Enemy_phys_flags)
+                ld      (ix+Enemy_phys_flags), a
                 xor     a
                 ld      (ix+Enemy_index), a
                 ld      (ix+Enemy_state), a ; ENEMY_APPEAR
@@ -190,7 +229,7 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 jp      nz, @@setSprite
 @@notDying:     ld      a, (ix+Enemy_state)
                 cp      ENEMY_ALIVE
-                jr      nz, @@doneAlive
+                jp      nz, @@doneAlive
                 ld      c, (ix+Enemy_phys_x)
                 ld      b, (ix+Enemy_phys_y)
                 push    ix
@@ -218,25 +257,38 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 call    CanGoLeft
                 jr      z, @@cantLeft
                 dec     (ix+Enemy_phys_x)
-                jr      @@doneAlive
+                jr      @@doneHorz
 @@cantLeft:     set     0, (ix+Enemy_phys_flags)    ; PHYS_RIGHT
-                jr      @@doneAlive
+                jr      @@doneHorz
 @@right:        call    CanGoRight
                 jr      z, @@cantRight
                 inc     (ix++Enemy_phys_x)
-                jr      @@doneAlive
+                jr      @@doneHorz
 @@cantRight:    res     0, (ix+Enemy_phys_flags)    ; PHYS_LEFT
-@@doneAlive:    ld      a, (Timer)
-                and     7
-                cp      7
-                jr      nz, @@setSprite
-                ld      a, (ix+Enemy_state)
+@@doneHorz:     bit     4, (ix+Enemy_phys_flags)    ; ENEMY_MOVE_VERTICALLY
+                jr      z, @@doneAlive
+                bit     1, (ix+Enemy_phys_flags)    ; PHYS_VERTICAL
+                jr      nz, @@up
+                call    CanGoDown
+                jr      z, @@cantDown
+                inc     (ix+Enemy_phys_y)
+                jr      @@doneAlive
+@@cantDown:     set     1, (ix+Enemy_phys_flags)    ; PHYS_UP
+                jr      @@doneAlive
+@@up:           ld      d, 1
+                call    CanGoUp
+                jr      z, @@cantUp
+                dec     (ix+Enemy_phys_y)
+                jr      @@doneAlive
+@@cantUp:       res     1, (ix+Enemy_phys_flags)    ; PHYS_DOWN
+@@doneAlive:    ld      a, (ix+Enemy_state)
                 ld      b, a
                 cp      ENEMY_WAITING
-                ld      a, (ix+Enemy_index)
                 jr      nz, @@notWaiting
+                ; waiting
+                ld      a, (ix+Enemy_index)
                 inc     a
-                cp      10
+                cp      ENEMY_RESPAWN_TIME
                 jr      c, @@updateIndex
                 ld      c, (ix+Enemy_originalX)
                 ld      b, (ix+Enemy_originalY)
@@ -246,7 +298,18 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 xor     a
 @@updateIndex:  ld      (ix+Enemy_index), a
                 jr      @@setSprite
-@@notWaiting:   inc     a
+@@notWaiting:   ld      a, (ix+Enemy_phys_flags)
+                and     PHYS_USERDATA & ~ENEMY_MOVE_VERTICALLY
+                rlca
+                rlca
+                rlca
+                ld      c, a
+                ld      a, (Timer)
+                and     c
+                cp      c
+                jr      nz, @@setSprite
+                ld      a, (ix+Enemy_index)
+                inc     a
                 and     3
                 ld      (ix+Enemy_index), a
                 jr      nz, @@setSprite

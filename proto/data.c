@@ -83,6 +83,15 @@ byte Weapon4[8];
 byte Weapon5[8];
 byte Weapon6[8];
 
+byte BatLeft1[8];
+byte BatLeft2[8];
+byte BatLeft3[8];
+byte BatLeft4[8];
+byte BatRight1[8];
+byte BatRight2[8];
+byte BatRight3[8];
+byte BatRight4[8];
+
 byte Empty[8];
 byte Bricks[8];
 
@@ -225,6 +234,7 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
                 case '2': FLUSH(); *level++ = 0x80 | PLAYER_2_START; continue;
                 case 'O': FLUSH(); *level++ = 0x80 | STONE; continue;
                 case 'G': FLUSH(); *level++ = 0x80 | GHOST; continue;
+                case 'B': FLUSH(); *level++ = 0x80 | BAT; continue;
                 case 'W': FLUSH(); *level++ = 0x80 | WEAPON; continue;
                 default: abort();
             }
@@ -418,6 +428,15 @@ void LoadData(void)
     GetSprite("Weapon4", Weapon4, 104, 160);
     GetSprite("Weapon5", Weapon5, 112, 160);
     GetSprite("Weapon6", Weapon6, 120, 160);
+
+    GetMirrorSprite("BatLeft1", BatLeft1, 112, 48);
+    GetMirrorSprite("BatLeft2", BatLeft2, 120, 48);
+    GetMirrorSprite("BatLeft3", BatLeft3, 128, 48);
+    GetMirrorSprite("BatLeft4", BatLeft4, 136, 48);
+    GetSprite("BatRight1", BatRight1, 112, 48);
+    GetSprite("BatRight2", BatRight2, 120, 48);
+    GetSprite("BatRight3", BatRight3, 128, 48);
+    GetSprite("BatRight4", BatRight4, 136, 48);
 
     fclose(f);
 }
