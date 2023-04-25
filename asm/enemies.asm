@@ -196,13 +196,18 @@ SpawnEnemy:     ld      a, (EnemyCount)
                 dec     de
                 ld      a, (de)
                 ld      (ix+Enemy_state), a
-                ld      (ix+Enemy_index), 0
+                and     a, ENEMY_SHOOTING
+                jr      z, @@notShooting
+                ld      (ix+Enemy_originalX), ENEMY_SHOOT_COOLDOWN
+@@notShooting:  ld      (ix+Enemy_index), 0
                 call    AllocSprite
                 ld      (ix+Enemy_spriteRef), a
                 ret
 
                 ; Input:
                 ;   HL => enemy
+                ; Output:
+                ;   ZF=1: killed, ZF=0: not killed
                 ; Preserves:
                 ;   BC, IX
 
@@ -218,8 +223,9 @@ KillEnemy:      ld      de, Enemy_state
                 or      ENEMY_DYING
                 ld      (hl), a
                 dec     hl
-                ld      (hl), 0     ; Enemy_index
-                ret
+                xor     a
+                ld      (hl), a     ; Enemy_index
+                ret     ; ZF=1 killed
 
                 ; Input:
                 ;   B = Y
@@ -251,6 +257,47 @@ EnemyCollides:  ld      a, (EnemyCount)
                 add     a, 7+8
                 cp      b
                 jr      c, @@noCollision
+                pop     ix
+                dec     hl
+                ret
+@@noCollision:  add     hl, de
+                dec     ixl
+                jr      nz, @@loop
+                pop     ix
+@@notFound:     ld      h, 0
+                ret
+
+                ; Input:
+                ;   B = Y
+                ;   C = X
+                ; Output:
+                ;   HL => enemy, or H = 0 if no collision
+                ; Preserves:
+                ;   IX
+
+EnemyCollidesBullet:
+                ld      a, (EnemyCount)
+                or      a
+                jr      z, @@notFound
+                push    ix
+                ld      hl, Enemies
+                ld      de, sizeof_Enemy-1
+                ld      ixl, a
+                ld      a, b
+                and     ~7
+                ld      b, a
+                ld      a, c
+                and     ~7
+                ld      c, a
+@@loop:         ld      a, (hl)             ; x
+                inc     hl
+                and     ~7
+                cp      c
+                jr      nz, @@noCollision
+                ld      a, (hl)             ; y
+                and     ~7
+                cp      b
+                jr      nz, @@noCollision
                 pop     ix
                 dec     hl
                 ret
@@ -395,11 +442,15 @@ UpdateEnemies:  ld      a, (EnemyCount)
                 jr      z, @@dying
                 and     ENEMY_SHOOTING
                 jr      z, @@setSprite
+                ld      a, (ix+Enemy_originalX)
+                dec     a
+                ld      (ix+Enemy_originalX), a
+                jr      nz, @@setSprite
+                ld      (ix+Enemy_originalX), ENEMY_SHOOT_COOLDOWN
                 push    ix
                 push    de
                 ld      a, (ix+Enemy_phys_x)
-                ;dec     a
-          sub a,9
+                dec     a
                 ld      c, (ix+Enemy_phys_flags)
                 bit     0, c                        ; PHYS_HORIZONTAL
                 jr      z, @@shootLeft              ; PHYS_LEFT

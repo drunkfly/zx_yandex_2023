@@ -7,16 +7,16 @@ msgPressAnyKey: db      PAPER,7,INK,1,FLASH,1,BRIGHT,1
 
 Start:          ld      sp, 0x5d0c
 
-                xor         a
-                ld          (Player1 + Player_kempston), a
-                ld          (Player2 + Player_kempston), a
-                ld          hl, DefaultInput1
-                ld          de, Player1 + Player_keyLeft_mask
-                ld          bc, 10
+                xor     a
+                ld      (Player1 + Player_kempston), a
+                ld      (Player2 + Player_kempston), a
+                ld      hl, DefaultInput1
+                ld      de, Player1 + Player_keyLeft_mask
+                ld      bc, 10
                 ldir
-                ld          hl, DefaultInput2
-                ld          de, Player2 + Player_keyLeft_mask
-                ld          bc, 10
+                ld      hl, DefaultInput2
+                ld      de, Player2 + Player_keyLeft_mask
+                ld      bc, 10
                 ldir
 
                 ld      hl, COIN2_ATTR*256 + COIN1_ATTR

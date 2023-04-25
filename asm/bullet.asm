@@ -193,14 +193,17 @@ UpdateDrawBullets:
                 pop     bc
 
                 push    hl
-                call    EnemyCollides
+                push    bc
+                call    EnemyCollidesBullet
+                pop     bc
                 ld      a, h
                 or      a
                 jr      z, @@noEnemy
                 call    KillEnemy
+                jr      nz, @@noEnemy
                 pop     hl
                 jr      @@destroy
-@@noEnemy:      
+@@noEnemy:
 
                 ld      de, 0
                 call    ReadCollision

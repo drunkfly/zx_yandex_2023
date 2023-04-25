@@ -355,7 +355,7 @@ void LoadData(void)
     fprintf(f, "Empty:\n");
     fprintf(f, "db 0, 0, 0, 0, 0, 0, 0, 0\n");
 
-    GetSprite("Bricks", Bricks, 64, 24);
+    GetSprite("Bricks", Bricks, 0, 16);//64, 24);
     GetSprite("CoinLeft", AppleLeft, 72, 128);
     GetSprite("CoinTopLeft", AppleTopLeft, 72, 120);
     GetSprite("CoinTop", AppleTop, 112, 120);
