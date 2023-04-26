@@ -204,6 +204,7 @@ PlayerDead3:    db      SPRITE_PlayerDead3Left
                 ; Input:
                 ;   B = port
                 ;   A = mask
+                ;   L = kempston bit
                 ; Output:
                 ;   ZF=0 = Key Pressed
 
@@ -285,6 +286,7 @@ TryGetItem:     ld      a, (ix+Player_state)
 
 MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
                 ld      a, (ix+Player_keyLeft_mask)
+                ld      l, KEMPSTON_LEFT
                 call    KeyPressed
                 jr      nz, @@noLeft
                 ld      a, (ix+Player_state)
@@ -315,6 +317,7 @@ MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
                 ret     ; CF=0: return true
 @@noLeft:       ld      b, (ix+Player_keyRight_port)
                 ld      a, (ix+Player_keyRight_mask)
+                ld      l, KEMPSTON_RIGHT
                 call    KeyPressed
                 jr      nz, @@noRight
                 ld      a, (ix+Player_state)
@@ -350,6 +353,7 @@ MoveLeftRight:  ld      b, (ix+Player_keyLeft_port)
 
 TryShoot:       ld      b, (ix+Player_keyFire_port)
                 ld      a, (ix+Player_keyFire_mask)
+                ld      l, KEMPSTON_FIRE
                 call    KeyPressed
                 ret     nz
                 ld      a, (ix+Player_cooldown)
@@ -486,6 +490,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 @@idleOnGround: ; check if we can jump
                 ld      b, (ix+Player_keyUp_port)
                 ld      a, (ix+Player_keyUp_mask)
+                ld      l, KEMPSTON_UP
                 call    KeyPressed
                 jr      nz, @@noJump
                 call    CanGoUp
@@ -502,6 +507,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 @@noJump:       ; check if we can duck
                 ld      b, (ix+Player_keyDown_port)
                 ld      a, (ix+Player_keyDown_mask)
+                ld      l, KEMPSTON_DOWN
                 call    KeyPressed
                 jr      nz, @@noDuck
                 ld      (ix+Player_state), PLAYER_SITTING
@@ -523,7 +529,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 
 @@deadFalling:  ld      a, (onGround)
                 or      a
-                jr      z, @@draw
+                jp      z, @@draw
                 ld      (ix+Player_state), PLAYER_DEAD
                 jr      @@draw
 
@@ -573,6 +579,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      @@jumpingInAir
 @@sitOnGround:  ld      b, (ix+Player_keyDown_port)
                 ld      a, (ix+Player_keyDown_mask)
+                ld      l, KEMPSTON_DOWN
                 call    KeyPressed
                 jr      z, @@continueSit
                 ld      (ix+Player_state), PLAYER_IDLE

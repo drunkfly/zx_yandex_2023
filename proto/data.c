@@ -405,6 +405,7 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
 }
 
 char tmp[6912];
+char tmp2[6912];
 
 void LoadData(void)
 {
@@ -426,13 +427,54 @@ void LoadData(void)
     f = fopen(buf, "rb");
     fread(tmp, 1, 6912, f);
     fclose(f);
-
     *(strrchr(buf, '/') + 1) = 0;
     strcat(buf, "../asm/data_intro.asm");
     f = fopen(buf, "w");
     fprintf(f, "section data_intro\n");
     for (int i = 0; i < 6912; i++)
         fprintf(f, "db 0x%02X\n", (unsigned char)tmp[i]);
+    fclose(f);
+
+    strcpy(buf, __FILE__);
+    for (char* p = buf; *p; ++p) {
+        if (*p == '\\')
+            *p = '/';
+    }
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "win.scr");
+    f = fopen(buf, "rb");
+    fread(tmp, 1, 6912, f);
+    fclose(f);
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "win2.scr");
+    f = fopen(buf, "rb");
+    fread(tmp2, 1, 6912, f);
+    fclose(f);
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "../asm/data_win.asm");
+    f = fopen(buf, "w");
+    fprintf(f, "section data_win_1\n");
+    fprintf(f, "Win1:\n");
+    for (int y = 0; y < 64; y++) {
+        fprintf(f, "db ");
+        for (int x = 0; x < 8; x++) {
+            fprintf(f, "0x%02X", (unsigned char)~tmp[ZXCOORD(x, y)]);
+            if (x != 7)
+                fprintf(f, ",");
+        }
+        fprintf(f, "\n");
+    }
+    fprintf(f, "section data_win_2\n");
+    fprintf(f, "Win2:\n");
+    for (int y = 0; y < 64; y++) {
+        fprintf(f, "db ");
+        for (int x = 0; x < 8; x++) {
+            fprintf(f, "0x%02X", (unsigned char)~tmp2[ZXCOORD(x, y)]);
+            if (x != 7)
+                fprintf(f, ",");
+        }
+        fprintf(f, "\n");
+    }
     fclose(f);
 
     strcpy(buf, __FILE__);
@@ -460,7 +502,15 @@ void LoadData(void)
     size_t pt3Len = fread(tmp, 1, 6912, f);
     fclose(f);
 
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "nq-Old-School-Threads.pt3");
+    f = fopen(buf, "rb");
+    size_t pt3Len2 = fread(tmp2, 1, 6912, f);
+    fclose(f);
+
     size_t maxLen = pt3Len;
+    if (pt3Len2 > maxLen)
+        maxLen = pt3Len2;
 
     *(strrchr(buf, '/') + 1) = 0;
     strcat(buf, "../asm/data_pt3.asm");
@@ -474,6 +524,10 @@ void LoadData(void)
     fprintf(f, "GamePT3:\n");
     for (size_t i = 100; i < pt3Len; i++)
         fprintf(f, "db 0x%02X\n", (unsigned char)tmp[i]);
+    fprintf(f, "section pt3_win\n");
+    fprintf(f, "WinPT3:\n");
+    for (size_t i = 100; i < pt3Len2; i++)
+        fprintf(f, "db 0x%02X\n", (unsigned char)tmp2[i]);
     fclose(f);
 
     *(strrchr(buf, '/') + 1) = 0;

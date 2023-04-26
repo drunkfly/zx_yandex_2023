@@ -41,8 +41,10 @@ Campaign:       ld      a, (CurrentLevel)
                 ld      e, (ix+2)
                 ld      d, (ix+3)
                 call    RunLevel
-                ;or      a
-                ;ret     z
+                if      !PROFILER_ENABLED
+                or      a
+                ret     z
+                endif
                 ld      hl, CurrentLevel
                 inc     (hl)
                 jr      Campaign
@@ -50,10 +52,50 @@ Campaign:       ld      a, (CurrentLevel)
                 if      PROFILER_ENABLED
                 xor     a
                 out     (0xfe), a
+                jr      @@doneWin
                 endif
                 call    ClearAttrib
+                call    ClearScreen
+                ld      hl, Win1
+                ld      de, TempBuffer
+                call    Unzx7
+                ld      hl, TempBuffer
+                call    DrawPicture
+                ld      hl, WinPT3
+                call    PlayMusic
+                ld      hl, 0x5800
+                ld      de, 0x5801
+                ld      (hl), 0x47
+                ld      bc, 768
+                ldir
+                ld      hl, Win2
+                ld      de, TempBuffer
+                call    Unzx7
                 ld      hl, msgGameComplete
-                jp      RunLevel@@win1
+                call    DrawString
+                call    WaitKeyReleased
+@@doneLoop:     halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
+                call    CheckKC
+                jr      nz, @@easterEgg
+                call    CheckPauseKey
+                jr      z, @@doneWin
+                jr      @@doneLoop
+@@easterEgg:    ld      hl, TempBuffer
+                call    DrawPicture
+@@doneLoop2:    halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
+                call    CheckPauseKey
+                jr      nz, @@doneLoop2
+@@doneWin:      call    WaitKeyReleased
+                ld      a, 1
+                ret
 
                 section code_low
 
@@ -102,16 +144,8 @@ RunLevel:       push    hl
                 xor     a
                 out     (0xfe), a
                 endif
-                ld      bc, 0xFEFE
-                in      a, (c)
-                and     1
-                jr      nz, @@noQuit
-                ld      bc, 0x7FFE
-                in      a, (c)
-                and     1
-                jr      z, @@quit
-@@noQuit:       jp      @@loop
-
+                call    CheckPauseKey
+                jp      nz, @@loop
 @@quit:         xor     a
                 ld      (SpritesEnabled), a
                 halt
@@ -143,6 +177,10 @@ RunLevel:       push    hl
                 jr      z, @@returnToMenu
                 jr      @@quitLoop
 @@returnToGame: halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 ld      hl, TempBuffer
                 ld      de, 0x4000
                 ld      bc, 6912
@@ -186,7 +224,7 @@ RunLevel:       push    hl
 msgHud:         db      INK,7,PAPER,0,BRIGHT,1
                 db      22,1,1,'Level '
 LevelNumber:    db      '00 OF 00'
-                db      22,2,5,'[SHIFT+SPACE] RESTART/EXIT'
+                db      22,2,6,'[CAPS+SPACE] RESTART/EXIT'
                 db      0xff
 
 msgPlayerWin:   db      INK,7,PAPER,0,BRIGHT,1
@@ -212,6 +250,21 @@ msgRestartQuit: db      INK,7,PAPER,0,BRIGHT,1
                 db      22,13,6,'                     '
                 db      0xff
 
+                section code_high
+
 msgGameComplete:
-                db      INK,7,PAPER,0,BRIGHT,1,22,12,8,' GAME COMPLETE! '
+                db      INK,6,PAPER,0,BRIGHT,1
+                db      22,(PICTURE_Y/8+8+2),11,'WELL DONE!'
+                db      INK,7,BRIGHT,0
+                db      22,(PICTURE_Y/8+8+4),3,'Press CAPS+SPACE to return'
+                db      22,(PICTURE_Y/8+8+5),10,'to main menu'
                 db      0xff
+
+CheckPauseKey:  ld      bc, 0xFEFE
+                in      a, (c)
+                and     1
+                ret     nz
+                ld      bc, 0x7FFE
+                in      a, (c)
+                and     1
+                ret
