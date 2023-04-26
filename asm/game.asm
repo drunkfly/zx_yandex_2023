@@ -59,6 +59,8 @@ Campaign:       ld      a, (CurrentLevel)
                 call    Unzx7
                 ld      hl, TempBuffer
                 call    DrawPicture
+                ld      hl, WinPT3
+                call    PlayMusic
                 ld      hl, 0x5800
                 ld      de, 0x5801
                 ld      (hl), 0x47

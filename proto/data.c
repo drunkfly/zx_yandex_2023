@@ -502,7 +502,15 @@ void LoadData(void)
     size_t pt3Len = fread(tmp, 1, 6912, f);
     fclose(f);
 
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "nq-Old-School-Threads.pt3");
+    f = fopen(buf, "rb");
+    size_t pt3Len2 = fread(tmp2, 1, 6912, f);
+    fclose(f);
+
     size_t maxLen = pt3Len;
+    if (pt3Len2 > maxLen)
+        maxLen = pt3Len2;
 
     *(strrchr(buf, '/') + 1) = 0;
     strcat(buf, "../asm/data_pt3.asm");
@@ -516,6 +524,10 @@ void LoadData(void)
     fprintf(f, "GamePT3:\n");
     for (size_t i = 100; i < pt3Len; i++)
         fprintf(f, "db 0x%02X\n", (unsigned char)tmp[i]);
+    fprintf(f, "section pt3_win\n");
+    fprintf(f, "WinPT3:\n");
+    for (size_t i = 100; i < pt3Len2; i++)
+        fprintf(f, "db 0x%02X\n", (unsigned char)tmp2[i]);
     fclose(f);
 
     *(strrchr(buf, '/') + 1) = 0;
