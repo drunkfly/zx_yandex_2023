@@ -41,8 +41,10 @@ Campaign:       ld      a, (CurrentLevel)
                 ld      e, (ix+2)
                 ld      d, (ix+3)
                 call    RunLevel
-                ;or      a
-                ;ret     z
+                if      !PROFILER_ENABLED
+                or      a
+                ret     z
+                endif
                 ld      hl, CurrentLevel
                 inc     (hl)
                 jr      Campaign
@@ -84,7 +86,7 @@ Campaign:       ld      a, (CurrentLevel)
                 jr      @@doneLoop
 @@easterEgg:    ld      hl, TempBuffer
                 call    DrawPicture
-@@doneLoop2:     halt
+@@doneLoop2:    halt
                 if      PROFILER_ENABLED
                 xor     a
                 out     (0xfe), a
