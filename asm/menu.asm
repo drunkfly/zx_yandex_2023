@@ -80,8 +80,17 @@ msgFire1:       db      22,15,19,FLASH,0," "
                 db      22,16,19,FLASH,1," "
                 db      0xff
 
-msgChooseLevel: db      PAPER,0,INK,7,FLASH,0,BRIGHT,1
-                db      22,12,5," Choose level [1-6]:",FLASH,1," ",FLASH,0," "
+msgChooseLevel: db      PAPER,3,INK,7,FLASH,0,BRIGHT,1
+                db      22, 7,8,"  Choose level  "
+                db      PAPER,0
+                db      22, 8,8,"                "
+                db      22, 9,8," [1] Laguna     "
+                db      22,10,8," [2] Lava attic "
+                db      22,11,8," [3] Dragonfly  "
+                db      22,12,8," [4] Bridge     "
+                db      22,13,8," [5] Stairway   "
+                db      22,14,8," [6] Peak       "
+                db      22,15,8,"                "
                 db      0xff
 
 MainMenuInit:   di
@@ -404,10 +413,10 @@ Frame_bottomCornerAttrib = 22
 
 PvpFrame:       db      0x46                    ; corner attrib
                 db      0x06                    ; lines attrib
-                db      4                       ; x
-                db      11                      ; y
-                db      24                      ; w
-                db      3                       ; h
+                db      7                       ; x
+                db      6                       ; y
+                db      18                      ; w
+                db      11                      ; h
                 dw      BorderTopLeft
                 dw      BorderTopCenter
                 dw      BorderTopRight
