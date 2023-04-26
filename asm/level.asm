@@ -126,12 +126,20 @@ ChainsAttr2:    db      0                   ; 47
                 db      0x03                ; 55
                 dw      Mushroom2
 
+                section code_high
+
 CoinTopTile:    db      PASSABLE_ATTR
                 dw      CoinTop
 CoinTop1Tile:   db      PASSABLE_ATTR
                 dw      CoinTop1
 CoinTop2Tile:   db      PASSABLE_ATTR
                 dw      CoinTop2
+DoorTopTile:    db      DOOR_ATTR
+                dw      Gates1_1
+DoorBottomTile: db      DOOR_ATTR
+                dw      Gates1_2
+SwitchTile:     db      SWITCH_ATTR
+                dw      SwitchOff
 
                 section code_low
 
@@ -146,6 +154,10 @@ LoadLevel:      xor     a
                 ld      (FlyingCount), a
                 ld      (EnemyCount), a
                 ld      (BulletCount), a
+                ld      (SwitchCount), a
+                ld      (GateOpen), a
+                ld      (GateAnim), a
+                ld      (GateTimer), a
                 ld      (GameLevelDone), a
                 push    de
                 push    hl
@@ -278,9 +290,9 @@ LoadLevel:      xor     a
                 cp      OBJ_PLAYER2_START
                 jr      z, @@player2start
                 cp      OBJ_PLAYER1_TOP
-                jr      z, @@player1top
+                jp      z, @@player1top
                 cp      OBJ_PLAYER2_TOP
-                jr      z, @@player2top
+                jp      z, @@player2top
                 cp      OBJ_PLAYER1_COIN
                 jr      z, @@player1coin
                 cp      OBJ_PLAYER2_COIN
@@ -297,6 +309,12 @@ LoadLevel:      xor     a
                 jp      z, @@flowerRight
                 cp      OBJ_FLOWER_AUTO
                 jp      z, @@flowerAuto
+                cp      OBJ_DOOR_TOP
+                jp      z, @@doorTop
+                cp      OBJ_DOOR_BOTTOM
+                jp      z, @@doorBottom
+                cp      OBJ_SWITCH
+                jp      z, @@doorSwitch
                 cp      OBJ_WEAPON
                 jr      z, @@weapon
 @@doneEmpty:    xor     a
@@ -340,6 +358,37 @@ LoadLevel:      xor     a
                 pop     bc
                 pop     de
                 jp      @@doneObject
+
+@@doorTop:      ld      a, c
+                ld      (DoorX), a
+                ld      a, b
+                ld      (DoorY), a
+                ld      ixl, 1
+                ld      hl, DoorTopTile
+                jp      @@drawTile
+
+@@doorBottom:   ld      ixl, 1
+                ld      hl, DoorBottomTile
+                jp      @@drawTile
+
+@@doorSwitch:   ld      a, (SwitchCount)
+                cp      MAX_SWITCHES
+                jr      z, @@doneEmpty
+                inc     a
+                ld      (SwitchCount), a
+                add     a, a
+                ld      l, a
+                ld      h, 0
+                push    de
+                ld      de, Switches-sizeof_Switch
+                add     hl, de
+                ld      (hl), c
+                inc     hl
+                ld      (hl), b
+                pop     de
+                ld      ixl, 1
+                ld      hl, SwitchTile
+                jp      @@drawTile
 
 @@player1top:   ld      ix, Player1
                 ld      hl, CoinTop1Tile

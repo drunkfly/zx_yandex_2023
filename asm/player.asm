@@ -253,15 +253,16 @@ TryGetItem:     ld      a, (ix+Player_state)
                 jr      z, @@stateGood
                 cp      PLAYER_JUMPING
                 ret     nz
-@@stateGood:    ld      a, (ix+Player_itemAttr)
-                or      a
-                ld      d, 0
-                jr      z, @@grabAny
-                ld      d, SPRITE_Weapon1
-@@grabAny:      ld      b, (ix+Player_phys_y)
+@@stateGood:    ld      b, (ix+Player_phys_y)
                 ld      a, (ix+Player_phys_x)
                 add     a, c
                 ld      c, a
+                call    GateToggleSwtch
+                ld      a, (ix+Player_itemAttr)
+                or      a
+                ld      d, 0
+                jr      z, @@grab
+                ld      d, SPRITE_Weapon1
 @@grab:         call    TryGrabItem
                 ld      a, e
                 or      a

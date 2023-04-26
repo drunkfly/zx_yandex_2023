@@ -47,6 +47,8 @@ msgRedefine3:   db      PAPER,0
                 db      22,17,11,"          "
                 db      0xff
 
+                section code_high
+
 msgRight1:      db      22,12,19,FLASH,0," "
                 db      22,13,19,FLASH,1," "
                 db      0xff
@@ -65,8 +67,6 @@ msgFire1:       db      22,15,19,FLASH,0," "
 
 msgChooseLevel: db      22,12,5," Choose level [1-4]:",FLASH,1," ",FLASH,0," "
                 db      0xff
-
-                section code_high
 
 MainMenuInit:   di
                 ; install interrupt handler

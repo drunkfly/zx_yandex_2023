@@ -4,6 +4,7 @@ MAX_FLYING          = 8
 MAX_ITEMS           = 16
 MAX_ENEMIES         = 8
 MAX_BULLETS         = 64
+MAX_SWITCHES        = 4
 
 SHOOT_COOLDOWN      = 25
 DEATH_SHOOT_COOLDOWN = 50*2
@@ -28,6 +29,9 @@ OBJ_BAT             = 9
 OBJ_FLOWER_LEFT     = 10
 OBJ_FLOWER_RIGHT    = 11
 OBJ_FLOWER_AUTO     = 12
+OBJ_DOOR_TOP        = 13
+OBJ_DOOR_BOTTOM     = 14
+OBJ_SWITCH          = 15
 
 PASSABLE_ATTR       = 0x47
 COIN1_ATTR          = 0x44
@@ -45,6 +49,8 @@ STONES4_ATTR        = 0x46
 STONES5_ATTR        = 0x41
 CHAINS_ATTR         = 0x41  ; passable
 WEAPON_ATTR         = 0x45
+DOOR_ATTR           = 0x05
+SWITCH_ATTR         = 0x06
 
 PHYS_HORIZONTAL     = 0x01
 PHYS_LEFT           = 0
@@ -67,5 +73,7 @@ KEMPSTON_LEFT       = 2
 KEMPSTON_DOWN       = 4
 KEMPSTON_UP         = 8
 KEMPSTON_FIRE       = 16
+
+GATE_DELAY          = 10
 
 Timer               = 0x5C78
