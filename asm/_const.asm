@@ -76,4 +76,6 @@ KEMPSTON_FIRE       = 16
 
 GATE_DELAY          = 10
 
+AFTER_REVIVE_INVINC_TIME = 100
+
 Timer               = 0x5C78

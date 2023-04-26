@@ -4,8 +4,6 @@
 Start:          ld      sp, 0x5d0a
 
                 xor     a
-                ld      (Player1 + Player_kempston), a
-                ld      (Player2 + Player_kempston), a
                 ld      hl, DefaultInput1
                 ld      de, Player1 + Player_keyLeft_mask
                 ld      bc, 10

@@ -237,6 +237,7 @@ UpdateDrawBullets:
                 push    hl
                 call    KillPlayer
                 pop     hl
+                jr      z, @@skipPlayer2
                 pop     ix
 @@destroy:      dec     hl
                 dec     hl

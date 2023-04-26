@@ -39,7 +39,7 @@ Player_keyFire_mask     = 22
 Player_keyFire_port     = 23
 Player_spriteRef        = 24
 Player_itemSpriteRef    = 25
-Player_kempston         = 26
+Player_invincibility    = 26
 Player_myCoin           = 27
 Player_enemyCoin        = 28
 
@@ -69,7 +69,7 @@ Player1:        db      0           ; phys.x
                 db      0x7F        ; keyFire.port      ; M
                 db      0           ; spriteRef
                 db      0           ; itemSpriteRef
-                db      0           ; kempston
+                db      0           ; invincibility
                 db      0           ; myCoin
                 db      0           ; enemyCoin
 
@@ -99,7 +99,7 @@ Player2:        db      0           ; phys.x
                 db      0x7F        ; keyFire.port      ; Space
                 db      0           ; spriteRef
                 db      0           ; itemSpriteRef
-                db      0           ; kempston
+                db      0           ; invincibility
                 db      0           ; myCoin
                 db      0           ; enemyCoin
 
@@ -253,6 +253,7 @@ InitPlayer:     ld      (ix+Player_originalX), c
                 ld      (ix+Player_itemSpriteID), a
                 ld      (ix+Player_cooldown), a
                 ld      (ix+Player_gunCount), a
+                ld      (ix+Player_invincibility), a
                 dec     a
                 ld      (ix+Player_itemSpriteRef), a    ; 0xff
                 ret
@@ -476,6 +477,12 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 dec     (ix+Player_cooldown)
 @@1:
 
+                ld      a, (ix+Player_invincibility)
+                or      a
+                jr      z, @@2
+                dec     (ix+Player_invincibility)
+@@2:
+
                 ld      a, 1
                 ld      (onGround), a
                 ld      a, (ix+Player_itemAttr)
@@ -615,6 +622,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 @@wakingUp:     ld      a, (ix+Player_cooldown)
                 or      a
                 jr      nz, @@draw
+                ld      (ix+Player_invincibility), AFTER_REVIVE_INVINC_TIME
                 ld      (ix+Player_state), PLAYER_IDLE
                 jr      @@draw
 
@@ -646,7 +654,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 or      a
                 jr      z, @@drawIdle1
                 ld      hl, PlayerHands
-                jr      @@setSpriteResetCooldown
+                jp      @@setSprite
 @@drawIdle1:    ld      a, (ix+Player_gunCount)
                 or      a
                 jr      z, @@drawIdle2
@@ -679,7 +687,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 or      a
                 jr      z, @@drawJumping1
                 ld      hl, PlayerHandsJump
-                jr      @@setSpriteResetCooldown
+                jr      @@setSprite
 @@drawJumping1: ld      a, (ix+Player_gunCount)
                 or      a
                 jr      z, @@drawJumping2
@@ -691,7 +699,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 @@drawDeadFalling:
 @@drawDeadFallingRespawn:
                 ld      hl, PlayerDead1
-                jr      @@setSpriteResetCooldown
+                jr      @@setSprite
 
 @@drawDead:
 @@drawDeadRespawn:
@@ -699,18 +707,17 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 and     31
                 cp      15
                 ld      hl, PlayerDead2
-                jr      nc, @@setSpriteResetCooldown ; >= 15
+                jr      nc, @@setSprite ; >= 15
                 ld      hl, PlayerDead1
-                jr      @@setSpriteResetCooldown
+                jr      @@setSprite
 
 @@drawWakingUp: ld      hl, PlayerDead3
-                jr      @@setSpriteResetCooldown
+                jr      @@setSprite
 
 @@drawSitting:  ld      a, (ix+Player_itemAttr)
                 or      a
                 jr      z, @@drawSitting1
                 ld      hl, PlayerHandsDuck
-@@setSpriteResetCooldown:
                 jr      @@setSprite
 @@drawSitting1: ld      a, (ix+Player_gunCount)
                 or      a
@@ -726,8 +733,13 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 @@6:            ld      b, (hl)
                 ld      d, (ix+Player_phys_y)
                 ld      e, (ix+Player_phys_x)
+                ld      a, (ix+Player_invincibility)
+                and     15
+                cp      7
                 ld      a, (ix+Player_spriteRef)
-                call    SetSprite
+                jr      c, @@doSetSprite
+                ld      b, 0
+@@doSetSprite:  call    SetSprite
                 ld      a, (ix+Player_itemAttr)
                 or      a
                 jr      z, @@noItem
@@ -843,6 +855,8 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 ; Input:
                 ;   IX => player
                 ;   B = reason
+                ; Output:
+                ;   ZF=0: player killed, ZF=1: not killed
 
 KillPlayer:     ld      a, (ix+Player_state)
                 cp      PLAYER_DEAD
@@ -853,7 +867,12 @@ KillPlayer:     ld      a, (ix+Player_state)
                 ret     z
                 cp      PLAYER_DEAD_FALLING_RESPAWN
                 ret     z
-                push    ix
+                ld      a, (ix+Player_invincibility)
+                or      a
+                jr      z, @@notInvincible
+                xor     a   ; ZF=1
+                ret
+@@notInvincible:push    ix
                 push    bc
                 push    iy
                 call    _PlayPlayerHitSound
@@ -904,6 +923,8 @@ KillPlayer:     ld      a, (ix+Player_state)
 
 @@item:         ld      (ix+Player_state), PLAYER_DEAD_FALLING
                 ld      (ix+Player_cooldown), DEATH_STONE_COOLDOWN
+                xor     a
+                inc     a   ; ZF=0
                 ret
 
 @@enemy:        ld      a, (SinglePlayer)
@@ -911,6 +932,8 @@ KillPlayer:     ld      a, (ix+Player_state)
                 jr      z, @@item
 @@respawn:      ld      (ix+Player_state), PLAYER_DEAD_FALLING_RESPAWN
 @@shootCooldown:ld      (ix+Player_cooldown), DEATH_SHOOT_COOLDOWN
+                xor     a
+                inc     a   ; ZF=0
                 ret
 
 @@dropItem:     ld      l, 3 | (1 << 5)

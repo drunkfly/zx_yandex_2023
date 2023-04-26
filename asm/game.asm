@@ -143,6 +143,8 @@ RunLevel:       push    hl
                 endif
 @@loop1:        xor     a
                 ld      (SkipDropSound), a
+                call    CheckPauseKey
+                jr      z, @@quit
                 call    UpdateItems
                 call    UpdateEnemies
                 call    UpdateFlying
@@ -167,8 +169,7 @@ RunLevel:       push    hl
                 xor     a
                 out     (0xfe), a
                 endif
-                call    CheckPauseKey
-                jp      nz, @@loop
+                jr      @@loop
 @@quit:         xor     a
                 ld      (SpritesEnabled), a
                 halt
