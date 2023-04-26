@@ -1,7 +1,7 @@
 
                 section code_entry
 
-Start:          ld      sp, 0x5d0b
+Start:          ld      sp, 0x5d0a
 
                 xor     a
                 ld      (Player1 + Player_kempston), a
@@ -26,10 +26,10 @@ Start:          ld      sp, 0x5d0b
                 out     (0xfe), a
 
                 ld      a, 2
-                call    0x1601            ; open screen
+                call    0x1601              ; open screen
                 ld      hl, msgPressAnyKey
                 call    DrawString
-                call    0xc000
+                call    0xc000              ; beeper
                 ;call    WaitAnyKey
                 call    WaitKeyReleased
                 jp      MainMenu

@@ -3,49 +3,59 @@
 
 SinglePlayer:   db      0
 GameLevelDone:  db      0
+CurrentLevel:   db      0
 
                 section code_game
 
-Campaign:       ld      hl, Level1
-                ld      de, Level1_size
+Levels:         dw      Level1, Level1_size
+                dw      Level2, Level2_size
+                dw      Level3, Level3_size
+                dw      Level4, Level4_size
+                dw      Level5, Level5_size
+                dw      Level6, Level6_size
+                dw      Level7, Level7_size
+                dw      Level8, Level8_size
+                dw      Level9, Level9_size
+                dw      Level10, Level10_size
+                dw      Level11, Level11_size
+                dw      Level12, Level12_size
+                dw      Level13, Level13_size
+                dw      Level14, Level14_size
+                dw      Level15, Level15_size
+                dw      Level16, Level16_size
+                dw      Level17, Level17_size
+                dw      0
+
+Campaign:       ld      a, (CurrentLevel)
+                ld      ixl, a
+                ld      ixh, 0
+                add     ix, ix
+                add     ix, ix
+                ld      de, Levels
+                add     ix, de
+                ld      l, (ix+0)
+                ld      h, (ix+1)
+                xor     a
+                cp      h
+                jr      z, @@done
+                ld      e, (ix+2)
+                ld      d, (ix+3)
                 call    RunLevel
-                ld      hl, Level2
-                ld      de, Level2_size
-                call    RunLevel
-                ld      hl, Level3
-                ld      de, Level3_size
-                call    RunLevel
-                ld      hl, Level4
-                ld      de, Level4_size
-                call    RunLevel
-                ld      hl, Level5
-                ld      de, Level5_size
-                call    RunLevel
-                ld      hl, Level6
-                ld      de, Level6_size
-                call    RunLevel
-                ld      hl, Level7
-                ld      de, Level7_size
-                call    RunLevel
-                ld      hl, Level8
-                ld      de, Level8_size
-                call    RunLevel
-                ld      hl, Level9
-                ld      de, Level9_size
-                call    RunLevel
-                ld      hl, Level10
-                ld      de, Level10_size
-                call    RunLevel
-                ld      hl, Level11
-                ld      de, Level11_size
-                call    RunLevel
-                ld      hl, Level12
-                ld      de, Level12_size
-                call    RunLevel
-                halt
+                ;or      a
+                ;ret     z
+                ld      hl, CurrentLevel
+                inc     (hl)
+                jr      Campaign
+@@done:         halt
                 call    ClearAttrib
                 ld      hl, msgGameComplete
                 jp      RunLevel@@win1
+
+                ; Input
+                ;   HL => level data
+                ;   DE => level data size
+                ; Output:
+                ;   A=0: exit to menu, A=1: restart
 
 RunLevel:       push    hl
                 push    de
@@ -120,6 +130,7 @@ RunLevel:       push    hl
                 jp      RunLevel
 @@returnToMenu: pop     de
                 pop     hl
+                xor     a
                 ret
 
 @@win:          pop     de
@@ -138,6 +149,7 @@ RunLevel:       push    hl
                 call    WaitKeyReleased
                 call    WaitAnyKey
                 call    WaitKeyReleased
+                ld      a, 1
                 ret
 
 msgHud:         db      INK,7,PAPER,0,BRIGHT,1

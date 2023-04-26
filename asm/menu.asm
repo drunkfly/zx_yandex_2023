@@ -118,7 +118,9 @@ MainMenu:       halt
 @@redefine:     call    RedefineMenu
                 jr      MainMenu
 
-@@single:       ld      a, 1
+@@single:       xor     a
+                ld      (CurrentLevel), a
+                inc     a
                 ld      (SinglePlayer), a
                 call    Campaign
                 jr      MainMenu
