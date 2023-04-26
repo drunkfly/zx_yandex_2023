@@ -111,7 +111,7 @@ static const char* Level9Data[] = {
       "                                ", /*  4 */
 };
 
-enum { Level18Chains = CHAINS_GREEN };
+enum { Level11Chains = CHAINS_GREEN };
 static const char* Level11Data[] = {
     /* Level 17 */
     /* 01234567890123456789012345678901 */
@@ -533,7 +533,7 @@ static const char* Level10Data[] = {
         "                                ",
     };
 
-enum { Level11Chains = CHAINS_BLUE  };
+enum { Level18Chains = CHAINS_BLUE  };
 static const char* Level18Data[] = {
       /* Level 11 */
       /* 01234567890123456789012345678901 */
