@@ -1,11 +1,11 @@
     device zxspectrum48
 
-	org #8000
+	org #c000
 
 begin
 	ld hl,musicData
 	call tritone.play
-	jr $
+    ret
 
 
 	include "tritone_std.asm"
@@ -16,4 +16,5 @@ musicData
 end
 	display /d,end-begin
 
-	savesna "nq-16k-game-1-std.sna",begin
+	;savesna "nq-16k-game-1-std.sna",begin
+    savebin "beeper-std.bin",$C000,$768

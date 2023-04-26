@@ -405,8 +405,42 @@ void LoadData(void)
         fprintf(f, "db 0x%02X\n", (unsigned char)tmp[i]);
     fclose(f);
 
+    strcpy(buf, __FILE__);
+    for (char* p = buf; *p; ++p) {
+        if (*p == '\\')
+            *p = '/';
+    }
     *(strrchr(buf, '/') + 1) = 0;
-    strcat(buf, "../asm/data_levels.asm");
+    strcat(buf, "../music/beeper-std.bin");
+    f = fopen(buf, "rb");
+    size_t beeperLen = fread(tmp, 1, 6912, f);
+    fclose(f);
+
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "../asm/data_beeper.asm");
+    f = fopen(buf, "w");
+    fprintf(f, "section beeper\n");
+    for (size_t i = 0; i < beeperLen; i++)
+        fprintf(f, "db 0x%02X\n", (unsigned char)tmp[i]);
+    fclose(f);
+
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "../proto/nq-Old-School-Threads.pt3");
+    f = fopen(buf, "rb");
+    size_t pt3Len = fread(tmp, 1, 6912, f);
+    fclose(f);
+
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "../asm/data_pt3.asm");
+    f = fopen(buf, "w");
+    fprintf(f, "section pt3\n");
+    fprintf(f, "MusicBuffer:\n");
+    for (size_t i = 100; i < pt3Len; i++)
+        fprintf(f, "db 0x%02X\n", (unsigned char)tmp[i]);
+    fclose(f);
+
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "data_levels.asm");
     f = fopen(buf, "w");
 
     GenerateLevel("level1", "Level1", Level1, Level1Data);
@@ -430,7 +464,7 @@ void LoadData(void)
     fclose(f);
     
     *(strrchr(buf, '/') + 1) = 0;
-    strcat(buf, "../asm/data_gfx.asm");
+    strcat(buf, "data_gfx.asm");
     f = fopen(buf, "w");
 
     fprintf(f, "section data_gfx\n");

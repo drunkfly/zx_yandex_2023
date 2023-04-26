@@ -1,4 +1,5 @@
 section data_intro [file "INTRO", base 0x4000]
+section beeper [file "BEEPER", base 0xc000]
 
 section bss [base 0x5d0b, imaginary]
 

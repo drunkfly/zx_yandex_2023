@@ -20,6 +20,8 @@ Start:          ld      sp, 0x5d0b
                 ld      hl, COIN1_ATTR*256 + COIN2_ATTR
                 ld      (Player2 + Player_myCoin), hl
 
+                call    InitMusicPlayer
+
                 xor     a
                 out     (0xfe), a
 
@@ -27,7 +29,9 @@ Start:          ld      sp, 0x5d0b
                 call    0x1601            ; open screen
                 ld      hl, msgPressAnyKey
                 call    DrawString
-                call    WaitAnyKey
+                call    0xc000
+                ;call    WaitAnyKey
+                call    WaitKeyReleased
                 jp      MainMenu
 
 msgPressAnyKey: db      PAPER,7,INK,1,FLASH,1,BRIGHT,1
