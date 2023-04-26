@@ -117,7 +117,7 @@ UpdatePhysObject:
                 ;   HL => address
                 ;   A = attribute
                 ; Preserves:
-                ;   BC
+                ;   BC, IX
 
 ReadCollision:  ld      a, b
                 rrca
@@ -188,18 +188,20 @@ CanGoUp:        ld      a, (ix+PhysObject_y)
                 ;   IX => PhysObject
                 ; Return:
                 ;   ZF=0: true; ZF=1: false
+                ; Preserves:
+                ;   IX
 
 PassableAttr4 = CanGoDown@@passable4 + 1
 
 CanGoDown:      ld      a, (ix+PhysObject_y)
-                ld      b, a
+                ld      c, (ix+PhysObject_x)
+CanGoDown@@1:   ld      b, a
                 and     7
                 ret     nz      ; return true
                 ld      a, b
-                cp      -8 + (LEVEL_Y + LEVEL_HEIGHT * 8)
+                cp      -8 + (/*LEVEL_Y +*/ LEVEL_HEIGHT * 8)
                 jr      nc, @@retFalse
                 ld      de, 0xff00  ; D = -1, E = 0
-                ld      c, (ix+PhysObject_x)
                 call    ReadCollision
                 cp      PASSABLE_ATTR
                 jr      z, CanGoUp@@1

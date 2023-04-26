@@ -237,7 +237,33 @@ UpdateItems:    ld      a, (Timer)
                 inc     hl
                 ld      d, (hl)     ; y
                 inc     hl
-                ld      a, (hl)     ; spriteID
+
+                ld      a, d
+                ld      c, e
+                push    hl
+                push    de
+                call    CanGoDown@@1
+                pop     de
+                pop     hl
+                jr      z, @@cantGoDown
+                ld      b, d
+                ld      c, e
+                ld      e, (hl)
+                push    hl
+                inc     hl
+                ld      d, (hl)
+                ld      hl, 0xff00
+                push    ix
+                call    SpawnFlyingItem
+                pop     ix
+                pop     hl
+                dec     hl
+                dec     hl
+                push    hl
+                call    RemoveItem
+                pop     hl
+                jr      @@continue2
+@@cantGoDown:   ld      a, (hl)     ; spriteID
                 cp      SPRITE_Coin1
                 ld      c, 4
                 jr      z, @@changeSprite
@@ -269,6 +295,6 @@ UpdateItems:    ld      a, (Timer)
                 pop     hl
 @@continue:     ld      de, sizeof_Item-2
                 add     hl, de
-                dec     ixl
+@@continue2:    dec     ixl
                 jr      nz, @@loop
                 ret

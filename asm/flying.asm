@@ -81,9 +81,13 @@ SpawnFlyingItem:ld      a, (FlyingCount)
                 push    bc
                 call    InitPhysObject
                 ld      a, h
+                cp      0xff
+                jr      z, @@noJump
                 ld      c, l
                 call    JumpPhysObject
-                call    AllocSprite
+                jr      @@didJump
+@@noJump:       ld      (ix+Flying_flags), 0
+@@didJump:      call    AllocSprite
                 ld      b, e
                 pop     de
                 ld      (ix+Flying_spriteRef), a
