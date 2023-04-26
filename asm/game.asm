@@ -45,9 +45,15 @@ Campaign:       ld      hl, Level1
                 halt
                 call    ClearAttrib
                 ld      hl, msgGameComplete
-                jr      RunLevel@@win1
+                jp      RunLevel@@win1
 
-RunLevel:       call    LoadLevel
+RunLevel:       push    hl
+                push    de
+                call    LoadLevel
+                ld      ix, HudFrame
+                call    MenuFrame
+                ld      hl, msgHud
+                call    DrawString
 @@loop:         halt
                 ld      a, 3
                 out     (0xfe), a
@@ -74,11 +80,51 @@ RunLevel:       call    LoadLevel
                 ld      a, 0x32
                 jr      nz, @@win
 @@skipPlayer2:
+                ld      bc, 0xFEFE
+                in      a, (c)
+                and     1
+                jr      nz, @@noQuit
+                ld      bc, 0x7FFE
+                in      a, (c)
+                and     1
+                jr      z, @@quit
+@@noQuit:
+          ; FIXME
+          ld a, 5
+          out (0xfe), a
+          call MusicPlayer@@play
                 xor     a
                 out     (0xfe), a
                 jp      @@loop
 
-@@win:          ld      (PlayerWinner), a
+@@quit:         halt
+                call    DimScreen
+                ld      ix, RestartFrame
+                call    MenuFrame
+                ld      hl, msgRestartQuit
+                call    DrawString
+@@quitLoop:     call    0x028E
+                ld      a, e
+                cp      0xff
+                jr      z, @@quitLoop
+                push    af
+                call    WaitKeyReleased
+                pop     af
+                cp      0x0d        ; R
+                jr      z, @@restart
+                cp      0x25        ; Q
+                jr      z, @@returnToMenu
+                jr      @@quitLoop
+@@restart:      pop     de
+                pop     hl
+                jp      RunLevel
+@@returnToMenu: pop     de
+                pop     hl
+                ret
+
+@@win:          pop     de
+                pop     hl
+                ld      (PlayerWinner), a
                 halt
                 call    DimScreen
                 ld      ix, LevelCompleteFrame
@@ -94,6 +140,12 @@ RunLevel:       call    LoadLevel
                 call    WaitKeyReleased
                 ret
 
+msgHud:         db      INK,7,PAPER,0,BRIGHT,1
+                db      22,1,1,'LEVEL '
+LevelNumber:    db      '00 OF 00'
+                db      22,2,5,'[SHIFT+SPACE] RESTART/EXIT'
+                db      0xff
+
 msgPlayerWin:   db      INK,7,PAPER,0,BRIGHT,1
                 db      22,11,5,'                      '
                 db      22,12,5,'    PLAYER ' 
@@ -107,6 +159,13 @@ msgLevelComplete:
                 db      22,11,5,'                      '
                 db      22,12,5,'    LEVEL COMPLETE!   '
                 db      22,13,5,'                      '
+                db      0xff
+
+msgRestartQuit: db      INK,7,PAPER,0,BRIGHT,1
+                db      22,10,9,'               '
+                db      22,11,9,'  [R] RESTART  '
+                db      22,12,9,'  [Q] QUIT     '
+                db      22,13,9,'               '
                 db      0xff
 
 msgGameComplete:

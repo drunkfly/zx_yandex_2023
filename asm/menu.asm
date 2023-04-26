@@ -368,6 +368,39 @@ LevelCompleteFrame:
                 dw      Border1BottomRight
                 db      0x06                    ; bottom corner attrib
 
+RestartFrame:
+                db      0x42                    ; corner attrib
+                db      0x02                    ; lines attrib
+                db      8                       ; x
+                db      9                       ; y
+                db      17                      ; w
+                db      6                       ; h
+                dw      Border1TopLeft
+                dw      Border1TopCenter
+                dw      Border1TopRight
+                dw      Border1Left
+                dw      Border1Right
+                dw      Border1BottomLeft
+                dw      Border1BottomCenter
+                dw      Border1BottomRight
+                db      0x02                    ; bottom corner attrib
+
+HudFrame:       db      0x47                    ; corner attrib
+                db      0x07                    ; lines attrib
+                db      0                       ; x
+                db      0                       ; y
+                db      32                      ; w
+                db      4                       ; h
+                dw      BorderTopLeft
+                dw      BorderTopCenter
+                dw      BorderTopRight
+                dw      BorderLeft
+                dw      BorderRight
+                dw      BorderBottomLeft
+                dw      BorderBottomCenter
+                dw      BorderBottomRight
+                db      0x47                    ; bottom corner attrib
+
 MenuFrame:      ld      b, (ix+Frame_cornerAttrib)
                 ld      l, (ix+Frame_topLeft)
                 ld      h, (ix+Frame_topLeft+1)
