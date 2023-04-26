@@ -141,7 +141,9 @@ RunLevel:       push    hl
                 ld      a, 4
                 out     (0xfe), a
                 endif
-@@loop1:        call    UpdateItems
+@@loop1:        xor     a
+                ld      (SkipDropSound), a
+                call    UpdateItems
                 call    UpdateEnemies
                 call    UpdateFlying
                 call    UpdateDrawBullets

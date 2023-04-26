@@ -20,7 +20,7 @@ Player_phys_speed       = 3
 Player_phys_accel       = 4
 Player_state            = 5
 Player_cooldown         = 6
-Player_hasGun           = 7
+Player_gunCount         = 7
 Player_itemSpriteID     = 8
 Player_itemAttr         = 9
 Player_gatesX           = 10
@@ -50,7 +50,7 @@ Player1:        db      0           ; phys.x
                 db      0           ; phys.accel
                 db      0           ; state
                 db      0           ; cooldown
-                db      0           ; hasGun
+                db      0           ; gunCount
                 db      0           ; itemSpriteID
                 db      0           ; itemAttr
                 db      0           ; gatesX
@@ -80,7 +80,7 @@ Player2:        db      0           ; phys.x
                 db      0           ; phys.accel
                 db      0           ; state
                 db      0           ; cooldown
-                db      0           ; hasGun
+                db      0           ; gunCount
                 db      0           ; itemSpriteID
                 db      0           ; itemAttr
                 db      0           ; gatesX
@@ -201,6 +201,8 @@ PlayerDead3:    db      SPRITE_PlayerDead3Left
 
                 section code_low
 
+SkipDropSound   db      0
+
                 ; Input:
                 ;   B = port
                 ;   A = mask
@@ -250,7 +252,7 @@ InitPlayer:     ld      (ix+Player_originalX), c
                 ld      (ix+Player_itemAttr), a
                 ld      (ix+Player_itemSpriteID), a
                 ld      (ix+Player_cooldown), a
-                ld      (ix+Player_hasGun), a
+                ld      (ix+Player_gunCount), a
                 dec     a
                 ld      (ix+Player_itemSpriteRef), a    ; 0xff
                 ret
@@ -300,7 +302,7 @@ TryGetItem:     ld      a, (ix+Player_state)
                 call    AllocSprite
                 ld      (ix+Player_itemSpriteRef), a
                 ret
-@@weapon:       ld      (ix+Player_hasGun), 1
+@@weapon:       inc     (ix+Player_gunCount)
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -404,7 +406,12 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 call    SpawnFlyingItem
                 push    iy
                 push    af
+                ld      a, (SkipDropSound)
+                or      a
+                jr      nz, @@skipDropSound
                 call    _PlayShootSound
+@@skipDropSound:xor     a
+                ld      (SkipDropSound), a
                 pop     af
                 pop     iy
                 pop     ix
@@ -420,7 +427,7 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 dec     a
                 ld      (ix+Player_itemSpriteRef), a    ; 0xff
                 ret     ; return ZF == 0
-@@weapon:       ld      a, (ix+Player_hasGun)
+@@weapon:       ld      a, (ix+Player_gunCount)
                 or      a
                 ret     z
                 ld      a, (ix+Player_state)
@@ -640,7 +647,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@drawIdle1
                 ld      hl, PlayerHands
                 jr      @@setSpriteResetCooldown
-@@drawIdle1:    ld      a, (ix+Player_hasGun)
+@@drawIdle1:    ld      a, (ix+Player_gunCount)
                 or      a
                 jr      z, @@drawIdle2
                 ld      hl, PlayerGun
@@ -659,7 +666,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@drawMoving1
                 ld      hl, PlayerHands
                 jr      @@drawMoving3
-@@drawMoving1:  ld      a, (ix+Player_hasGun)
+@@drawMoving1:  ld      a, (ix+Player_gunCount)
                 or      a
                 jr      z, @@drawMoving2
                 ld      hl, PlayerGun
@@ -673,7 +680,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@drawJumping1
                 ld      hl, PlayerHandsJump
                 jr      @@setSpriteResetCooldown
-@@drawJumping1: ld      a, (ix+Player_hasGun)
+@@drawJumping1: ld      a, (ix+Player_gunCount)
                 or      a
                 jr      z, @@drawJumping2
                 ld      hl, PlayerGunJump
@@ -705,7 +712,7 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 ld      hl, PlayerHandsDuck
 @@setSpriteResetCooldown:
                 jr      @@setSprite
-@@drawSitting1: ld      a, (ix+Player_hasGun)
+@@drawSitting1: ld      a, (ix+Player_gunCount)
                 or      a
                 jr      z, @@drawSitting2
                 ld      hl, PlayerGunDuck
@@ -831,6 +838,8 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+                section code_high
+
                 ; Input:
                 ;   IX => player
                 ;   B = reason
@@ -857,18 +866,29 @@ KillPlayer:     ld      a, (ix+Player_state)
                 push    bc
                 call    @@dropItem
                 pop     bc
-@@noItem:       ld      a, (ix+Player_hasGun)
+@@noItem:       ld      a, (ix+Player_gunCount)
                 or      a
                 jr      z, @@noGun
-                ld      (ix+Player_hasGun), 0
-                ld      (ix+Player_itemSpriteID), SPRITE_Weapon1
+                push    bc
+                ld      b, a
+                ld      (ix+Player_gunCount), 0
+                ld      l, 3 | (1 << 5)
+@@dropGunLoop:  ld      (ix+Player_itemSpriteID), SPRITE_Weapon1
                 ld      (ix+Player_itemAttr), WEAPON_ATTR
                 ld      (ix+Player_itemSpriteRef), 0xff
                 ld      a, (ix+Player_phys_flags)
                 xor     1
                 ld      (ix+Player_phys_flags), a
                 push    bc
-                call    @@dropItem
+                push    hl
+                call    @@dropItem1
+                pop     hl
+                pop     bc
+                ld      a, 4
+                add     a, l
+                ld      l, a
+                dec     b
+                jr      nz, @@dropGunLoop
                 pop     bc
 @@noGun:        ld      a, b
                 cp      REASON_ENEMY
@@ -894,7 +914,9 @@ KillPlayer:     ld      a, (ix+Player_state)
                 ret
 
 @@dropItem:     ld      l, 3 | (1 << 5)
-                call    TryShoot@@dropItem
+@@dropItem1:    call    TryShoot@@dropItem
+                ld      a, 1
+                ld      (SkipDropSound), a
                 ret     nz
                 ld      b, (ix+Player_phys_y)
                 ld      c, (ix+Player_phys_x)

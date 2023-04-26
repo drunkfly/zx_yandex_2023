@@ -215,15 +215,15 @@ MainMenu:       ld      hl, MenuPT3
                 jr      z, @@pvp6
                 jr      @@pvpLoop
 
-@@pvp1:         ld      hl, PvpLevel2
-                ld      de, PvpLevel2_size
+@@pvp1:         ld      hl, PvpLevel1
+                ld      de, PvpLevel1_size
                 ld      a, 0x31
 @@runPvp:       ld      (PvpLevelNumber), a
                 call    RunLevel
                 jp      MainMenu
 
-@@pvp2:         ld      hl, PvpLevel1
-                ld      de, PvpLevel1_size
+@@pvp2:         ld      hl, PvpLevel2
+                ld      de, PvpLevel2_size
                 ld      a, 0x32
                 jr      @@runPvp
 

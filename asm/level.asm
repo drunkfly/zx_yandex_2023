@@ -158,6 +158,7 @@ LoadLevel:      xor     a
                 ld      (GateOpen), a
                 ld      (GateAnim), a
                 ld      (GateTimer), a
+                ld      (SkipDropSound), a
                 ld      (GameLevelDone), a
                 push    de
                 push    hl
