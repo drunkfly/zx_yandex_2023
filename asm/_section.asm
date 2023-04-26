@@ -34,6 +34,8 @@ section data_pvpLevel1 [compress=zx7]
 section data_pvpLevel2 [compress=zx7]
 section data_pvpLevel3 [compress=zx7]
 section data_pvpLevel4 [compress=zx7]
+section data_win_1 [compress=zx7]
+section data_win_2 [compress=zx7]
 section data_tiles
 section data_menu [base 0x60ac]
 

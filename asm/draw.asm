@@ -368,3 +368,40 @@ XorSprite:      ; calculate screen address
                 add     a, h
                 ld      h, a
                 ret
+
+                section code_high
+
+                ; Input:
+                ;   HL => picture
+
+PICTURE_X = 12
+PICTURE_Y = 6*8
+PICTURE_ADDR = 0x4000 | ((PICTURE_Y & 0xc0 << 5)) | ((PICTURE_Y & 0x38) << 2) | ((PICTURE_Y & 7) << 8) | PICTURE_X
+
+DrawPicture:    ld      de, PICTURE_ADDR
+                ld      ixl, 64
+@@loop:         ldi
+                ldi
+                ldi
+                ldi
+                ldi
+                ldi
+                ldi
+                ldi
+                dec     de
+                dec     de
+                dec     de
+                dec     de
+                dec     de
+                dec     de
+                dec     de
+                dec     de
+                ex      de, hl
+                inc     h
+                ld      a, 7
+                and     h
+                call    z, XorSprite@@downHL
+                ex      de, hl
+                dec     ixl
+                jr      nz, @@loop
+                ret

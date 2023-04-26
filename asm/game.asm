@@ -52,8 +52,27 @@ Campaign:       ld      a, (CurrentLevel)
                 out     (0xfe), a
                 endif
                 call    ClearAttrib
+                call    ClearScreen
+                ld      hl, Win1
+                ld      de, TempBuffer
+                call    Unzx7
+                ld      hl, TempBuffer
+                call    DrawPicture
+                ld      hl, 0x5800
+                ld      de, 0x5801
+                ld      (hl), 0x47
+                ld      bc, 768
+                ldir
+                ld      hl, Win2
+                ld      de, TempBuffer
+                call    Unzx7
                 ld      hl, msgGameComplete
-                jp      RunLevel@@win1
+                call    DrawString
+                call    WaitKeyReleased
+                call    WaitAnyKey
+                call    WaitKeyReleased
+                ld      a, 1
+                ret
 
                 section code_low
 
@@ -143,6 +162,10 @@ RunLevel:       push    hl
                 jr      z, @@returnToMenu
                 jr      @@quitLoop
 @@returnToGame: halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 ld      hl, TempBuffer
                 ld      de, 0x4000
                 ld      bc, 6912
@@ -213,5 +236,6 @@ msgRestartQuit: db      INK,7,PAPER,0,BRIGHT,1
                 db      0xff
 
 msgGameComplete:
-                db      INK,7,PAPER,0,BRIGHT,1,22,12,8,' GAME COMPLETE! '
+                db      INK,6,PAPER,0,BRIGHT,1
+                db      22,(PICTURE_Y/8+8+2),11,'WELL DONE!'
                 db      0xff

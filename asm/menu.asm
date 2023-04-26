@@ -698,6 +698,10 @@ WaitAnyKey:     ld          bc, 0xFEFE
                 cp          0x1f
                 jr          nz, @@found
                 rlc         b
+                if      PROFILER_ENABLED
+                xor         a
+                out         (0xfe), a
+                endif
                 jr          @@loop
 @@found:        ld          c, 1
                 rrca
@@ -723,7 +727,12 @@ WaitKeyReleased:xor         a
                 in          a, (0xfe)
                 and         0x1f
                 cp          0x1f
-                jr          nz, WaitKeyReleased
+                ret         z
+                if          PROFILER_ENABLED
+                xor         a
+                out         (0xfe), a
+                endif
+                jr          WaitKeyReleased
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
