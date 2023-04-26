@@ -400,9 +400,9 @@ RestartFrame:
                 db      0x42                    ; corner attrib
                 db      0x02                    ; lines attrib
                 db      5                       ; x
-                db      9                       ; y
+                db      8                       ; y
                 db      23                      ; w
-                db      6                       ; h
+                db      7                       ; h
                 dw      Border1TopLeft
                 dw      Border1TopCenter
                 dw      Border1TopRight

@@ -79,7 +79,7 @@ RunLevel:       push    hl
                 ld      a, 1
                 ld      (SpritesEnabled), a
 @@loop:         halt
-                call    UpdateItems
+@@loop1:        call    UpdateItems
                 call    UpdateEnemies
                 call    UpdateFlying
                 call    UpdateDrawBullets
@@ -88,7 +88,7 @@ RunLevel:       push    hl
                 ld      a, (GameLevelDone)
                 or      a
                 ld      a, 0x31
-                jr      nz, @@win
+                jp      nz, @@win
                 ld      a, (SinglePlayer)
                 or      a
                 jr      nz, @@skipPlayer2
@@ -119,6 +119,10 @@ RunLevel:       push    hl
                 xor     a
                 out     (0xfe), a
                 endif
+                ld      hl, 0x4000
+                ld      de, TempBuffer
+                ld      bc, 6912
+                ldir
                 call    DimScreen
                 ld      ix, RestartFrame
                 call    MenuFrame
@@ -131,11 +135,21 @@ RunLevel:       push    hl
                 push    af
                 call    WaitKeyReleased
                 pop     af
+                cp      0x0f        ; C
+                jr      z, @@returnToGame
                 cp      0x0d        ; R
                 jr      z, @@restart
                 cp      0x25        ; Q
                 jr      z, @@returnToMenu
                 jr      @@quitLoop
+@@returnToGame: halt
+                ld      hl, TempBuffer
+                ld      de, 0x4000
+                ld      bc, 6912
+                ldir
+                ld      a, 1
+                ld      (SpritesEnabled), a
+                jp      @@loop1
 @@restart:      pop     de
                 pop     hl
                 jp      RunLevel
@@ -191,7 +205,8 @@ msgLevelComplete:
                 db      0xff
 
 msgRestartQuit: db      INK,7,PAPER,0,BRIGHT,1
-                db      22,10,6,'                     '
+                db      22, 9,6,'                     '
+                db      22,10,6,'  [C] Continue       '
                 db      22,11,6,'  [R] Restart level  '
                 db      22,12,6,'  [Q] Quit to menu   '
                 db      22,13,6,'                     '

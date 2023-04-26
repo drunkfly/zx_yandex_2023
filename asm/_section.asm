@@ -3,6 +3,8 @@ section beeper [file "BEEPER", base 0xc000]
 
 section bss [base 0x5d0a, imaginary]
 section bss_music [base 0xc000, imaginary]
+section bss_temp [base 0xe000, imaginary]
+TempBuffer:
 
 section data_player_jumps_1 [base 0x5fee]
 section data_bullets [base 0x60b6]
