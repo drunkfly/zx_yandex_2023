@@ -62,4 +62,10 @@ REASON_BULLET       = 3
 
 ENEMY_RESPAWN_TIME  = 120
 
+KEMPSTON_RIGHT      = 1
+KEMPSTON_LEFT       = 2
+KEMPSTON_DOWN       = 4
+KEMPSTON_UP         = 8
+KEMPSTON_FIRE       = 16
+
 Timer               = 0x5C78

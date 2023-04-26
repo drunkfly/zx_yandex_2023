@@ -375,7 +375,7 @@ XorSprite:      ; calculate screen address
                 ;   HL => picture
 
 PICTURE_X = 12
-PICTURE_Y = 6*8
+PICTURE_Y = 4*8
 PICTURE_ADDR = 0x4000 | ((PICTURE_Y & 0xc0 << 5)) | ((PICTURE_Y & 0x38) << 2) | ((PICTURE_Y & 7) << 8) | PICTURE_X
 
 DrawPicture:    ld      de, PICTURE_ADDR
