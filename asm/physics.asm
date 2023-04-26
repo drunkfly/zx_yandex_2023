@@ -152,6 +152,9 @@ ReadCollision:  ld      a, b
                 ; Return:
                 ;   ZF=0: true; ZF=1: false
 
+PassableAttr2 = CanGoUp@@passable2 + 1
+PassableAttr3 = CanGoUp@@passable3 + 1
+
 CanGoUp:        ld      a, (ix+PhysObject_y)
                 ld      b, a
                 and     7
@@ -164,6 +167,8 @@ CanGoUp:        ld      a, (ix+PhysObject_y)
                 call    ReadCollision
                 cp      PASSABLE_ATTR
                 jr      z, @@1
+@@passable2:    cp      0
+                jr      z, @@1
 @@retFalse:     xor     a       ; return false
                 ret
 @@1:            ld      a, c
@@ -173,6 +178,8 @@ CanGoUp:        ld      a, (ix+PhysObject_y)
 @@2:            ld      a, (hl)
                 cp      PASSABLE_ATTR
                 ld      (LastCollision), a
+                jr      z, @@retTrue
+@@passable3:    cp      0
                 jr      nz, @@retFalse
 @@retTrue:      inc     a       ; return true
                 ret
@@ -181,6 +188,8 @@ CanGoUp:        ld      a, (ix+PhysObject_y)
                 ;   IX => PhysObject
                 ; Return:
                 ;   ZF=0: true; ZF=1: false
+
+PassableAttr4 = CanGoDown@@passable4 + 1
 
 CanGoDown:      ld      a, (ix+PhysObject_y)
                 ld      b, a
@@ -194,6 +203,8 @@ CanGoDown:      ld      a, (ix+PhysObject_y)
                 call    ReadCollision
                 cp      PASSABLE_ATTR
                 jr      z, CanGoUp@@1
+@@passable4:    cp      0
+                jr      z, CanGoUp@@1
                 ld      (LastCollision), a
 @@retFalse:     xor     a       ; return false
                 ret
@@ -202,6 +213,8 @@ CanGoDown:      ld      a, (ix+PhysObject_y)
                 ;   IX => PhysObject
                 ; Return:
                 ;   ZF=0: true; ZF=1: false
+
+PassableAttr5 = CanGoLeft@@passable5 + 1
 
 CanGoLeft:      ld      a, (ix+PhysObject_x)
                 or      a
@@ -213,8 +226,10 @@ CanGoLeft:      ld      a, (ix+PhysObject_x)
 @@check:        ld      b, (ix+PhysObject_y)
                 call    ReadCollision
                 cp      PASSABLE_ATTR
+                jr      z, @@canGo
+@@passable5:    cp      0
                 jr      nz, CanGoDown@@retFalse
-                ld      a, b
+@@canGo:        ld      a, b
                 and     7
                 jr      z, CanGoUp@@retTrue
                 ld      de, 32
@@ -225,6 +240,9 @@ CanGoLeft:      ld      a, (ix+PhysObject_x)
                 ;   IX => PhysObject
                 ; Return:
                 ;   ZF=0: true; ZF=1: false
+
+PassableAttr6 = CanGoLeftWithItem@@passable6 + 1
+PassableAttr7 = CanGoLeftWithItem@@passable7 + 1
 
 CanGoLeftWithItem:
                 ld      a, (ix+PhysObject_x)
@@ -237,18 +255,22 @@ CanGoLeftWithItem:
 @@check:        ld      b, (ix+PhysObject_y)
                 call    ReadCollision
                 cp      PASSABLE_ATTR
+                jr      z, @@canGo
+@@passable6:    cp      0
                 jr      nz, CanGoDown@@retFalse
-                ld      a, b
+@@canGo:        ld      a, b
                 and     7       ; clears CF
                 ld      de, -32
                 jr      z, @@1
                 sbc     hl, de  ; +32
                 ld      a, (hl)
                 cp      PASSABLE_ATTR
-                jr      nz, CanGoUp@@retFalse
-                ld      de, -64
+                jr      z, @@canGo2
+@@passable7:    cp      0
+                jp      nz, CanGoUp@@retFalse
+@@canGo2:       ld      de, -64
 @@1:            add     hl, de  ; -32
-                jr      CanGoUp@@2
+                jp      CanGoUp@@2
 
                 ; Input:
                 ;   IX => PhysObject

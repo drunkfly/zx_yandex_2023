@@ -141,7 +141,7 @@ RunLevel:       push    hl
                 ret
 
 msgHud:         db      INK,7,PAPER,0,BRIGHT,1
-                db      22,1,1,'LEVEL '
+                db      22,1,1,'Level '
 LevelNumber:    db      '00 OF 00'
                 db      22,2,5,'[SHIFT+SPACE] RESTART/EXIT'
                 db      0xff
@@ -162,10 +162,10 @@ msgLevelComplete:
                 db      0xff
 
 msgRestartQuit: db      INK,7,PAPER,0,BRIGHT,1
-                db      22,10,9,'               '
-                db      22,11,9,'  [R] RESTART  '
-                db      22,12,9,'  [Q] QUIT     '
-                db      22,13,9,'               '
+                db      22,10,6,'               '
+                db      22,11,6,'  [R] Restart level  '
+                db      22,12,6,'  [Q] Quit to menu   '
+                db      22,13,6,'                     '
                 db      0xff
 
 msgGameComplete:

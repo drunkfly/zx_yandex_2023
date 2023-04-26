@@ -188,6 +188,10 @@ typedef int bool;
 #define KEYIDX_PC_TAB       70
 #endif
 
+#define CHAINS_BLUE 0x01
+#define CHAINS_GREEN 0x04
+#define CHAINS_GRAY 0x07
+
 extern byte Stone[8];
 
 extern byte AppleLeft[8];
@@ -303,6 +307,11 @@ extern byte PlayerGunDuckRight[8];
 extern byte Empty[];
 extern byte Bricks[];
 extern byte Apple[];
+
+extern byte Chains1[8];
+extern byte Chains2[8];
+extern byte Mushroom1[8];
+extern byte Mushroom2[8];
 
 extern byte Level1[];
 

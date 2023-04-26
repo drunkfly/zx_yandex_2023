@@ -85,6 +85,46 @@ Tiles:          db      PASSABLE_ATTR       ; 0
                 dw      Stones1
                 db      STONES4_ATTR        ; 37
                 dw      Stones2
+                ; stones 5
+                db      STONES5_ATTR        ; 38    ++
+                dw      Stones1
+                db      STONES5_ATTR        ; 39
+                dw      Stones2
+                ; bricks 5
+                db      BRICKS5_ATTR        ; 40    ++
+                dw      Bricks5
+                db      BRICKS5_ATTR        ; 41
+                dw      Bricks6
+                db      BRICKS5_ATTR        ; 42
+                dw      Bricks1
+                db      BRICKS5_ATTR        ; 43
+                dw      Bricks4
+                db      BRICKS5_ATTR        ; 44    ++
+                dw      Bricks2
+                db      BRICKS5_ATTR        ; 45
+                dw      Bricks3
+                ; chains
+ChainsAttr1:    db      0                   ; 46    ++
+                dw      Chains1
+ChainsAttr2:    db      0                   ; 47
+                dw      Chains2
+                ; mushrooms
+                db      0x06                ; 48
+                dw      Mushroom1
+                db      0x06                ; 49
+                dw      Mushroom2
+                db      0x05                ; 50
+                dw      Mushroom1
+                db      0x05                ; 51
+                dw      Mushroom2
+                db      0x02                ; 52
+                dw      Mushroom1
+                db      0x02                ; 53
+                dw      Mushroom2
+                db      0x03                ; 54
+                dw      Mushroom1
+                db      0x03                ; 55
+                dw      Mushroom2
 
 CoinTopTile:    db      PASSABLE_ATTR
                 dw      CoinTop
@@ -115,6 +155,17 @@ LoadLevel:      xor     a
                 ld      de, 0x4000
                 call    Unzx7
                 pop     de
+                dec     de
+                ld      a, (de)
+                ld      (PassableAttr1), a
+                ld      (PassableAttr2), a
+                ld      (PassableAttr3), a
+                ld      (PassableAttr4), a
+                ld      (PassableAttr5), a
+                ld      (PassableAttr6), a
+                ld      (PassableAttr7), a
+                ld      (ChainsAttr1), a
+                ld      (ChainsAttr2), a
                 ; DE => pointer to data
                 ; B,C => y,x
                 ld      bc, 256*(LEVEL_Y+LEVEL_HEIGHT-1)+0
@@ -129,9 +180,9 @@ LoadLevel:      xor     a
                 dec     de
                 ld      a, (de)
                 bit     6, a                ; bit 6 = single item
-                jr      nz, @@single
+                jp      nz, @@single
                 bit     7, a                ; bit 7 = single object
-                jr      nz, @@object
+                jp      nz, @@object
                 ; save counter
                 ld      ixl, a
                 ; read value
@@ -160,6 +211,14 @@ LoadLevel:      xor     a
                 cp      34
                 jr      z, @@randomize
                 cp      36
+                jr      z, @@randomize
+                cp      38
+                jr      z, @@randomize
+                cp      40
+                jr      z, @@randomize
+                cp      44
+                jr      z, @@randomize
+                cp      46
                 jr      nz, @@do
 @@randomize:    ex      af, af'
                 ld      hl, 0x500-0x4000
@@ -204,7 +263,7 @@ LoadLevel:      xor     a
                 call    @@advance
                 dec     ixl
                 jr      nz, @@rleLoop
-                jr      @@loop
+                jp      @@loop
 @@single:       ld      ixl, 1
                 and     0x3f
                 jr      @@do

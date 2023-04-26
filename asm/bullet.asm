@@ -169,6 +169,8 @@ DestroyBullet:  call    XorBullet
                 ; Input:
                 ;   None
 
+PassableAttr1 = UpdateDrawBullets@@passable1 + 1
+
 UpdateDrawBullets:
                 ld      a, (BulletCount)
                 or      a
@@ -209,7 +211,10 @@ UpdateDrawBullets:
                 call    ReadCollision
                 cp      PASSABLE_ATTR
                 pop     hl
+                jr      z, @@notDestroy
+@@passable1:    cp      0
                 jr      nz, @@destroy
+@@notDestroy:
 
                 push    ix
                 ld      ix, Player1

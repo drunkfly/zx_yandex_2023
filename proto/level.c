@@ -8,10 +8,12 @@ BRICKS_ATTR = 0x02,
 BRICKS2_ATTR = 0x03,
 BRICKS3_ATTR = 0x05,
 BRICKS4_ATTR = 0x06,
+BRICKS5_ATTR = 0x41,
 STONES1_ATTR = 0x42,
 STONES2_ATTR = 0x43,
 STONES3_ATTR = 0x45,
 STONES4_ATTR = 0x46,
+STONES5_ATTR = 0x41,
 };
 
 const Tile AppleTopTile  = { AppleTop,  PASSABLE_ATTR };
@@ -57,7 +59,25 @@ static Tile Tiles[] = {
         { Stones2,          STONES3_ATTR },     /* 35 */
         { Stones1,          STONES4_ATTR },     /* 36 */
         { Stones2,          STONES4_ATTR },     /* 37 */
-};
+        { Stones1,          STONES5_ATTR },     /* 38 */
+        { Stones2,          STONES5_ATTR },     /* 39 */
+        { Bricks5,          BRICKS5_ATTR },     /* 40 */
+        { Bricks6,          BRICKS5_ATTR },     /* 41 */
+        { Bricks1,          BRICKS5_ATTR },     /* 42 */
+        { Bricks4,          BRICKS5_ATTR },     /* 43 */
+        { Bricks2,          BRICKS5_ATTR },     /* 44 */
+        { Bricks3,          BRICKS5_ATTR },     /* 45 */
+        { Chains1,          CHAINS_ATTR },      /* 46 */
+        { Chains2,          CHAINS_ATTR },      /* 47 */
+        { Mushroom1,        0x06 },             /* 48 */
+        { Mushroom2,        0x06 },             /* 49 */
+        { Mushroom1,        0x05 },             /* 50 */
+        { Mushroom2,        0x05 },             /* 51 */
+        { Mushroom1,        0x02 },             /* 52 */
+        { Mushroom2,        0x02 },             /* 53 */
+        { Mushroom1,        0x03 },             /* 54 */
+        { Mushroom2,        0x03 },             /* 55 */
+    };
 
 static void DrawTile(byte x, byte y, const Tile* tile)
 {
@@ -71,6 +91,7 @@ static void DrawTile(byte x, byte y, const Tile* tile)
 void DrawLevel(const byte* level)
 {
     byte x = 0, y = LEVEL_HEIGHT - 1;
+    ++level;
 
     for (;;) {
         byte count = *level++;
@@ -137,7 +158,8 @@ void DrawLevel(const byte* level)
             byte id = value;
             if (value == 6 || value == 10 || value == 12 || value == 16 || value == 18
                     || value == 20 || value == 24 || value == 26 || value == 30 || value == 32
-                    || value == 34 || value == 36) {
+                    || value == 34 || value == 36 || value == 38 || value == 40 || value == 44
+                    || value == 46) {
                 if (rand() % 2 == 0)
                     value++;
             }

@@ -4,6 +4,7 @@
 #define APPLE1_ATTR         0x46
 #define APPLE2_ATTR         0x45
 #define STONE_ATTR          0x07
+#define CHAINS_ATTR         0x41 // passable
 
 #define LEVEL_Y             2
 #define LEVEL_WIDTH         32

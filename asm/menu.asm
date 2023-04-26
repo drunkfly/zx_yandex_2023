@@ -18,13 +18,13 @@ msgMainMenu:    db      INK,7,PAPER,1,BRIGHT,1,FLASH,0
                 db      22, 3,5," -= COINZ ARE MINE =- "
                 db      22, 4,5,"                      "
                 db      PAPER,0
-                db      22,10,1,"[1] SINGLE PLAYER"
-                db      22,12,1,"[2] 2 PLAYER: CAPTURE THE COIN"
-                db      22,14,1,"[K] REDEFINE KEYS"
+                db      22,10,1,"[1] Single player"
+                db      22,12,1,"[2] 2 player capture the coin"
+                db      22,14,1,"[K] Redefine keys"
                 db      PAPER,0
-                db      22,20,4,"CODE BY NIKOLAY ZAPOLNOV"
-                db      22,21,1,"GFX BY VOLUTAR, MUSIC BY N1K-O"
-                db      22,22,7,"LEVELS BY NILL:REM"
+                db      22,20,4,"Code by Nikolay Zapolnov"
+                db      22,21,1,"Gfx by Dexus, Music by n1k-o"
+                db      22,22,7,"Levels by Nill:Rem"
                 db      0xff
 
 msgRedefine1:   db      INK,7,BRIGHT,1,FLASH,0
@@ -39,11 +39,11 @@ msgRedefine2:   db      INK,7,BRIGHT,1,FLASH,0
 
 msgRedefine3:   db      PAPER,0
                 db      22,11,11,"          "
-                db      22,12,11," LEFT   ",FLASH,1," ",FLASH,0," "
-                db      22,13,11," RIGHT    "
-                db      22,14,11," UP       "
-                db      22,15,11," DOWN     "
-                db      22,16,11," FIRE     "
+                db      22,12,11," Left   ",FLASH,1," ",FLASH,0," "
+                db      22,13,11," Right    "
+                db      22,14,11," Up       "
+                db      22,15,11," Down     "
+                db      22,16,11," Fire     "
                 db      22,17,11,"          "
                 db      0xff
 
@@ -63,7 +63,7 @@ msgFire1:       db      22,15,19,FLASH,0," "
                 db      22,16,19,FLASH,1," "
                 db      0xff
 
-msgChooseLevel: db      22,12,5," CHOOSE LEVEL [1-4]:",FLASH,1," ",FLASH,0," "
+msgChooseLevel: db      22,12,5," Choose level [1-4]:",FLASH,1," ",FLASH,0," "
                 db      0xff
 
                 ; Input:
@@ -371,9 +371,9 @@ LevelCompleteFrame:
 RestartFrame:
                 db      0x42                    ; corner attrib
                 db      0x02                    ; lines attrib
-                db      8                       ; x
+                db      5                       ; x
                 db      9                       ; y
-                db      17                      ; w
+                db      23                      ; w
                 db      6                       ; h
                 dw      Border1TopLeft
                 dw      Border1TopCenter
@@ -532,7 +532,7 @@ X               db      0
 Y               db      0
 Attr            db      0
 
-DrawChar:       ld      de, (23606)
+DrawChar:       ld      de, 0x3d00-32*8;(23606)
                 ld      h, 0
                 ld      l, a
                 add     hl, hl

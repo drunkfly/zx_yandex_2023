@@ -30,17 +30,20 @@ OBJ_FLOWER_RIGHT    = 11
 OBJ_FLOWER_AUTO     = 12
 
 PASSABLE_ATTR       = 0x47
-COIN1_ATTR          = 0x46
-COIN2_ATTR          = 0x44
+COIN1_ATTR          = 0x44
+COIN2_ATTR          = 0x46
 STONE_ATTR          = 0x07
 BRICKS_ATTR         = 0x02
 BRICKS2_ATTR        = 0x03
 BRICKS3_ATTR        = 0x05
 BRICKS4_ATTR        = 0x06
+BRICKS5_ATTR        = 0x41
 STONES1_ATTR        = 0x42
 STONES2_ATTR        = 0x43
 STONES3_ATTR        = 0x45
 STONES4_ATTR        = 0x46
+STONES5_ATTR        = 0x41
+CHAINS_ATTR         = 0x41  ; passable
 WEAPON_ATTR         = 0x45
 
 PHYS_HORIZONTAL     = 0x01

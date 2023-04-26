@@ -35,5 +35,5 @@ Start:          ld      sp, 0x5d0b
                 jp      MainMenu
 
 msgPressAnyKey: db      PAPER,7,INK,1,FLASH,1,BRIGHT,1
-                db      22,21,23,"  PRESS  "
-                db      22,22,23," ANY KEY ",0xff
+                db      22,21,23,"  Press  "
+                db      22,22,23," any key ",0xff

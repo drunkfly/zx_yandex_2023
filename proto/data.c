@@ -155,6 +155,11 @@ byte Border1BottomLeft[8];
 byte Border1BottomCenter[8];
 byte Border1BottomRight[8];
 
+byte Chains1[8];
+byte Chains2[8];
+byte Mushroom1[8];
+byte Mushroom2[8];
+
 byte Level1[1024];
 
 static byte data[6912];
@@ -207,7 +212,7 @@ static void GetMirrorSprite(const char* name, byte* dst, byte x, byte y)
 #include "data_levels.h"
 #include "data_levels_2.h"
 
-static void GenerateLevel(const char* section, const char* name, byte* level, const char* const* data)
+static void GenerateLevel(const char* section, const char* name, byte* level, const char* const* data, byte chainsAttr)
 {
     byte count = 0;
     byte value;
@@ -226,6 +231,8 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
             } \
             count = 0; \
         }
+
+    *level++ = chainsAttr;
 
     for (int y = LEVEL_HEIGHT - 1; y >= 0; y--) {
         if (strlen(data[y]) != LEVEL_WIDTH)
@@ -315,8 +322,8 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
                     break;
                 }
                 case '?': {
-                    bool hasLeft = (x != 0 && data[y][x-1] == '&');
-                    bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '&');
+                    bool hasLeft = (x != 0 && data[y][x-1] == '?');
+                    bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '?');
                     if (!hasLeft && !hasRight)
                         b = 26;
                     else if (!hasLeft && hasRight)
@@ -327,10 +334,33 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
                         b = 30;
                     break;
                 }
+                case '&': {
+                    bool hasLeft = (x != 0 && data[y][x-1] == '&');
+                    bool hasRight = (x < LEVEL_WIDTH-1 && data[y][x+1] == '&');
+                    if (!hasLeft && !hasRight)
+                        b = 40;
+                    else if (!hasLeft && hasRight)
+                        b = 42;
+                    else if (hasLeft && !hasRight)
+                        b = 43;
+                    else
+                        b = 44;
+                    break;
+                }
                 case 'X': b = 18; break;
                 case 'x': b = 32; break;
                 case 'Y': b = 34; break;
                 case 'y': b = 36; break;
+                case 'Z': b = 38; break;
+                case 'C': b = 46; break;
+                case 'M': b = 48; break;
+                case 'm': b = 49; break;
+                case 'N': b = 50; break;
+                case 'n': b = 51; break;
+                case 'P': b = 52; break;
+                case 'p': b = 53; break;
+                case 'Q': b = 54; break;
+                case 'q': b = 55; break;
                 case '1': FLUSH(); *level++ = 0x80 | PLAYER_1_START; continue;
                 case '2': FLUSH(); *level++ = 0x80 | PLAYER_2_START; continue;
                 case 'O': FLUSH(); *level++ = 0x80 | STONE; continue;
@@ -443,23 +473,29 @@ void LoadData(void)
     strcat(buf, "data_levels.asm");
     f = fopen(buf, "w");
 
-    GenerateLevel("level1", "Level1", Level1, Level1Data);
-    GenerateLevel("level2", "Level2", Level1, Level2Data);
-    GenerateLevel("level3", "Level3", Level1, Level3Data);
-    GenerateLevel("level4", "Level4", Level1, Level4Data);
-    GenerateLevel("level5", "Level5", Level1, Level5Data);
-    GenerateLevel("level6", "Level6", Level1, Level6Data);
-    GenerateLevel("level7", "Level7", Level1, Level7Data);
-    GenerateLevel("level8", "Level8", Level1, Level8Data);
-    GenerateLevel("level9", "Level9", Level1, Level9Data);
-    GenerateLevel("level10", "Level10", Level1, Level10Data);
-    GenerateLevel("level11", "Level11", Level1, Level11Data);
-    GenerateLevel("level12", "Level12", Level1, Level12Data);
+    GenerateLevel("level2", "Level2", Level1, Level2Data, Level2Chains);
+    GenerateLevel("level3", "Level3", Level1, Level3Data, Level3Chains);
+    GenerateLevel("level4", "Level4", Level1, Level4Data, Level4Chains);
+    GenerateLevel("level5", "Level5", Level1, Level5Data, Level5Chains);
+    GenerateLevel("level6", "Level6", Level1, Level6Data, Level6Chains);
+    GenerateLevel("level7", "Level7", Level1, Level7Data, Level7Chains);
+    GenerateLevel("level8", "Level8", Level1, Level8Data, Level8Chains);
+    GenerateLevel("level9", "Level9", Level1, Level9Data, Level9Chains);
+    GenerateLevel("level10", "Level10", Level1, Level10Data, Level10Chains);
+    GenerateLevel("level11", "Level11", Level1, Level11Data, Level11Chains);
+    GenerateLevel("level12", "Level12", Level1, Level12Data, Level12Chains);
+    GenerateLevel("level13", "Level13", Level1, Level13Data, Level13Chains);
+    GenerateLevel("level14", "Level14", Level1, Level14Data, Level14Chains);
+    GenerateLevel("level15", "Level15", Level1, Level15Data, Level15Chains);
+    GenerateLevel("level16", "Level16", Level1, Level16Data, Level16Chains);
+    GenerateLevel("level17", "Level17", Level1, Level17Data, Level17Chains);
 
-    GenerateLevel("pvpLevel1", "PvpLevel1", Level1, PvpLevel1Data);
-    GenerateLevel("pvpLevel2", "PvpLevel2", Level1, PvpLevel2Data);
-    GenerateLevel("pvpLevel3", "PvpLevel3", Level1, PvpLevel3Data);
-    GenerateLevel("pvpLevel4", "PvpLevel4", Level1, PvpLevel4Data);
+    GenerateLevel("pvpLevel1", "PvpLevel1", Level1, PvpLevel1Data, PvpLevel1Chains);
+    GenerateLevel("pvpLevel2", "PvpLevel2", Level1, PvpLevel2Data, PvpLevel2Chains);
+    GenerateLevel("pvpLevel3", "PvpLevel3", Level1, PvpLevel3Data, PvpLevel3Chains);
+    GenerateLevel("pvpLevel4", "PvpLevel4", Level1, PvpLevel4Data, PvpLevel4Chains);
+
+    GenerateLevel("level1", "Level1", Level1, Level1Data, Level1Chains);
 
     fclose(f);
     
@@ -622,6 +658,11 @@ void LoadData(void)
     GetSprite("Border1BottomLeft",   Border1BottomLeft,   168, 80);
     GetSprite("Border1BottomCenter", Border1BottomCenter, 192, 24);
     GetSprite("Border1BottomRight",  Border1BottomRight,  240, 80);
+
+    GetSprite("Chains1", Chains1, 88, 16);
+    GetSprite("Chains2", Chains2, 96, 16);
+    GetSprite("Mushroom1", Mushroom1, 56, 72);
+    GetSprite("Mushroom2", Mushroom2, 72, 72);
 
     fclose(f);
 }
