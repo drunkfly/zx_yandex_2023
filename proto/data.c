@@ -160,6 +160,18 @@ byte Chains2[8];
 byte Mushroom1[8];
 byte Mushroom2[8];
 
+byte Gates1_1[8];
+byte Gates1_2[8];
+byte Gates2_1[8];
+byte Gates2_2[8];
+byte Gates3_1[8];
+byte Gates3_2[8];
+byte Gates4_1[8];
+byte Gates4_2[8];
+
+byte SwitchOff[8];
+byte SwitchOn[8];
+
 byte Level1[1024];
 
 static byte data[6912];
@@ -370,6 +382,9 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
                 case 'F': FLUSH(); *level++ = 0x80 | FLOWER_LEFT; continue;
                 case 'f': FLUSH(); *level++ = 0x80 | FLOWER_RIGHT; continue;
                 case 'L': FLUSH(); *level++ = 0x80 | FLOWER_AUTO; continue;
+                case 'D': FLUSH(); *level++ = 0x80 | DOOR_TOP; continue;
+                case 'd': FLUSH(); *level++ = 0x80 | DOOR_BOTTOM; continue;
+                case 'S': FLUSH(); *level++ = 0x80 | SWITCH; continue;
                 default: abort();
             }
 
@@ -737,6 +752,18 @@ void LoadData(void)
     GetSprite("Chains2", Chains2, 96, 16);
     GetSprite("Mushroom1", Mushroom1, 56, 72);
     GetSprite("Mushroom2", Mushroom2, 72, 72);
+
+    GetSprite("Gates1_1", Gates1_1, 24, 56);
+    GetSprite("Gates1_2", Gates1_2, 24, 64);
+    GetSprite("Gates2_1", Gates2_1, 32, 56);
+    GetSprite("Gates2_2", Gates2_2, 32, 64);
+    GetSprite("Gates3_1", Gates3_1, 40, 56);
+    GetSprite("Gates3_2", Gates3_2, 40, 64);
+    GetSprite("Gates4_1", Gates4_1, 48, 56);
+    GetSprite("Gates4_2", Gates4_2, 48, 64);
+
+    GetSprite("SwitchOff", SwitchOff, 48, 16);
+    GetSprite("SwitchOn", SwitchOff, 56, 16);
 
     fclose(f);
 }

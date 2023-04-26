@@ -131,6 +131,7 @@ RunLevel:       push    hl
                 call    UpdateEnemies
                 call    UpdateFlying
                 call    UpdateDrawBullets
+                call    UpdateGates
                 ld      ix, Player1
                 call    DoPlayer
                 ld      a, (GameLevelDone)
@@ -230,7 +231,7 @@ RunLevel:       push    hl
 msgHud:         db      INK,7,PAPER,0,BRIGHT,1
                 db      22,1,1,'Level '
 LevelNumber:    db      '00 OF 00'
-                db      22,2,6,'[CAPS+SPACE] RESTART/EXIT'
+                db      22,2,8,'[CAPS+SPACE] PAUSE MENU'
                 db      0xff
 
 msgPlayerWin:   db      INK,7,PAPER,0,BRIGHT,1

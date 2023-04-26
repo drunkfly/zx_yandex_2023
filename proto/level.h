@@ -23,5 +23,8 @@
 #define FLOWER_LEFT         10
 #define FLOWER_RIGHT        11
 #define FLOWER_AUTO         12
+#define DOOR_TOP            13
+#define DOOR_BOTTOM         14
+#define SWITCH              15
 
 void DrawLevel(const byte* level);

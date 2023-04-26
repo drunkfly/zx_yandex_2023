@@ -314,6 +314,14 @@ extern byte Mushroom2[8];
 
 extern byte Level1[];
 
+extern byte Gates1_1[8];
+extern byte Gates1_2[8];
+extern byte Gates2_1[8];
+extern byte Gates2_2[8];
+extern byte Gates3_1[8];
+extern byte Gates3_2[8];
+extern byte Gates4_1[8];
+extern byte Gates4_2[8];
 
 void SpawnBullet(byte x, byte y, byte dir);
 void UpdateDrawBullets(void);
