@@ -205,14 +205,31 @@ PlayerDead3:    db      SPRITE_PlayerDead3Left
                 ;   B = port
                 ;   A = mask
                 ;   L = kempston bit
+                ;   IX => player
                 ; Output:
                 ;   ZF=0 = Key Pressed
+                ; Preserves:
+                ;   IX
 
 KeyPressed:     ld      c, 0xFE
                 in      c, (c)
                 and     c
                 ret     z               ; ZF=0 = Key Pressed
-                ; FIXME: kempston
+                ld      a, (KempstonMode)
+                sub     a, 1
+                ret     c               ; ZF=1 = Not pressed
+                dec     a
+                ld      a, Player1 & 0xff
+                jr      z, @@kempston
+                ld      a, Player2 & 0xff
+@@kempston:     cp      ixl
+                ret     nz              ; ZF=1 = Not pressed
+                in      a, (0x1f)
+                cpl
+                and     l
+                ret
+@@retFalse:     xor     a
+                inc     a
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

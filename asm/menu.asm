@@ -13,28 +13,43 @@ MENU_COIN2_ATTR = COIN2_ATTR
 
                 section code_low
 
+KempstonMode    db      0
+
 msgMainMenu:    db      INK,7,PAPER,1,BRIGHT,1,FLASH,0
                 db      22, 2,5,"                      "
                 db      22, 3,5," -= COINZ ARE MINE =- "
                 db      22, 4,5,"                      "
                 db      PAPER,0
                 db      22,10,1,"[1] Single player"
-                db      22,12,1,"[2] 2 player capture the coin"
-                db      22,14,1,"[K] Redefine keys"
+                db      22,11,1,"[2] 2 player capture the coin"
+                db      22,13,1,"[K] Kempston: "
+                db      22,14,1,"[R] Redefine keys"
                 db      PAPER,0
                 db      22,20,4,"Code by Nikolay Zapolnov"
                 db      22,21,1,"Gfx by Dexus, Music by n1k-o"
                 db      22,22,7,"Levels by Nill:Rem"
                 db      0xff
 
+msgKempstonOff: db      INK,7,PAPER,0,BRIGHT,1,FLASH,0
+                db      22,13,15,"Off              "
+                db      0xff
+
+msgKempstonP1:  db      INK,6,PAPER,0,BRIGHT,1,FLASH,0
+                db      22,13,15,"Player 1 / Single"
+                db      0xff
+
+msgKempstonP2:  db      INK,4,PAPER,0,BRIGHT,1,FLASH,0
+                db      22,13,15,"Player 2         "
+                db      0xff
+
 msgRedefine1:   db      INK,7,BRIGHT,1,FLASH,0
                 db      PAPER,2
-                db      22,10,11," PLAYER 1 "
+                db      22,10,11," Player 1 "
                 db      0xff
 
 msgRedefine2:   db      INK,7,BRIGHT,1,FLASH,0
                 db      PAPER,3
-                db      22,10,11," PLAYER 2 "
+                db      22,10,11," Player 2 "
                 db      0xff
 
 msgRedefine3:   db      PAPER,0
@@ -65,7 +80,8 @@ msgFire1:       db      22,15,19,FLASH,0," "
                 db      22,16,19,FLASH,1," "
                 db      0xff
 
-msgChooseLevel: db      22,12,5," Choose level [1-6]:",FLASH,1," ",FLASH,0," "
+msgChooseLevel: db      PAPER,0,INK,7,FLASH,0,BRIGHT,1
+                db      22,12,5," Choose level [1-6]:",FLASH,1," ",FLASH,0," "
                 db      0xff
 
 MainMenuInit:   di
@@ -95,6 +111,8 @@ MainMenu:       ld      hl, MenuPT3
 
                 ld      hl, msgMainMenu
                 call    DrawString
+
+                call    DrawKempstonMode
 
                 call    XorCoin1
                 call    XorCoin2
@@ -128,12 +146,23 @@ MainMenu:       ld      hl, MenuPT3
                 call    WaitKeyReleased
                 pop     af
 
-                cp      0x11        ; K
+                cp      0x0d        ; R
                 jr      z, @@redefine
+                cp      0x11        ; K
+                jr      z, @@kempston
                 cp      0x24        ; 1
                 jr      z, @@single
                 cp      0x1c        ; 2
                 jr      z, @@pvp
+                jr      @@loop
+
+@@kempston:     ld      a, (KempstonMode)
+                inc     a
+                cp      3
+                jr      c, @@kempston1
+                xor     a
+@@kempston1:    ld      (KempstonMode), a
+                call    DrawKempstonMode
                 jr      @@loop
 
 @@redefine:     call    RedefineMenu
@@ -144,7 +173,7 @@ MainMenu:       ld      hl, MenuPT3
                 inc     a
                 ld      (SinglePlayer), a
                 call    Campaign
-                jr      MainMenu
+                jp      MainMenu
 
 @@pvp:          xor     a
                 ld      (SinglePlayer), a
@@ -232,6 +261,21 @@ XorCoin:        ld      a, 0
                 add     a, SPRITE_Coin1
                 ld      (hl), b
                 jp      DrawSprites@@draw
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+DrawKempstonMode:
+                ld      a, (KempstonMode)
+                or      a
+                jr      z, @@kempstonOff
+                dec     a
+                jr      z, @@kempstonP1
+                ld      hl, msgKempstonP2
+                jr      @@kempstonDone
+@@kempstonP1:   ld      hl, msgKempstonP1
+                jr      @@kempstonDone
+@@kempstonOff:  ld      hl, msgKempstonOff
+@@kempstonDone: jp      DrawString
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
