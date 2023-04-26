@@ -519,7 +519,7 @@ void LoadData(void)
     fclose(f);
 
     *(strrchr(buf, '/') + 1) = 0;
-    strcat(buf, "nq-Old-School-Threads.pt3");
+    strcat(buf, "nq-Coinz-are-mine-final-cut.pt3");
     f = fopen(buf, "rb");
     size_t pt3Len2 = fread(tmp2, 1, 6912, f);
     fclose(f);
