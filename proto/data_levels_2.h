@@ -55,9 +55,9 @@ static const char* Level1Data[] = {
   };
 
 
-enum { Level17Chains = CHAINS_GREEN };
-static const char* Level20Data[] = {
-    /* Level 17 */
+enum { Level8Chains = CHAINS_GREEN };
+static const char* Level8Data[] = {
+    /* Level 20 */
     /* 01234567890123456789012345678901 */
       "                                ", /*  0 */
       "                                ", /*  1 */
@@ -74,7 +74,7 @@ static const char* Level20Data[] = {
       "#---     D                     #", /* 13 */
       "#|A|2  f d                     #", /* 14 */
       "#yyyyyyyyyyyyyyyy              #", /* 15 */
-      "#             yyyW             #", /* 16 */
+      "#             yyy              #", /* 16 */
       "#             yyyyyy           #", /* 17 */
       "# ---                          #", /* 18 */
       "# |A|1                    S   Q#", /* 19 */
@@ -140,7 +140,7 @@ static const char* Level11Data[] = {
 };
 
 
-enum { Level20Chains = CHAINS_GREEN };
+enum { Level17Chains = CHAINS_GREEN };
 static const char* Level17Data[] = {
             /* Level 17 */
             /* 01234567890123456789012345678901 */
@@ -196,8 +196,8 @@ static const char* Level16Data[] = {
               "                                ", /*  4 */
         };
 
-enum { Level15Chains = CHAINS_GREEN };
-static const char* Level15Data[] = {
+enum { Level20Chains = CHAINS_GREEN };
+static const char* Level20Data[] = {
             /* Level 15 */
             /* 01234567890123456789012345678901 */
               "                                ", /*  0 */
@@ -449,8 +449,8 @@ static const char* Level7Data[] = {
         "                                ", /* 21 */
     };
         
-enum { Level8Chains = CHAINS_BLUE  };
-static const char* Level8Data[] = {
+enum { Level15Chains = CHAINS_BLUE  };
+static const char* Level15Data[] = {
       /* Level 8*/
       /* 01234567890123456789012345678901 */
         "                                ", /*  0 */
