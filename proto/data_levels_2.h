@@ -127,7 +127,7 @@ static const char* Level11Data[] = {
       "#ZZZZZZ  ZZZZZZ |A|2           #", /* 10 */
       "#             Z######          #", /* 11 */
       "#             Z######          #", /* 12 */
-      "#S            L######          #", /* 13 */
+      "# S           L######          #", /* 13 */
       "#ZZZZ        ZZ######&&&&      #", /* 14 */
       "####Z             D            #", /* 15 */
       "####ZZZ           d            #", /* 16 */
@@ -592,7 +592,7 @@ static const char* Level12Data[] = { //
 enum { PvpLevel1Chains = CHAINS_GREEN };
 static const char* PvpLevel1Data[] = {
       /* PVP Level 1 */
-      /* 01234567890123456789012345678901 */
+      /* 01234567890123456789012345678901 */            // LAGUNA
         "                                ", /*  0 */
         "                                ", /*  1 */
         "&&&&&&&&&&&&&&&&%%%%%%%%%%%%%%%%", /*  2 */
@@ -606,7 +606,7 @@ static const char* PvpLevel1Data[] = {
         "&ZZZZ         Z  Y       OYYYYY%", /* 10 */
         "&&&&&ZG                  %%%%%%%", /* 11 */
         "&&&&&&  Z                %%%%%%%", /* 12 */
-        "&&&&&&  ZZ            Y  %%%%%%%", /* 13 */
+        "&&&&&&  ZZ      W     Y  %%%%%%%", /* 13 */
         "&&&&&&  ZZZ    ZY    YYYY%%%%%%%", /* 14 */
         "&&&&                        %%%%", /* 15 */
         "&&&&         O              %%%%", /* 16 */
@@ -621,7 +621,7 @@ static const char* PvpLevel1Data[] = {
 enum { PvpLevel2Chains = CHAINS_GREEN };
 static const char* PvpLevel2Data[] = {
       /* PVP Level 2 */
-      /* 01234567890123456789012345678901 */
+      /* 01234567890123456789012345678901 */        // LAVA ATTIC
         "                                ", /*  0 */
         "                                ", /*  1 */
         "################????????????????", /*  2 */
@@ -629,11 +629,11 @@ static const char* PvpLevel2Data[] = {
         "#             CC C C           ?", /*  4 */
         "#             C    C           ?", /*  5 */
         "#             C                ?", /*  6 */
-        "#G              W              ?", /*  7 */
+        "#G                             ?", /*  7 */
         "#            O##yyO            ?", /*  8 */
         "#XX                         ###?", /*  9 */
         "#       XXXXXXXXyyyyyyyy       ?", /* 10 */
-        "#        CC#####?????CC        ?", /* 11 */
+        "#   W    CC#####?????CC    W   ?", /* 11 */
         "#XXXX     CCCC #y CCCCC    ####?", /* 12 */
         "#         CC        C C       G?", /* 13 */
         "#          C   Xy     C        ?", /* 14 */
@@ -647,19 +647,19 @@ static const char* PvpLevel2Data[] = {
     };
 
 enum { PvpLevel3Chains = CHAINS_GREEN };
-static const char* PvpLevel3Data[] = {  // VS
+static const char* PvpLevel3Data[] = {  // VS           DRAGONFLY
         "xxxxxxxxxxxxxxxx????????????????", /*  0 */
         "x                              ?", /*  1 */
         "x  XXXX                  XXXX  ?", /*  2 */
         "x         XX        XX         ?", /*  3 */
-        "x       XX    W       XX       ?", /*  4 */
+        "x       XX            XX       ?", /*  4 */
         "x     XX    XXX OXXX    XX     ?", /*  5 */
         "x    xxxxxxxxxxx???????????    ?", /*  6 */
         "x         CCCX    X CCCCC      ?", /*  7 */
         "xXX        CCX    X   C C    XX?", /*  8 */
         "x          C  X  X    C        ?", /*  9 */
         "x    XXX      X  X      XXX    ?", /* 10 */
-        "x            X    X            ?", /* 11 */
+        "x          W X    X W          ?", /* 11 */
         "xXX        XXX    XXX        XX?", /* 12 */
         "x                 CCC          ?", /* 13 */
         "x   XXX           C C    XXX   ?", /* 14 */
@@ -673,7 +673,7 @@ static const char* PvpLevel3Data[] = {  // VS
 };
 
 enum { PvpLevel4Chains = CHAINS_GREEN };
-static const char* PvpLevel4Data[] = {  // VS
+static const char* PvpLevel4Data[] = {  //           // BRIDGE
         "                                ", /*  0 */
         "                                ", /*  1 */
         "                                ", /*  2 */
@@ -688,9 +688,9 @@ static const char* PvpLevel4Data[] = {  // VS
         "#|A|1     YY        YY     2|A|#", /* 11 */
         "#YYYY  YYYYYYYY  YYYYYYYY  YYYY#", /* 12 */
         "%G                             %", /* 13 */
-        "%              G               %", /* 14 */
+        "%   W          G           W   %", /* 14 */
         "%   ##                    ##   %", /* 15 */
-        "%               W             G%", /* 16 */
+        "%                             G%", /* 16 */
         "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", /* 17 */
         "                                ", /* 18 */
         "                                ", /* 19 */
@@ -700,16 +700,16 @@ static const char* PvpLevel4Data[] = {  // VS
 
 
 enum { PvpLevel5Chains = CHAINS_GREEN };
-static const char* PvpLevel5Data[] = {  // VS
+static const char* PvpLevel5Data[] = {  //              STAIRS AND FLOWERS
         "                                ", /*  0 */
         "                                ", /*  1 */
         "&&&&&&&&&&&&&&&&################", /*  2 */
         "&                              #", /*  3 */
         "&                              #", /*  4 */
         "&                              #", /*  5 */
-        "&                              #", /*  6 */
+        "&                      S       #", /*  6 */
         "&     XXXXX  &&&ZZ  ZZZZZ      #", /*  7 */
-        "&S             L               #", /*  8 */
+        "&S             L   W           #", /*  8 */
         "&XXXX     X    ZZZZZZ      ZZZZ#", /*  9 */
         "&         X         Z          #", /* 10 */
         "&         X         Z          #", /* 11 */
@@ -727,7 +727,7 @@ static const char* PvpLevel5Data[] = {  // VS
 
 
 enum { PvpLevel6Chains = CHAINS_GREEN };
-static const char* PvpLevel6Data[] = {  // VS
+static const char* PvpLevel6Data[] = {  
         "                                ", /*  0 */
         "                                ", /*  1 */
         "????????????????################", /*  2 */
@@ -738,16 +738,16 @@ static const char* PvpLevel6Data[] = {  // VS
         "?                              #", /*  7 */
         "?                              #", /*  8 */
         "?              yX              #", /*  9 */
-        "?              yX              #", /* 10 */
-        "?---           yX           ---#", /* 11 */
-        "?|A|1         WyXW         2|A|#", /* 12 */
-        "?yyyyyy    yyyyyXXXXX     XXXXX#", /* 13 */
+        "?---           yX           ---#", /* 10 */
+        "?|A|1          yX          2|A|#", /* 11 */
+        "?yyyyy        WyXW        XXXXX#", /* 12 */
+        "?    yy     yyyyXXXX     XX    #", /* 13 */
         "?              yX              #", /* 14 */
         "?             OyXO             #", /* 15 */
-        "?        yyyyyyyXXXXXX         #", /* 16 */
-        "?      yyyyyyyyyXXXXXXXXXX     #", /* 17 */
-        "?                              #", /* 18 */
-        "?yy                          XX#", /* 19 */
-        "?yy            L             XX#", /* 20 */
+        "?       S yyyyyyXXXXXX S       #", /* 16 */
+        "?     yyyyyyyyyyXXXXXXXXXX     #", /* 17 */
+        "?              yX              #", /* 18 */
+        "?yy            D             XX#", /* 19 */
+        "?yy            d             XX#", /* 20 */
         "????????????????################", /* 21 */
 };
