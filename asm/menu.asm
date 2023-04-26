@@ -143,6 +143,7 @@ MainMenu:       ld      hl, MenuPT3
                 jr      z, @@loop
 
                 push    af
+                call    PlayMenuSound
                 call    WaitKeyReleased
                 pop     af
 
@@ -196,6 +197,7 @@ MainMenu:       ld      hl, MenuPT3
                 jr      z, @@pvpLoop
 
                 push    af
+                call    PlayMenuSound
                 call    WaitKeyReleased
                 pop     af
 
@@ -331,7 +333,10 @@ RedefineMenu:   halt
 
 @@redefine:     call    DrawString
                 call    WaitAnyKey
+                push    bc
+                call    PlayMenuSound
                 call    WaitKeyReleased
+                pop     bc
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

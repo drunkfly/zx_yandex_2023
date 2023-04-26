@@ -283,6 +283,15 @@ TryGetItem:     ld      a, (ix+Player_state)
                 ld      a, e
                 or      a
                 ret     z
+                push    af
+                push    iy
+                push    ix
+                push    de
+                call    _PlayPressSound
+                pop     de
+                pop     ix
+                pop     iy
+                pop     af
                 ld      a, SPRITE_Weapon1
                 cp      d
                 jr      z, @@weapon
@@ -393,6 +402,11 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 ld      h, (ix+Player_phys_flags)
                 push    ix
                 call    SpawnFlyingItem
+                push    iy
+                push    af
+                call    _PlayShootSound
+                pop     af
+                pop     iy
                 pop     ix
                 ret     z
                 ld      (ix+Player_cooldown), SHOOT_COOLDOWN
@@ -437,6 +451,9 @@ TryShoot:       ld      b, (ix+Player_keyFire_port)
                 push    ix
                 ld      ixl, b
                 call    SpawnBullet
+                push    iy
+                call    _PlayShootSound
+                pop     iy
                 pop     ix
                 ld      (ix+Player_cooldown), SHOOT_COOLDOWN
                 ret
@@ -822,6 +839,13 @@ KillPlayer:     ld      a, (ix+Player_state)
                 ret     z
                 cp      PLAYER_DEAD_FALLING_RESPAWN
                 ret     z
+                push    ix
+                push    bc
+                push    iy
+                call    _PlayPlayerHitSound
+                pop     iy
+                pop     bc
+                pop     ix
                 ld      a, (ix+Player_itemAttr)
                 or      a
                 jr      z, @@noItem

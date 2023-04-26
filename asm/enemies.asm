@@ -230,6 +230,15 @@ KillEnemy:      ld      de, Enemy_state
                 dec     hl
                 xor     a
                 ld      (hl), a     ; Enemy_index
+                push    af
+                push    iy
+                push    ix
+                push    bc
+                call    _PlayPressSound
+                pop     bc
+                pop     ix
+                pop     iy
+                pop     af
                 ret     ; ZF=1 killed
 
                 ; Input:

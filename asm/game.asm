@@ -57,7 +57,7 @@ Campaign:       ld      a, (CurrentLevel)
                 if      PROFILER_ENABLED
                 xor     a
                 out     (0xfe), a
-                jr      @@doneWin
+                ;jr      @@doneWin
                 endif
                 call    ClearAttrib
                 call    ClearScreen
@@ -174,6 +174,7 @@ RunLevel:       push    hl
                 xor     a
                 out     (0xfe), a
                 endif
+                call    PlayMenuSound
                 ld      hl, 0x4000
                 ld      de, TempBuffer
                 ld      bc, 6912
@@ -188,6 +189,7 @@ RunLevel:       push    hl
                 cp      0xff
                 jr      z, @@quitLoop
                 push    af
+                call    PlayMenuSound
                 call    WaitKeyReleased
                 pop     af
                 cp      0x0f        ; C
@@ -227,6 +229,13 @@ RunLevel:       push    hl
                 xor     a
                 out     (0xfe), a
                 endif
+                push    af
+                push    iy
+                push    de
+                call    _PlayCollectSound
+                pop     de
+                pop     iy
+                pop     af
                 call    DimScreen
                 ld      ix, LevelCompleteFrame
                 call    MenuFrame
