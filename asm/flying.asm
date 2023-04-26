@@ -172,11 +172,15 @@ UpdateFlying:   ld      a, (FlyingCount)
                 jr      nz, @@flyAgain
                 ld      a, (SinglePlayer)
                 or      a
-                jr      nz, @@cantMoveHorz
+                jr      nz, @@maybeEnemy
                 push    ix
                 ld      ix, Player2
                 call    CollidesWithPlayerFull
                 pop     ix
+                jr      nz, @@flyAgain
+@@maybeEnemy:   call    EnemyCollides
+                ld      a, h
+                or      a
                 jr      nz, @@flyAgain
 @@cantMoveHorz: ld      b, (ix+Flying_phys_y)
                 ld      c, (ix+Flying_phys_x)
