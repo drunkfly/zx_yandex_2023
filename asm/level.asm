@@ -149,6 +149,10 @@ LoadLevel:      xor     a
                 push    de
                 push    hl
                 halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 call    ClearAttrib
                 call    ClearScreen
                 pop     hl

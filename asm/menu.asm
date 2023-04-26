@@ -80,6 +80,10 @@ MainMenuInit:   di
                 section code_low
 
 MainMenu:       halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
 
                 call    ClearAttrib
                 call    ClearScreen
@@ -95,6 +99,10 @@ MainMenu:       halt
                 call    WaitKeyReleased
 
 @@loop:         halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
 
                 ld      a, (Timer)
                 and     7
@@ -139,6 +147,10 @@ MainMenu:       halt
                 ld      (SinglePlayer), a
 
                 halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 call    DimScreen
                 ld      ix, PvpFrame
                 call    MenuFrame
@@ -205,6 +217,10 @@ XorCoin:        ld      a, 0
                 ;   none
 
 RedefineMenu:   halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 call    DimScreen
                 ld      ix, RedefineFrame
                 call    MenuFrame

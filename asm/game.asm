@@ -47,6 +47,10 @@ Campaign:       ld      a, (CurrentLevel)
                 inc     (hl)
                 jr      Campaign
 @@done:         halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 call    ClearAttrib
                 ld      hl, msgGameComplete
                 jp      RunLevel@@win1
@@ -75,8 +79,6 @@ RunLevel:       push    hl
                 ld      a, 1
                 ld      (SpritesEnabled), a
 @@loop:         halt
-                ld      a, 4
-                out     (0xfe), a
                 call    UpdateItems
                 call    UpdateEnemies
                 call    UpdateFlying
@@ -96,7 +98,10 @@ RunLevel:       push    hl
                 or      a
                 ld      a, 0x32
                 jr      nz, @@win
-@@skipPlayer2:
+@@skipPlayer2:  if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 ld      bc, 0xFEFE
                 in      a, (c)
                 and     1
@@ -105,15 +110,15 @@ RunLevel:       push    hl
                 in      a, (c)
                 and     1
                 jr      z, @@quit
-@@noQuit:
-          ; FIXME
-                xor     a
-                out     (0xfe), a
-                jp      @@loop
+@@noQuit:       jp      @@loop
 
 @@quit:         xor     a
                 ld      (SpritesEnabled), a
                 halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 call    DimScreen
                 ld      ix, RestartFrame
                 call    MenuFrame
@@ -145,6 +150,10 @@ RunLevel:       push    hl
                 xor     a
                 ld      (SpritesEnabled), a
                 halt
+                if      PROFILER_ENABLED
+                xor     a
+                out     (0xfe), a
+                endif
                 call    DimScreen
                 ld      ix, LevelCompleteFrame
                 call    MenuFrame

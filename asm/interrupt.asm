@@ -1,5 +1,5 @@
 
-DEBUG_ENABLED = 1
+PROFILER_ENABLED = 1
 
                 section     intvec [align 256]
 
@@ -31,7 +31,7 @@ InterruptEntry: push        af
                 push        hl
                 push        ix
                 push        iy
-                if          DEBUG_ENABLED
+                if          PROFILER_ENABLED
                 ld          a, 1
                 out         (0xfe), a
                 endif
@@ -40,7 +40,7 @@ InterruptEntry: push        af
                 or          a
                 jr          z, @@skipSprites
                 call        DrawSprites
-@@skipSprites:  if          DEBUG_ENABLED
+@@skipSprites:  if          PROFILER_ENABLED
                 ld          a, 2
                 out         (0xfe), a
                 endif
@@ -52,7 +52,7 @@ InterruptEntry: push        af
 @@skipMusic:    ; Timer
                 ld          hl, Timer
                 inc         (hl)
-                if          DEBUG_ENABLED
+                if          PROFILER_ENABLED
                 ld          a, 3
                 out         (0xfe), a
                 endif
