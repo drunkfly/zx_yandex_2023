@@ -406,6 +406,7 @@ static void GenerateLevel(const char* section, const char* name, byte* level, co
 
 char tmp[6912];
 char tmp2[6912];
+char tmp3[6912];
 
 void LoadData(void)
 {
@@ -508,9 +509,17 @@ void LoadData(void)
     size_t pt3Len2 = fread(tmp2, 1, 6912, f);
     fclose(f);
 
+    *(strrchr(buf, '/') + 1) = 0;
+    strcat(buf, "nq-Coinz-are-mine-menu.pt3");
+    f = fopen(buf, "rb");
+    size_t pt3Len3 = fread(tmp3, 1, 6912, f);
+    fclose(f);
+
     size_t maxLen = pt3Len;
     if (pt3Len2 > maxLen)
         maxLen = pt3Len2;
+    if (pt3Len3 > maxLen)
+        maxLen = pt3Len3;
 
     *(strrchr(buf, '/') + 1) = 0;
     strcat(buf, "../asm/data_pt3.asm");
@@ -528,6 +537,10 @@ void LoadData(void)
     fprintf(f, "WinPT3:\n");
     for (size_t i = 100; i < pt3Len2; i++)
         fprintf(f, "db 0x%02X\n", (unsigned char)tmp2[i]);
+    fprintf(f, "section pt3_menu\n");
+    fprintf(f, "MenuPT3:\n");
+    for (size_t i = 100; i < pt3Len3; i++)
+        fprintf(f, "db 0x%02X\n", (unsigned char)tmp3[i]);
     fclose(f);
 
     *(strrchr(buf, '/') + 1) = 0;

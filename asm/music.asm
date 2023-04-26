@@ -3,12 +3,24 @@
 
                 ; Input:
                 ;   HL => compressed music
+                ;   A => Music ID
 
-PlayMusic:      xor         a
+PlayMusic:      ld          d, a
+                ld          a, (MusicPlayer@@_CurrentMusic)
+                cp          d
+                ret         z
+                ld          a, 0xff
+                ld          (MusicPlayer@@_CurrentMusic), a
+                halt
+                xor         a
                 ld          (MusicEnabled), a
+                push        de
                 ld          de, MusicBuffer
                 call        Unzx7
-                ld          a, 1
+                pop         de
+                ld          a, d
+                ld          (MusicPlayer@@_CurrentMusic), a
+                inc         a
                 ld          (MusicEnabled), a
                 ret
 
@@ -787,7 +799,7 @@ MusicPlayer:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@@_CurrentMusic db          0
+@@_CurrentMusic db          0xff
 
 @@play:         ld          a, (@@_CurrentMusic)
 @@currentMusic: cp          0xff

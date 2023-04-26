@@ -62,6 +62,7 @@ Campaign:       ld      a, (CurrentLevel)
                 ld      hl, TempBuffer
                 call    DrawPicture
                 ld      hl, WinPT3
+                ld      a, 3
                 call    PlayMusic
                 ld      hl, 0x5800
                 ld      de, 0x5801
@@ -108,6 +109,7 @@ Campaign:       ld      a, (CurrentLevel)
 RunLevel:       push    hl
                 push    de
                 ld      hl, GamePT3
+                ld      a, 0
                 call    PlayMusic
                 pop     de
                 pop     hl
@@ -121,6 +123,10 @@ RunLevel:       push    hl
                 ld      a, 1
                 ld      (SpritesEnabled), a
 @@loop:         halt
+                if      PROFILER_ENABLED
+                ld      a, 4
+                out     (0xfe), a
+                endif
 @@loop1:        call    UpdateItems
                 call    UpdateEnemies
                 call    UpdateFlying

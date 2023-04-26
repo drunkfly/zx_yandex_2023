@@ -49,3 +49,4 @@ section interrupt [base 0x8181]
 
 section pt3_game [compress=zx7]
 section pt3_win [compress=zx7]
+section pt3_menu [compress=zx7]

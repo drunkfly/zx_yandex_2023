@@ -79,7 +79,10 @@ MainMenuInit:   di
 
                 section code_low
 
-MainMenu:       halt
+MainMenu:       ld      hl, MenuPT3
+                ld      a, 1
+                call    PlayMusic
+
                 if      PROFILER_ENABLED
                 xor     a
                 out     (0xfe), a
