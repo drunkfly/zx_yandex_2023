@@ -537,6 +537,11 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 ld      c, 7 | (3 << 5)
 @@jumpNoItem:   ld      a, (ix+Player_phys_flags)
                 call    JumpPhysObject
+                push    ix
+                push    iy
+                call    _PlayAirlockSound
+                pop     iy
+                pop     ix
                 jr      @@jumpingInAir
 @@noJump:       ; check if we can duck
                 ld      b, (ix+Player_keyDown_port)
