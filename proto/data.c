@@ -460,11 +460,18 @@ void LoadData(void)
     size_t pt3Len = fread(tmp, 1, 6912, f);
     fclose(f);
 
+    size_t maxLen = pt3Len;
+
     *(strrchr(buf, '/') + 1) = 0;
     strcat(buf, "../asm/data_pt3.asm");
     f = fopen(buf, "w");
-    fprintf(f, "section pt3\n");
+    fprintf(f, "section bss_music\n");
     fprintf(f, "MusicBuffer:\n");
+    fprintf(f, "repeat %d\n", (int)maxLen);
+    fprintf(f, "db 0\n");
+    fprintf(f, "endrepeat\n");
+    fprintf(f, "section pt3_game\n");
+    fprintf(f, "GamePT3:\n");
     for (size_t i = 100; i < pt3Len; i++)
         fprintf(f, "db 0x%02X\n", (unsigned char)tmp[i]);
     fclose(f);

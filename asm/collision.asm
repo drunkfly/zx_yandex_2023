@@ -1,5 +1,5 @@
 
-                section code_collision
+                section code_low
 
                 ; Input:
                 ;   B = object Y

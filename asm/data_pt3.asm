@@ -1,5 +1,10 @@
-section pt3
+section bss_music
 MusicBuffer:
+repeat 3490
+db 0
+endrepeat
+section pt3_game
+GamePT3:
 db 0x06
 db 0x0A
 db 0x00

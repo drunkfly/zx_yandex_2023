@@ -32,7 +32,8 @@ Start:          ld      sp, 0x5d0a
                 call    0xc000              ; beeper
                 ;call    WaitAnyKey
                 call    WaitKeyReleased
-                jp      MainMenu
+
+                jp      MainMenuInit
 
 msgPressAnyKey: db      PAPER,7,INK,1,FLASH,1,BRIGHT,1
                 db      22,21,23,"  Press  "

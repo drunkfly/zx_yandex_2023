@@ -2,6 +2,7 @@ section data_intro [file "INTRO", base 0x4000]
 section beeper [file "BEEPER", base 0xc000]
 
 section bss [base 0x5d0a, imaginary]
+section bss_music [base 0xc000, imaginary]
 
 section data_player_jumps_1 [base 0x5fee]
 section data_bullets [base 0x60b6]
@@ -32,16 +33,14 @@ section data_pvpLevel2 [compress=zx7]
 section data_pvpLevel3 [compress=zx7]
 section data_pvpLevel4 [compress=zx7]
 section data_tiles
-section data_menu
+section data_menu [base 0x60ac]
 
 section code_entry [base 0x6000]
-section code_draw
-section code_level
-section code_physics
-section code_player
-section code_sprites
-section code_zx7
-section code_items
-section code_game
-section code_flying
-section code_enemies
+section code_low [base 0x61b1]
+section code_mid [base 0x8101]
+section code_zx7 [base 0x6067]
+
+section intvec [base 0x8000]
+section interrupt [base 0x8181]
+
+section pt3_game [compress=zx7]

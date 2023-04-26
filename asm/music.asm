@@ -1,6 +1,19 @@
 
                 section     music
 
+                ; Input:
+                ;   HL => compressed music
+
+PlayMusic:      xor         a
+                ld          (MusicEnabled), a
+                ld          de, MusicBuffer
+                call        Unzx7
+                ld          a, 1
+                ld          (MusicEnabled), a
+                ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
                 ; Vortex Tracker II v1.0 PT3 player for ZX Spectrum
                 ; (c)2004,2007 S.V.Bulba <vorobey@mail.khstu.ru>
                 ; http://bulba.untergrund.net (http://bulba.at.kz)
@@ -967,7 +980,7 @@ MusicPlayer:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section     bank1_engine_bss
+                section     music
 
                 ; vars from here can be stripped
                 ; you can move VARS to any other address

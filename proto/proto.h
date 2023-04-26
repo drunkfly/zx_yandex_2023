@@ -190,7 +190,6 @@ typedef int bool;
 
 #define CHAINS_BLUE 0x01
 #define CHAINS_GREEN 0x04
-#define CHAINS_GRAY 0x07
 
 extern byte Stone[8];
 

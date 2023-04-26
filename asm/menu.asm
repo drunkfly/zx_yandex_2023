@@ -11,7 +11,7 @@ MENU_COIN2_X = 28
 MENU_COIN2_Y = 3
 MENU_COIN2_ATTR = COIN2_ATTR
 
-                section code_menu
+                section code_low
 
 msgMainMenu:    db      INK,7,PAPER,1,BRIGHT,1,FLASH,0
                 db      22, 2,5,"                      "
@@ -66,8 +66,18 @@ msgFire1:       db      22,15,19,FLASH,0," "
 msgChooseLevel: db      22,12,5," Choose level [1-4]:",FLASH,1," ",FLASH,0," "
                 db      0xff
 
-                ; Input:
-                ;   none
+                section code_high
+
+MainMenuInit:   di
+                ; install interrupt handler
+                ld      a, InterruptVectors / 256
+                ld      i, a
+                im      2
+                ; display language selection menu
+                ei
+                jp      MainMenu
+
+                section code_low
 
 MainMenu:       halt
 
@@ -709,6 +719,9 @@ DefaultInput1:  db          0x01, 0xFD  ; A
                 db          0x02, 0xFB  ; W
                 db          0x02, 0xFD  ; S
                 db          0x01, 0x7F  ; Space
+
+                section     code_low
+
 DefaultInput2:  db          0x08, 0xBF  ; J
                 db          0x02, 0xBF  ; L
                 db          0x04, 0xDF  ; I

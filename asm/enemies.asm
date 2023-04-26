@@ -49,7 +49,7 @@ EnemyCount      db      0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section data_enemies
+                section code_low
 
                 db      31
                 db      ENEMY_ALIVE
@@ -83,6 +83,8 @@ BatSprites:     db      SPRITE_BatRevive
 
                 db      SPRITE_BatFall2
                 db      SPRITE_BatFall2
+
+                section code_mid
 
                 db      31
                 db      ENEMY_ALIVE
@@ -149,7 +151,7 @@ FlowerSprites:  db      SPRITE_FlowerReviveLeft
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section code_enemies
+                section code_low
 
                 ; Input:
                 ;   A = item index

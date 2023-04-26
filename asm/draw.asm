@@ -1,5 +1,5 @@
 
-                section code_draw
+                section code_low
 
                 ; Input:
                 ;   None

@@ -5,7 +5,7 @@ SinglePlayer:   db      0
 GameLevelDone:  db      0
 CurrentLevel:   db      0
 
-                section code_game
+                section code_high
 
 Levels:         dw      Level1, Level1_size
                 dw      Level2, Level2_size
@@ -51,6 +51,8 @@ Campaign:       ld      a, (CurrentLevel)
                 ld      hl, msgGameComplete
                 jp      RunLevel@@win1
 
+                section code_low
+
                 ; Input
                 ;   HL => level data
                 ;   DE => level data size
@@ -59,15 +61,20 @@ Campaign:       ld      a, (CurrentLevel)
 
 RunLevel:       push    hl
                 push    de
+                ld      hl, GamePT3
+                call    PlayMusic
+                pop     de
+                pop     hl
+                push    hl
+                push    de
                 call    LoadLevel
                 ld      ix, HudFrame
                 call    MenuFrame
                 ld      hl, msgHud
                 call    DrawString
+                ld      a, 1
+                ld      (SpritesEnabled), a
 @@loop:         halt
-                ld      a, 3
-                out     (0xfe), a
-                call    DrawSprites
                 ld      a, 4
                 out     (0xfe), a
                 call    UpdateItems
@@ -100,14 +107,13 @@ RunLevel:       push    hl
                 jr      z, @@quit
 @@noQuit:
           ; FIXME
-          ld a, 5
-          out (0xfe), a
-          call MusicPlayer@@play
                 xor     a
                 out     (0xfe), a
                 jp      @@loop
 
-@@quit:         halt
+@@quit:         xor     a
+                ld      (SpritesEnabled), a
+                halt
                 call    DimScreen
                 ld      ix, RestartFrame
                 call    MenuFrame
@@ -136,6 +142,8 @@ RunLevel:       push    hl
 @@win:          pop     de
                 pop     hl
                 ld      (PlayerWinner), a
+                xor     a
+                ld      (SpritesEnabled), a
                 halt
                 call    DimScreen
                 ld      ix, LevelCompleteFrame

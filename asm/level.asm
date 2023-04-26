@@ -133,7 +133,7 @@ CoinTop1Tile:   db      PASSABLE_ATTR
 CoinTop2Tile:   db      PASSABLE_ATTR
                 dw      CoinTop2
 
-                section code_level
+                section code_low
 
                 ; Input:
                 ;   HL => compressed level data

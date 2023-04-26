@@ -199,7 +199,7 @@ PlayerDead3:    db      SPRITE_PlayerDead3Left
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                section code_player
+                section code_low
 
                 ; Input:
                 ;   B = port
