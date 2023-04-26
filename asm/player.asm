@@ -243,6 +243,7 @@ InitPlayer:     ld      (ix+Player_originalX), c
                 ; Input:
                 ;   IX => player
                 ;   C = offset
+                ;   D = Item sprite ID if only grab specific item, 0 if any
 
 TryGetItem:     ld      a, (ix+Player_state)
                 cp      PLAYER_IDLE
@@ -253,12 +254,14 @@ TryGetItem:     ld      a, (ix+Player_state)
                 ret     nz
 @@stateGood:    ld      a, (ix+Player_itemAttr)
                 or      a
-                ret     nz
-                ld      b, (ix+Player_phys_y)
+                ld      d, 0
+                jr      z, @@grabAny
+                ld      d, SPRITE_Weapon1
+@@grabAny:      ld      b, (ix+Player_phys_y)
                 ld      a, (ix+Player_phys_x)
                 add     a, c
                 ld      c, a
-                call    TryGrabItem
+@@grab:         call    TryGrabItem
                 ld      a, e
                 or      a
                 ret     z
@@ -436,10 +439,36 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      z, @@3
                 inc     d
 @@3:            call    UpdatePhysObject
-                jr      z, @@4
-                xor     a
+                jr      nz, @@4
+                cp      WEAPON_ATTR
+                jr      nz, @@5
+                ld      a, (ix+Player_phys_y)
+                and     ~7
+                add     a, 8
+                ld      b, a
+                ld      a, (ix+Player_phys_x)
+                and     ~7
+                ld      c, a
+                ld      d, SPRITE_Weapon1
+                call    TryGetItem@@grab
+                ld      a, (ix+Player_phys_y)
+                and     ~7
+                add     a, 8
+                ld      b, a
+                ld      a, (ix+Player_phys_x)
+                ld      c, a
+                and     7
+                jr      z, @@5
+                ld      a, c
+                and     ~7
+                add     a, 8
+                ld      c, a
+                ld      d, SPRITE_Weapon1
+                call    TryGetItem@@grab
+                jr      @@5
+@@4:            xor     a
                 ld      (onGround), a
-@@4:
+@@5:
 
                 ld      a, (ix+Player_state)
                 ld      l, a
@@ -639,9 +668,9 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jr      @@setSprite
 
 @@setSprite:    bit     0, (ix+Player_phys_flags)   ; PHYS_HORIZONTAL
-                jr      z, @@5
+                jr      z, @@6
                 inc     hl
-@@5:            ld      b, (hl)
+@@6:            ld      b, (hl)
                 ld      d, (ix+Player_phys_y)
                 ld      e, (ix+Player_phys_x)
                 ld      a, (ix+Player_spriteRef)

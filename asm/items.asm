@@ -168,6 +168,7 @@ ItemAt:         ld      a, (ItemCount)
                 ; Input:
                 ;   B = Y
                 ;   C = X
+                ;   D = Item sprite ID if only grab specific item, 0 if any
                 ; Result:
                 ;   E = attr (0 if not grabbed)
                 ;   D = sprite
@@ -180,6 +181,7 @@ TryGrabItem:    ld      a, (ItemCount)
                 ret     z
                 push    ix
                 ld      hl, Items
+                ld      ixh, d
                 ld      de, sizeof_Item
                 ld      ixl, a
 @@loop:         ld      a, (hl)
@@ -198,7 +200,12 @@ TryGrabItem:    ld      a, (ItemCount)
                 inc     hl          ; skip X
                 inc     hl          ; skip Y
                 ld      d, (hl)     ; spriteID
-                inc     hl
+                ld      a, ixh
+                or      a
+                jr      z, @@grab
+                cp      d
+                jr      nz, @@continue2
+@@grab:         inc     hl
                 ld      e, (hl)     ; attr
                 pop     hl
                 push    de
@@ -206,6 +213,7 @@ TryGrabItem:    ld      a, (ItemCount)
                 pop     de
                 pop     ix
                 ret
+@@continue2:    pop     hl
 @@continue:     add     hl, de
                 dec     ixl
                 jr      nz, @@loop

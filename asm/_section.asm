@@ -1,6 +1,6 @@
 section data_intro [file "INTRO", base 0x4000]
 
-section bss [base 0x5d0c, imaginary]
+section bss [base 0x5d0b, imaginary]
 
 section data_player_jumps_1 [base 0x5fee]
 section data_bullets [base 0x60b6]

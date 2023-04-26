@@ -1,11 +1,7 @@
 
                 section code_entry
 
-msgPressAnyKey: db      PAPER,7,INK,1,FLASH,1,BRIGHT,1
-                db      22,21,23,"  PRESS  "
-                db      22,22,23," ANY KEY ",0xff
-
-Start:          ld      sp, 0x5d0c
+Start:          ld      sp, 0x5d0b
 
                 xor     a
                 ld      (Player1 + Player_kempston), a
@@ -32,3 +28,7 @@ Start:          ld      sp, 0x5d0c
                 call    DrawString
                 call    WaitAnyKey
                 jp      MainMenu
+
+msgPressAnyKey: db      PAPER,7,INK,1,FLASH,1,BRIGHT,1
+                db      22,21,23,"  PRESS  "
+                db      22,22,23," ANY KEY ",0xff

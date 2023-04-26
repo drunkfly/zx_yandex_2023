@@ -7,6 +7,12 @@ PhysObject_accel = 4
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+                section bss
+
+LastCollision   db      0
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
                 section code_physics
 
                 ; Input:
@@ -42,6 +48,7 @@ JumpPhysObject: and     PHYS_HORIZONTAL
                 ;   D = height
                 ;   IX => PhysObject
                 ; Return:
+                ;   A = collision byte if can't go down
                 ;   ZF=0: true; ZF=1: false
 
 UpdatePhysObject:
@@ -93,6 +100,7 @@ UpdatePhysObject:
                 jr      nz, @@canGoDown
                 xor     a       ; return false
                 ld      (ix+PhysObject_speed), a
+                ld      a, (LastCollision)
                 ret     
 @@canGoDown:    inc     (ix+PhysObject_y)
                 dec     e
@@ -164,6 +172,7 @@ CanGoUp:        ld      a, (ix+PhysObject_y)
                 inc     hl
 @@2:            ld      a, (hl)
                 cp      PASSABLE_ATTR
+                ld      (LastCollision), a
                 jr      nz, @@retFalse
 @@retTrue:      inc     a       ; return true
                 ret
@@ -185,6 +194,7 @@ CanGoDown:      ld      a, (ix+PhysObject_y)
                 call    ReadCollision
                 cp      PASSABLE_ATTR
                 jr      z, CanGoUp@@1
+                ld      (LastCollision), a
 @@retFalse:     xor     a       ; return false
                 ret
 
