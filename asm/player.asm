@@ -218,7 +218,6 @@ KeyPressed:     ld      c, 0xFE
                 ld      a, (KempstonMode)
                 sub     a, 1
                 ret     c               ; ZF=1 = Not pressed
-                dec     a
                 ld      a, Player1 & 0xff
                 jr      z, @@kempston
                 ld      a, Player2 & 0xff
