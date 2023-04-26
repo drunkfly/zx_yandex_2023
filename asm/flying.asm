@@ -92,6 +92,8 @@ SpawnFlyingItem:ld      a, (FlyingCount)
                 inc     a       ; return true
                 ret
 
+                section code_high
+
                 ; Input:
                 ;   None
 

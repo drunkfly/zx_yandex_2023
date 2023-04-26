@@ -24,7 +24,12 @@ Levels:         dw      Level1, Level1_size
                 dw      Level15, Level15_size
                 dw      Level16, Level16_size
                 dw      Level17, Level17_size
-                dw      0
+                dw      Level18, Level18_size
+                dw      Level19, Level19_size
+                dw      Level20, Level20_size
+LevelsEnd:      dw      0
+
+LevelCount = (LevelsEnd - Levels) / 4
 
 Campaign:       ld      a, (CurrentLevel)
                 ld      ixl, a
@@ -118,7 +123,16 @@ RunLevel:       push    hl
                 call    LoadLevel
                 ld      ix, HudFrame
                 call    MenuFrame
+                ld      a, (SinglePlayer)
+                or      a
+                jr      z, @@multi
+                call    UpdateLevelCounter
                 ld      hl, msgHud
+                call    DrawString
+                jr      @@doneHud
+@@multi:        ld      hl, msgHudMulti
+                call    DrawString
+@@doneHud:      ld      hl, msgHudBottom
                 call    DrawString
                 ld      a, 1
                 ld      (SpritesEnabled), a
@@ -230,8 +244,16 @@ RunLevel:       push    hl
 
 msgHud:         db      INK,7,PAPER,0,BRIGHT,1
                 db      22,1,1,'Level '
-LevelNumber:    db      '00 OF 00'
-                db      22,2,8,'[CAPS+SPACE] PAUSE MENU'
+LevelNumber:    db      '00 of '
+LevelTotal:     db      '00'
+                db      0xff
+
+msgHudMulti:    db      INK,7,PAPER,0,BRIGHT,1
+                db      22,1,1,'PvP level '
+PvpLevelNumber: db      '0'
+                db      0xff
+
+msgHudBottom:   db      22,2,8,'[Caps+Space] Pause menu'
                 db      0xff
 
 msgPlayerWin:   db      INK,7,PAPER,0,BRIGHT,1
@@ -274,4 +296,24 @@ CheckPauseKey:  ld      bc, 0xFEFE
                 ld      bc, 0x7FFE
                 in      a, (c)
                 and     1
+                ret
+
+UpdateLevelCounter:
+                ld      a, (CurrentLevel)
+                inc     a
+                call    NumToString
+                ld      a, (NumToStrBuf+1)
+                add     a, 0x30
+                ld      (LevelNumber), a
+                ld      a, (NumToStrBuf+2)
+                add     a, 0x30
+                ld      (LevelNumber+1), a
+                ld      a, LevelCount
+                call    NumToString
+                ld      a, (NumToStrBuf+1)
+                add     a, 0x30
+                ld      (LevelTotal), a
+                ld      a, (NumToStrBuf+2)
+                add     a, 0x30
+                ld      (LevelTotal+1), a
                 ret
