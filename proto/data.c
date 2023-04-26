@@ -137,6 +137,24 @@ byte Apple2[8];
 byte Apple3[8];
 byte Apple4[8];
 
+byte BorderTopLeft[8];
+byte BorderTopCenter[8];
+byte BorderTopRight[8];
+byte BorderLeft[8];
+byte BorderRight[8];
+byte BorderBottomLeft[8];
+byte BorderBottomCenter[8];
+byte BorderBottomRight[8];
+
+byte Border1TopLeft[8];
+byte Border1TopCenter[8];
+byte Border1TopRight[8];
+byte Border1Left[8];
+byte Border1Right[8];
+byte Border1BottomLeft[8];
+byte Border1BottomCenter[8];
+byte Border1BottomRight[8];
+
 byte Level1[1024];
 
 static byte data[6912];
@@ -552,6 +570,24 @@ void LoadData(void)
     GetSprite("FlowerDeathLeft1", FlowerDeathLeft1, 144, 56);
     GetSprite("FlowerDeathLeft2", FlowerDeathLeft2, 152, 56);
     GetSprite("FlowerReviveLeft", FlowerReviveLeft, 160, 56);
+
+    GetSprite("BorderTopLeft",      BorderTopLeft,      160, 8);
+    GetSprite("BorderTopCenter",    BorderTopCenter,    168, 8);
+    GetSprite("BorderTopRight",     BorderTopRight,     176, 8);
+    GetSprite("BorderLeft",         BorderLeft,         160, 16);
+    GetSprite("BorderRight",        BorderRight,        176, 16);
+    GetSprite("BorderBottomLeft",   BorderBottomLeft,   160, 24);
+    GetSprite("BorderBottomCenter", BorderBottomCenter, 168, 24);
+    GetSprite("BorderBottomRight",  BorderBottomRight,  176, 24);
+
+    GetSprite("Border1TopLeft",      Border1TopLeft,      184, 8);
+    GetSprite("Border1TopCenter",    Border1TopCenter,    192, 8);
+    GetSprite("Border1TopRight",     Border1TopRight,     200, 8);
+    GetSprite("Border1Left",         Border1Left,         184, 16);
+    GetSprite("Border1Right",        Border1Right,        200, 16);
+    GetSprite("Border1BottomLeft",   Border1BottomLeft,   168, 80);
+    GetSprite("Border1BottomCenter", Border1BottomCenter, 192, 24);
+    GetSprite("Border1BottomRight",  Border1BottomRight,  240, 80);
 
     fclose(f);
 }

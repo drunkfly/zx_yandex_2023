@@ -20,8 +20,9 @@ Start:          ld      sp, 0x5d0b
                 ld      hl, COIN1_ATTR*256 + COIN2_ATTR
                 ld      (Player2 + Player_myCoin), hl
 
-;                xor     a
-                ;out     (0xfe), a
+                xor     a
+                out     (0xfe), a
+
                 ld      a, 2
                 call    0x1601            ; open screen
                 ld      hl, msgPressAnyKey

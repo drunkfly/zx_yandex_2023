@@ -74,13 +74,15 @@ RunLevel:       call    LoadLevel
                 ld      a, 0x32
                 jr      nz, @@win
 @@skipPlayer2:
-                ld      a, 7
+                xor     a
                 out     (0xfe), a
                 jp      @@loop
 
-@@win:          halt
-                call    ClearAttrib
-                ld      (PlayerWinner), a
+@@win:          ld      (PlayerWinner), a
+                halt
+                call    DimScreen
+                ld      ix, LevelCompleteFrame
+                call    MenuFrame
                 ld      hl, msgPlayerWin
                 ld      a, (SinglePlayer)
                 or      a
@@ -92,15 +94,21 @@ RunLevel:       call    LoadLevel
                 call    WaitKeyReleased
                 ret
 
-msgPlayerWin:   db      INK,7,PAPER,1,FLASH,1,BRIGHT,1,22,12,8,' PLAYER ' 
+msgPlayerWin:   db      INK,7,PAPER,0,BRIGHT,1
+                db      22,11,5,'                      '
+                db      22,12,5,'    PLAYER ' 
 PlayerWinner:   db      '1'
-                db      ' WIN! '
+                db      ' WIN!     '
+                db      22,13,5,'                      '
                 db      0xff
 
 msgLevelComplete:
-                db      INK,7,PAPER,1,FLASH,1,BRIGHT,1,22,12,7,' LEVEL COMPLETE! '
+                db      INK,7,PAPER,0,BRIGHT,1
+                db      22,11,5,'                      '
+                db      22,12,5,'    LEVEL COMPLETE!   '
+                db      22,13,5,'                      '
                 db      0xff
 
 msgGameComplete:
-                db      INK,7,PAPER,1,FLASH,1,BRIGHT,1,22,12,8,' GAME COMPLETE! '
+                db      INK,7,PAPER,0,BRIGHT,1,22,12,8,' GAME COMPLETE! '
                 db      0xff
