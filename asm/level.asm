@@ -140,6 +140,7 @@ CoinTop2Tile:   db      PASSABLE_ATTR
                 ;   DE => 0x4000 + compressed level size
 
 LoadLevel:      xor     a
+                ld      (SpritesEnabled), a
                 ld      (SpriteCount), a
                 ld      (ItemCount), a
                 ld      (FlyingCount), a

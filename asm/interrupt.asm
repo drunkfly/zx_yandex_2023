@@ -53,7 +53,7 @@ InterruptEntry: push        af
                 ld          hl, Timer
                 inc         (hl)
                 if          PROFILER_ENABLED
-                ld          a, 3
+                xor         a
                 out         (0xfe), a
                 endif
                 ; restore registers
