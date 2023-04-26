@@ -264,7 +264,7 @@ msgHudMulti:    db      INK,7,PAPER,0,BRIGHT,1
 PvpLevelNumber: db      '0'
                 db      0xff
 
-msgHudBottom:   db      22,2,8,'[Caps+Space] Pause menu'
+msgHudBottom:   db      22,2,7,'[Shift+Space] Pause menu'
                 db      0xff
 
 msgPlayerWin:   db      INK,7,PAPER,0,BRIGHT,1
@@ -296,7 +296,7 @@ msgGameComplete:
                 db      INK,6,PAPER,0,BRIGHT,1
                 db      22,(PICTURE_Y/8+8+2),11,'WELL DONE!'
                 db      INK,7,BRIGHT,0
-                db      22,(PICTURE_Y/8+8+4),3,'Press CAPS+SPACE to return'
+                db      22,(PICTURE_Y/8+8+4),3,'Press Shift+Space to return'
                 db      22,(PICTURE_Y/8+8+5),10,'to main menu'
                 db      0xff
 
