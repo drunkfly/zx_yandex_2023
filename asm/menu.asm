@@ -65,7 +65,7 @@ msgFire1:       db      22,15,19,FLASH,0," "
                 db      22,16,19,FLASH,1," "
                 db      0xff
 
-msgChooseLevel: db      22,12,5," Choose level [1-4]:",FLASH,1," ",FLASH,0," "
+msgChooseLevel: db      22,12,5," Choose level [1-6]:",FLASH,1," ",FLASH,0," "
                 db      0xff
 
 MainMenuInit:   di
@@ -178,23 +178,42 @@ MainMenu:       ld      hl, MenuPT3
                 jr      z, @@pvp3
                 cp      0x0c        ; 4
                 jr      z, @@pvp4
+                cp      0x04        ; 5
+                jr      z, @@pvp5
+                cp      0x03        ; 6
+                jr      z, @@pvp6
                 jr      @@pvpLoop
 
 @@pvp1:         ld      hl, PvpLevel2
                 ld      de, PvpLevel2_size
-@@runPvp:       call    RunLevel
+                ld      a, 0x31
+@@runPvp:       ld      (PvpLevelNumber), a
+                call    RunLevel
                 jp      MainMenu
 
 @@pvp2:         ld      hl, PvpLevel1
                 ld      de, PvpLevel1_size
+                ld      a, 0x32
                 jr      @@runPvp
 
 @@pvp3:         ld      hl, PvpLevel3
                 ld      de, PvpLevel3_size
+                ld      a, 0x33
                 jr      @@runPvp
 
 @@pvp4:         ld      hl, PvpLevel4
                 ld      de, PvpLevel4_size
+                ld      a, 0x34
+                jr      @@runPvp
+
+@@pvp5:         ld      hl, PvpLevel5
+                ld      de, PvpLevel5_size
+                ld      a, 0x35
+                jr      @@runPvp
+
+@@pvp6:         ld      hl, PvpLevel6
+                ld      de, PvpLevel6_size
+                ld      a, 0x36
                 jr      @@runPvp
 
                 ; Input:
@@ -737,6 +756,34 @@ WaitKeyReleased:xor         a
                 endif
                 jr          WaitKeyReleased
                 ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+                section     code_high
+
+                ; Input:
+                ;   A = number to convert
+                ; Returns:
+                ;   None
+                ; Preserves:
+                ; Trashes:
+
+NumToString:    ld          hl, NumToStrBuf
+                ld          c, -100
+                call        @@1
+                ld          c, -10
+                call        @@1
+                ld          c, -1
+@@1:            ld          b, -1
+@@2:            inc         b
+                add         a, c
+                jr          c, @@2
+                sub         c
+                ld          (hl), b
+                inc         hl
+                ret
+
+NumToStrBuf:    db          '???'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

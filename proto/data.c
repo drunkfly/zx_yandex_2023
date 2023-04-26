@@ -578,11 +578,16 @@ void LoadData(void)
     GenerateLevel("level15", "Level15", Level1, Level15Data, Level15Chains);
     GenerateLevel("level16", "Level16", Level1, Level16Data, Level16Chains);
     GenerateLevel("level17", "Level17", Level1, Level17Data, Level17Chains);
+    GenerateLevel("level18", "Level18", Level1, Level18Data, Level18Chains);
+    GenerateLevel("level19", "Level19", Level1, Level19Data, Level19Chains);
+    GenerateLevel("level20", "Level20", Level1, Level20Data, Level20Chains);
 
     GenerateLevel("pvpLevel1", "PvpLevel1", Level1, PvpLevel1Data, PvpLevel1Chains);
     GenerateLevel("pvpLevel2", "PvpLevel2", Level1, PvpLevel2Data, PvpLevel2Chains);
     GenerateLevel("pvpLevel3", "PvpLevel3", Level1, PvpLevel3Data, PvpLevel3Chains);
     GenerateLevel("pvpLevel4", "PvpLevel4", Level1, PvpLevel4Data, PvpLevel4Chains);
+    GenerateLevel("pvpLevel5", "PvpLevel5", Level1, PvpLevel5Data, PvpLevel5Chains);
+    GenerateLevel("pvpLevel6", "PvpLevel6", Level1, PvpLevel6Data, PvpLevel6Chains);
 
     GenerateLevel("level1", "Level1", Level1, Level1Data, Level1Chains);
 
