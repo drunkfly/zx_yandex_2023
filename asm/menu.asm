@@ -341,7 +341,10 @@ RedefineMenu:   halt
                 ret
 
 @@redefine:     call    DrawString
-                call    WaitAnyKey
+@@loop:         call    WaitAnyKey
+                ld      a, c
+                cp      0xff
+                jr      z, @@loop
                 push    bc
                 call    PlayMenuSound
                 call    WaitKeyReleased
@@ -778,10 +781,16 @@ WaitAnyKey:     ld          bc, 0xFEFE
                 cp          0x1f
                 jr          nz, @@found
                 rlc         b
-                if      PROFILER_ENABLED
+                if          PROFILER_ENABLED
                 xor         a
                 out         (0xfe), a
                 endif
+                ld          a, (KempstonMode)
+                or          a
+                jr          z, @@loop
+                in          a, (0x1f)
+                and         0x1f
+                jr          nz, @@kempston
                 jr          @@loop
 @@found:        ld          c, 1
                 rrca
@@ -797,6 +806,8 @@ WaitAnyKey:     ld          bc, 0xFEFE
                 ret         nc
                 ld          c, 0x10
                 ret
+@@kempston:     ld          c, 0xff
+                ret
 
                 ; Input:
                 ;   None
@@ -807,12 +818,18 @@ WaitKeyReleased:xor         a
                 in          a, (0xfe)
                 and         0x1f
                 cp          0x1f
-                ret         z
+                jr          z, @@noKey
                 if          PROFILER_ENABLED
                 xor         a
                 out         (0xfe), a
                 endif
                 jr          WaitKeyReleased
+@@noKey:        ld          a, (KempstonMode)
+                or          a
+                ret         z
+                in          a, (0x1f)
+                and         0x1f
+                jr          nz, WaitKeyReleased
                 ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

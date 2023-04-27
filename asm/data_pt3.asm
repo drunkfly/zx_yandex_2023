@@ -3,6 +3,7 @@ MusicBuffer:
 repeat 3490
 db 0
 endrepeat
+EndMusicBuffer:
 section pt3_game
 GamePT3:
 db 0x06

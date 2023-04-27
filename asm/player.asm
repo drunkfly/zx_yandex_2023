@@ -42,6 +42,7 @@ Player_itemSpriteRef    = 25
 Player_invincibility    = 26
 Player_myCoin           = 27
 Player_enemyCoin        = 28
+Player_onGroundPrev     = 29
 
 Player1:        db      0           ; phys.x
                 db      0           ; phys.y
@@ -72,6 +73,7 @@ Player1:        db      0           ; phys.x
                 db      0           ; invincibility
                 db      0           ; myCoin
                 db      0           ; enemyCoin
+                db      0           ; onGroundPrev
 
 Player2:        db      0           ; phys.x
                 db      0           ; phys.y
@@ -102,6 +104,7 @@ Player2:        db      0           ; phys.x
                 db      0           ; invincibility
                 db      0           ; myCoin
                 db      0           ; enemyCoin
+                db      0           ; onGroundPrev
 
 onGround        db      0
 
@@ -254,6 +257,7 @@ InitPlayer:     ld      (ix+Player_originalX), c
                 ld      (ix+Player_cooldown), a
                 ld      (ix+Player_gunCount), a
                 ld      (ix+Player_invincibility), a
+                ld      (ix+Player_onGroundPrev), a
                 dec     a
                 ld      (ix+Player_itemSpriteRef), a    ; 0xff
                 ret
@@ -532,8 +536,10 @@ DoPlayer:       ld      a, (ix+Player_cooldown)
                 jp      (hl)
 
 @@idle:
-@@moving:       ld      a, (onGround)
+@@moving:       ld      a, (ix+Player_onGroundPrev);(onGround)
                 or      a
+                ld      a, (onGround)
+                ld      (ix+Player_onGroundPrev), a
                 jr      z, @@noDuck
 @@idleOnGround: ; check if we can jump
                 ld      b, (ix+Player_keyUp_port)

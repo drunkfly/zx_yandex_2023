@@ -1,7 +1,7 @@
 section data_intro [file "INTRO", base 0x4000]
 section beeper [file "BEEPER", base 0xc000]
 
-section bss [base 0x5d0a, imaginary]
+section bss [base /*0x5d08*/0xd000, imaginary]
 section bss_music [base 0xc000, imaginary]
 section bss_temp [base 0xe000, imaginary]
 TempBuffer:

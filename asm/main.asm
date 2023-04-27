@@ -1,7 +1,7 @@
 
                 section code_entry
 
-Start:          ld      sp, 0x5d0a
+Start:          ld      sp, /*0x5d0a*/0x5fe0
 
                 xor     a
                 ld      hl, DefaultInput1
