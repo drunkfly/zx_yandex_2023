@@ -24,9 +24,9 @@ msgMainMenu:    db      INK,7,PAPER,1,BRIGHT,1,FLASH,0
                 db      22,11,1,"[2] 2 player capture the coin"
                 db      22,13,1,"[K] Kempston: "
                 db      22,14,1,"[R] Redefine keys"
-                db      PAPER,0
+                db      PAPER,0,INK,6,BRIGHT,0
                 db      22,20,4,"Code by Nikolay Zapolnov"
-                db      22,21,1,"Gfx by Dexus, Music by n1k-o"
+                db      22,21,2,"Gfx by Dexus, Music by n1k-o"
                 db      22,22,7,"Levels by Nill:Rem"
                 db      0xff
 

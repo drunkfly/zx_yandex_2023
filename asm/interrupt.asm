@@ -1,5 +1,5 @@
 
-PROFILER_ENABLED = 1
+PROFILER_ENABLED = 0
 
                 section     intvec [align 256]
 
