@@ -241,6 +241,17 @@ RunLevel:       push    hl
                 pop     af
                 call    DimScreen
                 ld      ix, LevelCompleteFrame
+                ld      bc, 0x0646
+                ld      a, (SinglePlayer)
+                or      a
+                jr      nz, @@drawFrame
+                ld      a, (PlayerWinner)
+                cp      0x32
+                jr      z, @@drawFrame
+                ld      bc, 0x0444
+@@drawFrame:    ld      (LevelCompleteFrame@@attr1), bc
+                ld      a, b
+                ld      (LevelCompleteFrame@@attr3), a
                 call    MenuFrame
                 ld      hl, msgPlayerWin
                 ld      a, (SinglePlayer)

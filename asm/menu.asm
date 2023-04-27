@@ -460,8 +460,8 @@ MainMenuFrame:  db      0x45                    ; corner attrib
                 db      0x45                    ; bottom corner attrib
 
 LevelCompleteFrame:
-                db      0x46                    ; corner attrib
-                db      0x06                    ; lines attrib
+@@attr1:        db      0x46                    ; corner attrib
+@@attr2:        db      0x06                    ; lines attrib
                 db      4                       ; x
                 db      10                      ; y
                 db      24                      ; w
@@ -474,7 +474,7 @@ LevelCompleteFrame:
                 dw      Border1BottomLeft
                 dw      Border1BottomCenter
                 dw      Border1BottomRight
-                db      0x06                    ; bottom corner attrib
+@@attr3:        db      0x06                    ; bottom corner attrib
 
 RestartFrame:
                 db      0x42                    ; corner attrib

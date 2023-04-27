@@ -169,8 +169,9 @@ ShieldDestroySound1:
                 db          0
 
 ShieldDestroySound2:
-                db          0x11
-                dw          0x04c0
-                db          0x11
+                ;db          0x11
+                ;dw          0x04c0
+                ;db          0x11
+                db          0x08
                 dw          0x0510
                 db          0

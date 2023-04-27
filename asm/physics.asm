@@ -199,7 +199,7 @@ CanGoDown@@1:   ld      b, a
                 and     7
                 ret     nz      ; return true
                 ld      a, b
-                cp      -8 + (/*LEVEL_Y +*/ LEVEL_HEIGHT * 8)
+                cp      -8 + (LEVEL_HEIGHT * 8) + 1
                 jr      nc, @@retFalse
                 ld      de, 0xff00  ; D = -1, E = 0
                 call    ReadCollision

@@ -91,10 +91,10 @@ GateToggleSwtch:ld      a, (GateAnim)
 
 @@found:        ld      a, (GateOpen)
                 or      a
-                ld      de, SwitchOn
+                ld      de, SwitchOff
                 ld      a, 0
                 jr      nz, @@isOpen
-                ld      de, SwitchOff
+                ld      de, SwitchOn
                 ld      a, 1
 @@isOpen:       ld      (GateOpen), a
                 ld      a, 4
@@ -121,6 +121,10 @@ GateToggleSwtch:ld      a, (GateAnim)
                 dec     ixl
                 jr      nz, @@loop
 
+                push    iy
+                call    _PlayShieldDestroySound2
+                pop     iy
+
                 pop     bc
                 pop     ix
                 ret
@@ -135,8 +139,14 @@ UpdateGates:    ld      a, (GateAnim)
                 ld      a, (GateTimer)
                 dec     a
                 ld      (GateTimer), a
+                jr      z, @@nextTimer
+                and     3
                 ret     nz
-                ld      a, GATE_DELAY
+                push    iy
+                call    _PlayElevatorSound
+                pop     iy
+                ret
+@@nextTimer:    ld      a, GATE_DELAY
                 ld      (GateTimer), a
                 ld      a, (GateOpen)
                 rrca
