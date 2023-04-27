@@ -106,10 +106,12 @@ RemoveItem:     push    hl
                 inc     hl
                 ld      b, (hl)     ; y
                 inc     hl
+                ld      (@@saved + 1), bc
                 push    bc
                 push    hl
                 call    CalcAttribAddr
                 ld      (hl), PASSABLE_ATTR
+                ld      (@@saved2 + 1), hl
                 pop     hl
                 ld      a, (hl)     ; spriteID
                 call    GetRealItemSprite
@@ -123,6 +125,37 @@ RemoveItem:     push    hl
                 repeat  sizeof_Item
                 ldi
                 endrepeat
+                ld      a, (ItemCount)
+                or      a
+                ret     z
+                ld      b, a
+@@saved:        ld      de, 0
+                ld      a, d
+                and     ~7
+                ld      d, a
+                ld      a, e
+                and     ~7
+                ld      e, a
+                ld      hl, Items
+@@loop:         ld      a, (hl)     ; x
+                and     ~7
+                inc     hl
+                cp      e
+                jr      nz, @@continue2
+                ld      a, (hl)     ; y
+                and     ~7
+                inc     hl
+                cp      d
+                jr      nz, @@continue
+                inc     hl          ; skip spriteID
+                ld      a, (hl)     ; attr
+@@saved2:       ld      (0), a
+                ret
+@@continue2:    inc     hl
+@@continue:     inc     hl
+                inc     hl
+                inc     hl
+                djnz    @@loop
                 ret
 
                 ; Input:
@@ -220,6 +253,8 @@ TryGrabItem:    ld      a, (ItemCount)
                 pop     ix
                 ld      e, 0
                 ret
+
+                section code_high
 
                 ; Input:
                 ;   none

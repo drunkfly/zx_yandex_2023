@@ -323,7 +323,10 @@ LoadLevel:      xor     a
 
 @@player1start: ld      ix, Player1
                 jr      @@playerStart
-@@player2start: ld      ix, Player2
+@@player2start: ld      a, (SinglePlayer)
+                or      a
+                jr      nz, @@doneEmpty
+                ld      ix, Player2
 @@playerStart:  push    bc
                 sla     b
                 sla     b
