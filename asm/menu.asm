@@ -27,7 +27,7 @@ msgMainMenu:    db      INK,7,PAPER,1,BRIGHT,1,FLASH,0
                 db      PAPER,0,INK,6,BRIGHT,0
                 db      22,20,4,"Code by Nikolay Zapolnov"
                 db      22,21,2,"Gfx by Dexus, Music by n1k-o"
-                db      22,22,7,"Levels by Nill:Rem"
+                db      22,22,2,"Levels by Nill:Rem, Bedazzle"
                 db      0xff
 
 msgKempstonOff: db      INK,7,PAPER,0,BRIGHT,1,FLASH,0
