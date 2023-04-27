@@ -265,18 +265,19 @@ RunLevel:       push    hl
                 ld      a, 1
                 ret
 
-msgHud:         db      INK,7,PAPER,0,BRIGHT,1
+msgHud:         db      INK,5,PAPER,0,BRIGHT,0
                 db      22,1,1,'Level '
 LevelNumber:    db      '00 of '
 LevelTotal:     db      '00'
                 db      0xff
 
-msgHudMulti:    db      INK,7,PAPER,0,BRIGHT,1
+msgHudMulti:    db      INK,5,PAPER,0,BRIGHT,0
                 db      22,1,1,'PvP level '
 PvpLevelNumber: db      '0'
                 db      0xff
 
-msgHudBottom:   db      22,2,7,'[Shift+Space] Pause menu'
+msgHudBottom:   db      INK,4
+                db      22,2,7,'[Shift+Space] Pause menu'
                 db      0xff
 
 msgPlayerWin:   db      INK,7,PAPER,0,BRIGHT,1

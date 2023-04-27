@@ -304,10 +304,16 @@ EnemyCollidesBullet:
                 and     ~7
                 ld      c, a
 @@loop:         ld      a, (hl)             ; x
-                inc     hl
                 and     ~7
                 cp      c
-                jr      nz, @@noCollision
+                jr      z, @@maybeCollisn
+                inc     a
+                cp      c
+                jr      nz, @@noCollision2
+                ld      a, (hl)
+                and     7
+                jr      z, @@noCollision2
+@@maybeCollisn: inc     hl
                 ld      a, (hl)             ; y
                 and     ~7
                 cp      b
@@ -315,6 +321,7 @@ EnemyCollidesBullet:
                 pop     ix
                 dec     hl
                 ret
+@@noCollision2: inc     hl
 @@noCollision:  add     hl, de
                 dec     ixl
                 jr      nz, @@loop
